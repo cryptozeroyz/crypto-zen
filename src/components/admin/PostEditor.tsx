@@ -14,8 +14,6 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { commands } from "@uiw/react-md-editor";
-import "@uiw/react-md-editor/markdown-editor.css";
 import {
   parseMarkdown,
   buildMarkdown,
@@ -23,7 +21,9 @@ import {
   type FrontmatterFields,
 } from "@/lib/frontmatter";
 
-const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+const MarkdownEditor = dynamic(() => import("@/components/admin/MarkdownEditor"), {
+  ssr: false,
+});
 
 const inputClass =
   "w-full rounded-lg border border-line bg-paper px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent";
@@ -40,41 +40,7 @@ async function uploadFile(file: File): Promise<string> {
   return data.url as string;
 }
 
-/* 编辑器工具栏的自定义「上传图片」命令 */
-const uploadImageCommand: commands.ICommand = {
-  name: "upload-image",
-  keyCommand: "upload-image",
-  buttonProps: { "aria-label": "上传图片", title: "上传图片" },
-  icon: (
-    <svg viewBox="0 0 16 16" width="13" height="13" fill="currentColor" aria-hidden="true">
-      <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
-      <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12Zm12 1a1 1 0 0 1 1 1v6.333l-4.878-4.878a.5.5 0 0 0-.707 0L1.333 12.93A1 1 0 0 1 1 12.333V3a1 1 0 0 1 1-1h12Z" />
-    </svg>
-  ),
-  execute: (_state, api) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/png,image/jpeg,image/webp,image/gif";
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (!file) return;
-      try {
-        const url = await uploadFile(file);
-        const name = file.name.replace(/\.[^.]+$/, "");
-        api.replaceSelection(`![${name}](${url})\n`);
-      } catch (e) {
-        window.alert(e instanceof Error ? e.message : "上传失败");
-      }
-    };
-    input.click();
-  },
-};
-
-/** 工具栏：默认命令（去掉默认的图片链接命令）+ 上传图片 */
-const EDITOR_COMMANDS = [
-  ...commands.getCommands().filter((c) => c.name !== "image"),
-  uploadImageCommand,
-];
+/* 正文编辑器（Vditor，含图片上传与 Word 导入）与封面上传共用上传接口 */
 
 const FONT_SIZES = [
   { value: 13, label: "小" },
@@ -417,12 +383,12 @@ export default function PostEditor({
         </>
       )}
 
-      {/* 正文：Markdown 编辑器 */}
+      {/* 正文：Vditor 编辑器（支持图片上传、Word 导入） */}
       <div>
         <div className="mb-1.5 flex items-center justify-between">
-          <label htmlFor="pe-body" className="text-sm text-muted">
-            正文（Markdown）
-          </label>
+          <span id="pe-body" className="text-sm text-muted">
+            正文（Markdown，支持工具栏上传图片 / 导入 Word）
+          </span>
           {/* 字号切换 */}
           <div className="flex items-center gap-1 rounded-full border border-line p-0.5" role="group" aria-label="编辑器字号">
             {FONT_SIZES.map((f) => (
@@ -442,18 +408,8 @@ export default function PostEditor({
             ))}
           </div>
         </div>
-        <div id="pe-body" className={`mdfs-${fontSize}`}>
-          <MDEditor
-            value={body}
-            onChange={(val) => setBody(val ?? "")}
-            commands={EDITOR_COMMANDS}
-            textareaProps={{
-              placeholder: "用 Markdown 开始写作…",
-              "aria-label": "文章正文",
-            }}
-            height={440}
-            data-color-mode={dark ? "dark" : "light"}
-          />
+        <div className={`mdfs-${fontSize} overflow-hidden rounded-xl border border-line`}>
+          <MarkdownEditor initialValue={body} onChange={setBody} dark={dark} />
         </div>
       </div>
 

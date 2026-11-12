@@ -117,7 +117,11 @@ async function ghSave(dir: string, slug: string, content: string): Promise<void>
   );
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`GitHub API 保存失败：${res.status} ${text}`);
+    const hint =
+      res.status === 403
+        ? "（403：请检查 GITHUB_TOKEN 是否拥有该仓库 Contents: Read and write 权限）"
+        : "";
+    throw new Error(`GitHub API 保存失败：${res.status} ${text}${hint}`);
   }
 }
 
@@ -180,7 +184,11 @@ async function ghSaveUpload(filename: string, data: Buffer): Promise<void> {
   );
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`GitHub 上传失败：${res.status} ${text}`);
+    const hint =
+      res.status === 403
+        ? "（403：请检查 GITHUB_TOKEN 是否拥有该仓库 Contents: Read and write 权限）"
+        : "";
+    throw new Error(`GitHub 上传失败：${res.status} ${text}${hint}`);
   }
 }
 
