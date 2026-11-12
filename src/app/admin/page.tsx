@@ -61,6 +61,12 @@ export default async function AdminPage() {
             ← 返回站点
           </Link>
           <Link
+            href="/admin/watchlist"
+            className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
+          >
+            关注列表
+          </Link>
+          <Link
             href="/admin/new"
             className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-deep"
           >

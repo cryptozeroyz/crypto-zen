@@ -21,6 +21,7 @@ const zh = {
   },
   nav: {
     writing: "写作",
+    watchlist: "关注",
     about: "关于",
     homeAria: "Crypto Zen 的首页",
     switchLang: "切换语言",
@@ -88,6 +89,20 @@ const zh = {
     ],
   },
   social: { x: "X（Twitter）", telegram: "Telegram", xHandle: "@0CryptoZero", tgHandle: "@YZWEB3" },
+  watchlist: {
+    title: "关注列表",
+    intro:
+      "我正在关注的 Memecoin：行情与头像按 CA 自动抓取（DexScreener，约 5 分钟更新一次），评语是我的一句话关注理由。不构成投资建议。",
+    chart: "K 线",
+    trenchTitle: "Trench Index",
+    trenchSource: "数据来源：tehcscreener.com",
+    components: {
+      pad_volume: "发射盘交易量",
+      tokens_launched: "新发行代币数",
+      bot_volume: "机器人交易量",
+      bot_fees: "机器人手续费",
+    },
+  },
   theme: { toDark: "切换到暗色模式", toLight: "切换到亮色模式" },
 };
 
@@ -100,6 +115,7 @@ const en: typeof zh = {
   },
   nav: {
     writing: "Writing",
+    watchlist: "Watchlist",
     about: "About",
     homeAria: "Crypto Zen home",
     switchLang: "Switch language",
@@ -167,6 +183,20 @@ const en: typeof zh = {
     ],
   },
   social: { x: "X (Twitter)", telegram: "Telegram", xHandle: "@0CryptoZero", tgHandle: "@YZWEB3" },
+  watchlist: {
+    title: "Watchlist",
+    intro:
+      "Memecoins I'm watching. Prices and avatars are fetched automatically by contract address (DexScreener, refreshed every ~5 minutes). The notes are my one-line reasons. Not investment advice.",
+    chart: "Chart",
+    trenchTitle: "Trench Index",
+    trenchSource: "Data: tehcscreener.com",
+    components: {
+      pad_volume: "Pad Volume",
+      tokens_launched: "Tokens Launched",
+      bot_volume: "Bot Volume",
+      bot_fees: "Bot Fees",
+    },
+  },
   theme: { toDark: "Switch to dark mode", toLight: "Switch to light mode" },
 };
 

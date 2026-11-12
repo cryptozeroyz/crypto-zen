@@ -142,6 +142,77 @@ async function ghDelete(dir: string, slug: string): Promise<void> {
   if (!res.ok) throw new Error(`GitHub API 删除失败：${res.status}`);
 }
 
+/* ---------------- 通用文本文件（JSON 数据等） ---------------- */
+
+const WATCHLIST_PATH = "content/watchlist.json";
+
+function localReadText(relPath: string): string | null {
+  const abs = path.join(process.cwd(), relPath);
+  if (!fs.existsSync(abs)) return null;
+  return fs.readFileSync(abs, "utf8");
+}
+
+function localSaveText(relPath: string, content: string): void {
+  const abs = path.join(process.cwd(), relPath);
+  fs.mkdirSync(path.dirname(abs), { recursive: true });
+  fs.writeFileSync(abs, content, "utf8");
+}
+
+async function ghReadText(relPath: string): Promise<string | null> {
+  const res = await fetch(
+    `${GH_API}/repos/${ghRepo()}/contents/${relPath}`,
+    { headers: ghHeaders(), cache: "no-store" }
+  );
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`GitHub API 读取失败：${res.status}`);
+  const data = await res.json();
+  return Buffer.from(String(data.content), "base64").toString("utf8");
+}
+
+async function ghSaveText(relPath: string, content: string): Promise<void> {
+  // 先取 sha（存在则更新）
+  let sha: string | undefined;
+  const get = await fetch(`${GH_API}/repos/${ghRepo()}/contents/${relPath}`, {
+    headers: ghHeaders(),
+    cache: "no-store",
+  });
+  if (get.ok) sha = (await get.json()).sha as string;
+  else if (get.status !== 404) throw new Error(`GitHub API 读取失败：${get.status}`);
+
+  const res = await fetch(`${GH_API}/repos/${ghRepo()}/contents/${relPath}`, {
+    method: "PUT",
+    headers: { ...ghHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message: `admin: update ${relPath}`,
+      content: Buffer.from(content, "utf8").toString("base64"),
+      ...(sha ? { sha } : {}),
+    }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    const hint =
+      res.status === 403
+        ? "（403：请检查 GITHUB_TOKEN 是否拥有该仓库 Contents: Read and write 权限）"
+        : "";
+    throw new Error(`GitHub API 保存失败：${res.status} ${text}${hint}`);
+  }
+}
+
+/** 读取仓库内的任意文本文件（本地或 GitHub），不存在返回 null */
+export async function readTextFile(relPath: string): Promise<string | null> {
+  return getAdapterName() === "github"
+    ? ghReadText(relPath)
+    : localReadText(relPath);
+}
+
+/** 保存仓库内的任意文本文件 */
+export async function saveTextFile(relPath: string, content: string): Promise<void> {
+  if (getAdapterName() === "github") return ghSaveText(relPath, content);
+  localSaveText(relPath, content);
+}
+
+export { WATCHLIST_PATH };
+
 /* ---------------- 统一接口 ---------------- */
 
 export async function listRawPosts(dir: string = POSTS_DIR): Promise<RawPostFile[]> {

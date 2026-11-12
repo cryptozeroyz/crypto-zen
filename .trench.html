@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+/* theme before first paint: a stored choice (localStorage "theme") wins,
+   else the system's. The toggle lives in shared.js; keep in step on every page */
+(function(){var t;try{t=localStorage.getItem("theme")}catch(e){}
+if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+document.documentElement.setAttribute("data-theme",t)})();
+</script>
+<title>tehcscreener · public api</title>
+<meta name="description" content="Daily volumes, top tokens, revenue and the trench index as JSON.">
+<link rel="canonical" href="https://tehcscreener.com/api">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="tehcscreener">
+<meta property="og:url" content="https://tehcscreener.com/api">
+<meta property="og:title" content="tehcscreener · public api">
+<meta property="og:description" content="Daily volumes, top tokens, revenue and the trench index as JSON.">
+<meta property="og:image" content="https://tehcscreener.com/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@tehcscreener">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2048%2048'%3E%3Cg%20fill='%231a1817'%3E%3Crect%20x='3'%20%20y='3'%20%20width='12'%20height='12'%20opacity='.92'/%3E%20%3Crect%20x='18'%20y='3'%20%20width='12'%20height='12'%20opacity='.55'/%3E%20%3Crect%20x='34'%20y='5'%20%20width='8'%20%20height='8'%20%20opacity='.3'/%3E%20%3Crect%20x='4'%20%20y='18'%20width='10'%20height='10'%20opacity='.5'/%3E%20%3Crect%20x='18'%20y='18'%20width='12'%20height='12'%20opacity='.25'/%3E%20%3Crect%20x='33'%20y='18'%20width='10'%20height='10'%20opacity='.5'/%3E%20%3Crect%20x='5'%20%20y='35'%20width='7'%20%20height='7'%20%20opacity='.3'/%3E%20%3Crect%20x='18'%20y='33'%20width='12'%20height='12'%20opacity='.55'/%3E%20%3Crect%20x='33'%20y='33'%20width='12'%20height='12'%20opacity='1'/%3E%3C/g%3E%3C/svg%3E">
+<script defer src="https://umami.tehcscreener.com/script.js" data-website-id="7ec214f1-85f9-4518-9730-f3a4f4d8fe30"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f5f0;
+  --surface:#fafaf9;
+  --ink:#1a1817;
+  --ink-rgb:26,24,23;            /* channels, for rgba(var(--ink-rgb),a) */
+  --muted-70:rgba(var(--ink-rgb),.7);
+  --muted-50:rgba(var(--ink-rgb),.5);
+  --muted-40:rgba(var(--ink-rgb),.4);
+  --hair:rgba(var(--ink-rgb),.15);
+  --hairline:1px solid rgba(var(--ink-rgb),.15);
+  --scrim:rgba(var(--ink-rgb),.35);   /* palette/drawer scrim */
+  --lift:rgba(var(--ink-rgb),.18);    /* floating panel shadow */
+  --font:'JetBrains Mono',monospace;
+}
+/* dark: coming-soon's palette (bg #111010, ink #f7f5f0, dim .55,
+   faint .28, lines .07). Each token and its -rgb twin flip together */
+html[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111010;
+  --surface:#191818;              /* paper at .035 over the bg */
+  --ink:#f7f5f0;
+  --ink-rgb:247,245,240;
+  --muted-70:rgba(var(--ink-rgb),.55);  /* the light tiers' contrast, on dark */
+  --muted-50:rgba(var(--ink-rgb),.4);
+  --muted-40:rgba(var(--ink-rgb),.28);
+  --hair:rgba(var(--ink-rgb),.12);
+  --hairline:1px solid rgba(var(--ink-rgb),.12);
+  --scrim:rgba(0,0,0,.6);         /* ink-tinted scrims and panel shadows would glow light */
+  --lift:rgba(0,0,0,.6);
+}
+
+*,*::before,*::after{box-sizing:border-box;border-radius:0}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:var(--font);font-size:13px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--ink);transition:opacity .15s ease}
+a:hover{opacity:.7}
+
+/* header bar, as submit/pay/manage carry it */
+.header{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:20px 32px;font-size:13px;border-bottom:var(--hairline);
+}
+.header a{text-decoration:none;border-bottom:1px solid var(--ink)}
+.brand{display:inline-flex;align-items:center;gap:9px}
+.brand svg{display:block;flex:none}
+
+.wrap{max-width:760px;margin:0 auto;padding:48px 32px 80px}
+
+/* masthead */
+.masthead{padding-bottom:28px;border-bottom:var(--hairline)}
+.masthead h1{margin:0;font-size:36px;font-weight:500;letter-spacing:-1.5px}
+.masthead p{margin:10px 0 0;color:var(--muted-70)}
+.powered{
+  display:inline-flex;align-items:center;gap:7px;margin-top:14px;
+  font-size:11px;color:var(--muted-50);text-decoration:none;
+}
+.powered img{display:block;height:16px;width:auto}
+.base{
+  margin-top:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-size:12px;
+}
+.base .label{margin:0}
+
+h2{font-size:15px;font-weight:700;margin:44px 0 12px}
+.label{
+  font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted-50);
+}
+p{margin:0 0 10px}
+.muted{color:var(--muted-70)}
+code{font-family:var(--font);font-size:12px;background:rgba(var(--ink-rgb),.05);padding:1px 4px}
+
+/* notes */
+.notes{margin:28px 0 0;padding:0;list-style:none;border:var(--hairline)}
+.notes li{padding:12px 14px;border-bottom:var(--hairline)}
+.notes li:last-child{border-bottom:0}
+.notes b{font-weight:700}
+
+/* table of contents */
+.toc{margin:0;padding:0;list-style:none;columns:2;column-gap:24px}
+.toc li{padding:2px 0;break-inside:avoid}
+.toc a{text-decoration:none;border-bottom:1px solid var(--hair)}
+
+/* endpoints */
+.ep{margin:0 0 0;padding:28px 0 8px;border-top:var(--hairline)}
+.ep h3{
+  margin:0 0 10px;font-size:14px;font-weight:500;
+  display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;word-break:break-all;
+}
+.ep h3 .m{
+  flex:none;font-size:10px;font-weight:700;letter-spacing:.08em;
+  padding:2px 6px;background:var(--ink);color:var(--bg);
+}
+.ep h4{margin:18px 0 6px;font-size:10px;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted-50)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:var(--hairline)}
+table{border-collapse:collapse;width:100%;font-size:12px;min-width:520px}
+th,td{text-align:left;vertical-align:top;padding:7px 10px;border-bottom:var(--hairline)}
+tr:last-child td{border-bottom:0}
+th{font-weight:500;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted-50);white-space:nowrap}
+td:first-child{white-space:nowrap;font-weight:500}
+td.t{white-space:nowrap;color:var(--muted-70)}
+pre{
+  margin:0;padding:12px 14px;overflow-x:auto;border:var(--hairline);
+  background:rgba(var(--ink-rgb),.03);font:12px/1.5 var(--font);
+}
+
+/* tip jar */
+.tip{border:var(--hairline)}
+.tip__row{
+  display:grid;grid-template-columns:1fr auto;gap:6px 14px;align-items:center;
+  padding:12px 14px;border-bottom:var(--hairline);
+}
+.tip__row:last-child{border-bottom:0}
+.tip__addr{grid-column:1;font-size:12px;word-break:break-all}
+.tip__row .label{grid-column:1}
+.copy{
+  grid-column:2;grid-row:1 / span 2;
+  min-width:72px;padding:7px 12px;cursor:pointer;
+  font:12px var(--font);color:var(--ink);background:none;border:1px solid var(--ink);
+}
+.copy:hover{background:var(--ink);color:var(--bg)}
+.copy:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.copy.done{background:var(--ink);color:var(--bg)}
+
+/* claim form, then recent tips: part of the tipping flow, kept quiet */
+.claim{margin-top:18px}
+.claim__head{margin:0 0 8px;font-size:12px;font-weight:500}
+.tips{margin-top:18px}
+.tips__list{margin:8px 0 0;padding:0;list-style:none;border:var(--hairline)}
+.tips__item{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;
+  padding:9px 14px;border-bottom:var(--hairline);font-size:12px;
+}
+.tips__item:last-child{border-bottom:0}
+.tips__who{font-weight:500;overflow-wrap:anywhere}
+.tips__amt{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tips__text{color:var(--muted-70);overflow-wrap:anywhere}
+.tips__when{text-align:right;white-space:nowrap;color:var(--muted-40);font-size:11px}
+.tips__empty{padding:9px 14px;font-size:12px;color:var(--muted-50)}
+.tips__item.is-new{animation:tipflash 1.8s ease-out}
+@keyframes tipflash{from{background:rgba(var(--ink-rgb),.07)}to{background:transparent}}
+@media (prefers-reduced-motion:reduce){.tips__item.is-new{animation:none}}
+.tips__form{display:grid;gap:8px;padding:12px 14px;border:var(--hairline)}
+/* field labels are for screen readers; the placeholders carry them visually */
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.tips__form input::placeholder{color:var(--muted-40)}
+.tips__form input:disabled{background:rgba(var(--ink-rgb),.04);cursor:not-allowed}
+.tips__name{display:grid;gap:6px}
+.tips__form > label, .tips__name > label:first-child{display:block}
+/* the anonymity toggle: a plain sentence-case checkbox under the name */
+.tips__form .tips__anon{
+  display:inline-flex;align-items:center;gap:7px;width:max-content;max-width:100%;
+  font-size:11px;letter-spacing:0;text-transform:none;color:var(--muted-70);cursor:pointer;
+}
+.tips__form .tips__anon input{width:13px;height:13px;margin:0;padding:0;accent-color:var(--ink);cursor:pointer}
+.tips__form input{
+  width:100%;min-width:0;padding:7px 10px;font:12px var(--font);color:var(--ink);
+  background:transparent;border:var(--hairline);border-radius:0;
+}
+.tips__form input:focus{outline:none;border-color:var(--ink)}
+.tips__actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:2px}
+.tips__form button{
+  padding:7px 14px;cursor:pointer;font:12px var(--font);color:var(--ink);
+  background:none;border:1px solid var(--ink);
+}
+.tips__form button:hover{background:var(--ink);color:var(--bg)}
+.tips__form button:disabled{opacity:.5;cursor:default;background:none;color:var(--ink)}
+.tips__msg{font-size:12px;color:var(--muted-70);overflow-wrap:anywhere}
+.tips__msg.is-err{color:#9c2f22}
+.tips__note{margin:0;font-size:11px;color:var(--muted-40)}
+
+.site-foot{margin-top:56px;text-align:center}
+.site-foot a{display:inline-flex;align-items:center;gap:7px;font-size:12px;
+  color:var(--muted-50);text-decoration:none}
+.site-foot img{display:block;height:18px;width:auto}
+.site-foot .foot-api{display:table;margin:16px auto 0;font-size:10px;color:var(--muted-40)}
+.site-foot .foot-api + .foot-api{margin-top:6px}
+
+@media (max-width:620px){
+  .header{padding:16px 16px}
+  .wrap{padding:32px 16px 64px}
+  .masthead h1{font-size:28px;letter-spacing:-1px}
+  .toc{columns:1}
+}
+html[data-theme="dark"] .tips__msg.is-err{color:#e0715f}   /* admin.html's dark red */
+</style>
+<style>
+/* left nav, the same block on every page with the site header (trench,
+   index, chains, chain, pad, bot, api, submit): keep in step. From
+   1200px it is a sidebar beside the content, which keeps its 1280px cap
+   and narrows to fit beside it below 1560px; below 1200px a drawer
+   behind a small fixed button, top left, which only adds fixed elements,
+   so no page moves there. The 1200 here and shared.js's WIDE query move
+   together. */
+.snav-btn{
+  position:fixed;top:16px;left:4px;z-index:900;width:24px;height:24px;padding:0;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:var(--bg);border:var(--hairline);border-radius:0;color:var(--ink);
+}
+.snav-btn:hover{border-color:var(--ink)}
+.snav-btn:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
+.snav-btn svg{display:block}
+.snav-scrim{position:fixed;inset:0;z-index:950;background:var(--scrim)}
+.snav-scrim[hidden]{display:none}
+.snav{
+  position:fixed;top:0;left:0;bottom:0;z-index:960;box-sizing:border-box;
+  width:min(264px,86vw);padding:16px 0 28px;overflow-y:auto;overscroll-behavior:contain;
+  background:var(--bg);border-right:var(--hairline);
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.5;color:var(--ink);
+  transform:translateX(-100%);visibility:hidden;
+  /* closing hides it once the slide ends; opening shows it at once, so
+     focus can move in straight away */
+  transition:transform .2s ease,visibility 0s linear .2s;
+  scrollbar-width:thin;scrollbar-color:rgba(var(--ink-rgb),.2) transparent;
+}
+.snav.is-open{transform:none;visibility:visible;box-shadow:0 12px 40px var(--lift);
+  transition:transform .2s ease,visibility 0s}
+@media (prefers-reduced-motion:reduce){.snav{transition:none}}
+.snav__close{
+  display:block;margin:0 10px 8px auto;width:24px;height:24px;padding:0;cursor:pointer;
+  background:none;border:1px solid transparent;font:inherit;font-size:16px;line-height:1;color:var(--muted-50);
+}
+.snav__close:hover{color:var(--ink)}
+.snav__close:focus-visible{outline:1px solid var(--ink)}
+/* the persistent sidebar's fold button, top right: shown on hover or
+   keyboard focus, from 1200px only */
+.snav__fold{display:none}
+.snav ul{list-style:none;margin:0;padding:0}
+.snav__row{display:flex;align-items:center;margin:1px 10px;border:1px solid transparent}
+.snav__caret{
+  flex:none;width:24px;height:28px;padding:0;cursor:pointer;background:none;border:0;
+  font:inherit;font-size:12px;color:var(--muted-50);transition:transform .15s ease;
+}
+.snav__caret:hover{color:var(--ink)}
+.snav__caret[aria-expanded=true]{transform:rotate(90deg)}
+.snav__caret:focus-visible{outline:1px solid var(--ink);outline-offset:-3px}
+span.snav__caret{display:inline-block;cursor:default}
+.snav__link{flex:1;min-width:0;padding:5px 8px 5px 0;color:var(--muted-70);text-decoration:none;border:0}
+.snav__link:hover{color:var(--ink);opacity:1}
+.snav__link:focus-visible,.snav__kid:focus-visible{outline:1px solid var(--ink);outline-offset:2px}
+/* where the reader is: the pressed chips' ink border */
+.snav__row.is-current{border-color:var(--ink)}
+.snav__row.is-current .snav__link{color:var(--ink)}
+.snav__kids{margin:2px 0 10px}
+.snav__kid{
+  display:flex;align-items:center;gap:8px;margin:0 10px 0 34px;padding:3px 6px;
+  border:1px solid transparent;color:var(--muted-70);text-decoration:none;font-size:12px;
+}
+.snav__kid:hover{color:var(--ink);opacity:1}
+.snav__kid.is-current{border-color:var(--ink);color:var(--ink)}
+/* an item's logo, or its first character in the same box */
+.snav__icon{
+  width:16px;height:16px;flex:none;display:block;box-sizing:border-box;object-fit:contain;
+  border:var(--hairline);background:var(--surface);
+}
+span.snav__icon{font-size:9px;line-height:14px;text-align:center;color:var(--muted-70)}
+.snav__name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* one display name on several chains: the chain, small and muted */
+.snav__tag{flex:none;margin-left:auto;font-size:10px;color:var(--muted-40)}
+.snav__note{margin:2px 10px 10px 40px;font-size:11px;color:var(--muted-40)}
+@media (min-width:1200px){
+  .snav{width:216px;z-index:30;transform:none;opacity:1;visibility:visible;box-shadow:none;
+    padding-top:30px;transition:transform .18s ease,opacity .18s ease,visibility 0s}
+  .snav-btn,.snav-scrim,.snav__close{display:none}
+  .snav__fold{
+    display:block;position:absolute;top:6px;right:6px;width:22px;height:22px;padding:0;
+    cursor:pointer;background:none;border:0;font:inherit;font-size:12px;line-height:1;
+    color:rgba(var(--ink-rgb),.45);opacity:0;transition:opacity .15s ease;
+  }
+  .snav:hover .snav__fold,.snav__fold:focus-visible{opacity:1}
+  .snav__fold:hover{color:var(--ink)}
+  .snav__fold:focus-visible{outline:1px solid var(--ink);outline-offset:1px}
+  /* folded (a standing preference, localStorage tehc:nav-folded): the
+     sidebar slides away, the content takes the full width as it does
+     below 1200px, in one step, and the drawer's fixed button brings the
+     sidebar back in place */
+  html.snav-folded .snav{transform:translateX(-100%);opacity:0;visibility:hidden;
+    transition:transform .18s ease,opacity .18s ease,visibility 0s linear .18s}
+  html.snav-folded body{padding-left:0}
+  html.snav-folded .snav-btn{display:flex}
+  /* the content centres in what is left, narrowing below 1560px to fit */
+  body{padding-left:216px}
+}
+@media (min-width:1200px) and (prefers-reduced-motion:reduce){
+  .snav,html.snav-folded .snav,.snav__fold{transition:none}
+}
+@media (max-width:620px){
+  .snav-btn{top:11px;left:8px;width:30px;height:30px}
+  /* room for the button beside the brand */
+  .header{padding-left:48px}
+}
+</style>
+<script>
+/* left nav: a folded sidebar is a standing preference, applied before
+   first paint so a page never shows the sidebar and then takes it away */
+try { if (localStorage.getItem("tehc:nav-folded") === "1") document.documentElement.classList.add("snav-folded"); } catch(e){}
+</script>
+</head>
+<body>
+<div class="header">
+  <span class="brand">
+    <svg width="20" height="20" viewBox="0 0 48 48">
+      <g style="fill:var(--ink)">
+        <rect x="3"  y="3"  width="12" height="12" opacity=".92"/>
+        <rect x="18" y="3"  width="12" height="12" opacity=".55"/>
+        <rect x="34" y="5"  width="8"  height="8"  opacity=".3"/>
+        <rect x="4"  y="18" width="10" height="10" opacity=".5"/>
+        <rect x="18" y="18" width="12" height="12" opacity=".25"/>
+        <rect x="33" y="18" width="10" height="10" opacity=".5"/>
+        <rect x="5"  y="35" width="7"  height="7"  opacity=".3"/>
+        <rect x="18" y="33" width="12" height="12" opacity=".55"/>
+        <rect x="33" y="33" width="12" height="12" opacity="1"/>
+      </g>
+    </svg>
+    <a href="/">tehcscreener</a>
+  </span>
+</div>
+
+<div class="wrap">
+  <div class="masthead">
+    <h1>public api</h1>
+    <a class="powered" href="https://allium.so" target="_blank" rel="noopener" data-umami-event="outbound" data-umami-event-dest="allium" data-umami-event-kind="website" aria-label="powered by Allium"><span>powered by</span><img src="/assets/allium_logo_black.png" alt="Allium"></a>
+    <div class="base"><span class="label">base url</span><code>https://tehcscreener.com/api/v1</code></div>
+  </div>
+
+  <ul class="notes">
+    <li><b>Format.</b> JSON over GET. No API key. CORS open to any origin.
+      Dates are <code>YYYY-MM-DD</code> strings; amounts are USD. Data updates
+      once a day. Every response carries a top-level
+      <code>"source": "tehcscreener.com"</code> (on <a href="#status">/status</a>,
+      <code>source</code> is the sync source).</li>
+    <li><b>Windows.</b> <code>window</code> accepts <code>1d</code>,
+      <code>7d</code>, <code>30d</code> or <code>all</code>, counted back from the
+      latest day in the data (the response's <code>through</code>), not from the
+      current date. Other values return 400.</li>
+    <li><b>Series.</b> Per-day arrays align index-for-index with the
+      response's <code>days</code> array.</li>
+    <li><b>Errors.</b> 400 for a bad parameter, 404 for an unknown pad, bot or
+      chain. Body: <code>{"detail": "..."}</code>.</li>
+    <li><b>Versioning.</b> v1 is additive-only: fields may be added, never
+      renamed or removed. Breaking changes ship as v2.</li>
+    <li><b>Coverage.</b> Launchpads and bots appear in the API automatically
+      once they are listed on the site; ones still in review are left out.
+      Hyperliquid perps (<a href="#bot-perps">/bots/{bot}/perps</a>) cover
+      fomo and pumpapp. <a href="#rwa">RWAs</a>: robinhood.</li>
+    <li><b>Rate limit.</b> 120 requests/min per IP. Excess requests return 429
+      with <code>Retry-After</code> and <code>X-RateLimit-*</code> headers.</li>
+  </ul>
+
+  <h2>endpoints</h2>
+  <ul class="toc">
+    <li><a href="#launchpads">/launchpads</a></li>
+    <li><a href="#series">/launchpads/series</a></li>
+    <li><a href="#pad">/launchpads/{chain}/{pad}</a></li>
+    <li><a href="#revenue">/launchpads/{chain}/{project}/revenue</a></li>
+    <li><a href="#bots">/bots</a></li>
+    <li><a href="#bot">/bots/{bot}</a></li>
+    <li><a href="#bot-perps">/bots/{bot}/perps</a></li>
+    <li><a href="#chains">/chains</a></li>
+    <li><a href="#chain">/chains/{chain}</a></li>
+    <li><a href="#rwa">/rwa</a></li>
+    <li><a href="#trench">/trench</a></li>
+    <li><a href="#status">/status</a></li>
+  </ul>
+
+  <!-- field tables below are read off the handlers in main.py -->
+
+  <section class="ep" id="launchpads">
+    <h3><span class="m">GET</span>/api/v1/launchpads</h3>
+    <p class="muted">Every listed launchpad with its totals over the window,
+      highest volume first.</p>
+    <h4>query params</h4>
+    <div class="scroll"><table>
+      <tr><th>param</th><th>default</th><th>accepted</th></tr>
+      <tr><td>window</td><td class="t">7d</td><td><code>1d</code> | <code>7d</code> | <code>30d</code> | <code>all</code></td></tr>
+    </table></div>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>window</td><td class="t">string</td><td>the window used</td></tr>
+      <tr><td>through</td><td class="t">date</td><td>latest day in the launchpad data</td></tr>
+      <tr><td>pads</td><td class="t">array</td><td>one object per (chain, pad)</td></tr>
+      <tr><td>pads[].chain</td><td class="t">string</td><td>chain the pad runs on</td></tr>
+      <tr><td>pads[].pad</td><td class="t">string</td><td>pad id, as used in <code>/launchpads/{chain}/{pad}</code></td></tr>
+      <tr><td>pads[].logo_path</td><td class="t">string | null</td><td>site-relative logo path</td></tr>
+      <tr><td>pads[].tokens_launched</td><td class="t">int</td><td>tokens launched in the window</td></tr>
+      <tr><td>pads[].volume_usd</td><td class="t">number</td><td>trading volume in the window</td></tr>
+      <tr><td>pads[].trade_txns</td><td class="t">int</td><td>trade transactions in the window</td></tr>
+      <tr><td>pads[].tokens_traded</td><td class="t">int</td><td>sum of the per-day count of tokens traded</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl "https://tehcscreener.com/api/v1/launchpads?window=30d"</pre>
+  </section>
+
+  <section class="ep" id="series">
+    <h3><span class="m">GET</span>/api/v1/launchpads/series</h3>
+    <p class="muted">Daily volume, launches and protocol revenue per listed
+      launchpad: one series per (chain, pad), highest total volume first.</p>
+    <h4>query params</h4>
+    <div class="scroll"><table>
+      <tr><th>param</th><th>default</th><th>accepted</th></tr>
+      <tr><td>window</td><td class="t">30d</td><td><code>1d</code> | <code>7d</code> | <code>30d</code> | <code>all</code></td></tr>
+    </table></div>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>window</td><td class="t">string</td><td>the window used</td></tr>
+      <tr><td>through</td><td class="t">date</td><td>latest day in the launchpad data</td></tr>
+      <tr><td>days</td><td class="t">date[]</td><td>every day with data in the window, ascending</td></tr>
+      <tr><td>series</td><td class="t">array</td><td>one object per (chain, pad)</td></tr>
+      <tr><td>series[].chain</td><td class="t">string</td><td>chain</td></tr>
+      <tr><td>series[].pad</td><td class="t">string</td><td>pad id</td></tr>
+      <tr><td>series[].color</td><td class="t">string | null</td><td>the pad's chart color on the site</td></tr>
+      <tr><td>series[].logo_path</td><td class="t">string | null</td><td>site-relative logo path</td></tr>
+      <tr><td>series[].volume_usd</td><td class="t">number[]</td><td>volume per day, aligned to <code>days</code> (0 when none)</td></tr>
+      <tr><td>series[].tokens_launched</td><td class="t">int[]</td><td>launches per day, aligned to <code>days</code></td></tr>
+      <tr><td>series[].revenue_usd</td><td class="t">(number | null)[] | null</td><td>protocol revenue per day, aligned to <code>days</code>; null on a day without revenue data. The whole field is null for a pad without revenue data</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl "https://tehcscreener.com/api/v1/launchpads/series?window=7d"</pre>
+  </section>
+
+  <section class="ep" id="pad">
+    <h3><span class="m">GET</span>/api/v1/launchpads/{chain}/{pad}</h3>
+    <p class="muted">One launchpad: profile, daily totals and its top 50 tokens
+      by volume. <code>chain</code> and <code>pad</code> are the values from
+      <code>/launchpads</code>. Unknown or unlisted pads return 404.</p>
+    <h4>query params</h4>
+    <div class="scroll"><table>
+      <tr><th>param</th><th>default</th><th>accepted</th></tr>
+      <tr><td>window</td><td class="t">30d</td><td><code>1d</code> | <code>7d</code> | <code>30d</code> | <code>all</code></td></tr>
+      <tr><td>tokens</td><td class="t">traded</td><td><code>traded</code> (any token traded on the pad) | <code>launched</code> (only tokens launched on it within the window)</td></tr>
+    </table></div>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>chain, pad, window</td><td class="t">string</td><td>echo of the request</td></tr>
+      <tr><td>tokens_mode</td><td class="t">string</td><td>the <code>tokens</code> param used</td></tr>
+      <tr><td>profile</td><td class="t">object | null</td><td><code>name</code>, <code>description</code>, <code>website_url</code>, <code>x_url</code>, <code>logo_path</code>, <code>banner_path</code>, <code>color</code>, <code>pad_token</code> (the pad's own token, if any); null when no profile is set</td></tr>
+      <tr><td>daily</td><td class="t">array</td><td><code>{day, tokens_launched, volume_usd, trade_txns}</code> per day, ascending</td></tr>
+      <tr><td>top_tokens</td><td class="t">array</td><td>up to 50, highest volume first: <code>{token, volume_usd, trade_txns, first_day}</code>; <code>token</code> is the token address, <code>first_day</code> its first day with activity in the window</td></tr>
+      <tr><td>top_tokens[].symbol, top_tokens[].name</td><td class="t">string | null</td><td>the token's ticker and name where we have them from the launchpad's own launch data (today rise.rich); null otherwise</td></tr>
+      <tr><td>top_tokens[].onchain_mcap_usd</td><td class="t">number | null</td><td>closed-curve launchpads only (the pad's own protocol is the only market for its tokens; today <code>solana/rise.rich</code>): market cap from the protocol's own onchain price × emitted supply, latest day in the last 14; null when none. Absent for every other launchpad</td></tr>
+      <tr><td>top_tokens[].onchain_change_1d</td><td class="t">number | null</td><td>closed-curve launchpads only: day-over-day price change over the last two full days, as a fraction (<code>0.05</code> = +5%), from the protocol's own onchain price; null when the token did not trade on both days. Absent for every other launchpad</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl "https://tehcscreener.com/api/v1/launchpads/solana/pumpfun?window=7d&amp;tokens=launched"</pre>
+  </section>
+
+  <section class="ep" id="revenue">
+    <h3><span class="m">GET</span>/api/v1/launchpads/{chain}/{project}/revenue</h3>
+    <p class="muted">One launchpad's daily revenue in USD, full history. Use the
+      <code>chain</code> and <code>pad</code> from <code>/launchpads</code>.
+      Pads without revenue data return 404.</p>
+    <h4>query params</h4>
+    <p class="muted">none</p>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>chain, project</td><td class="t">string</td><td>echo of the request</td></tr>
+      <tr><td>daily</td><td class="t">array</td><td>one object per day with revenue data, full history, ascending</td></tr>
+      <tr><td>daily[].day</td><td class="t">date</td><td>the day</td></tr>
+      <tr><td>daily[].protocol_revenue_usd</td><td class="t">number</td><td>fees kept by the protocol</td></tr>
+      <tr><td>daily[].creator_revenue_usd</td><td class="t">number | null</td><td>creator/cashback fees; null on historical rows predating per-trade measurement (Oct 2026)</td></tr>
+      <tr><td>daily[].source</td><td class="t">string</td><td>data lineage: <code>dune_seed</code> | <code>stonkfun_api</code> | <code>allium_events</code></td></tr>
+      <tr><td>daily[].buyback_usd</td><td class="t">number | null</td><td>USD spent buying back the launchpad's own token that day; null where buybacks aren't tracked</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl "https://tehcscreener.com/api/v1/launchpads/solana/pumpfun/revenue"</pre>
+  </section>
+
+  <section class="ep" id="bots">
+    <h3><span class="m">GET</span>/api/v1/bots</h3>
+    <p class="muted">Daily volume, transactions and fees for trading bots
+      (terminals), one series per bot or per chain, highest total volume first.
+      Lists the bots shown in comparisons on the site; a few published bots
+      stand alone (their own page only) and are left out here, but still
+      answer on <a href="#bot">/bots/{bot}</a>. (Not in v1: the site's own
+      <code>/api/bots</code> also carries a <code>standalone</code> directory
+      of those bots for site search; v1 omits it.)</p>
+    <h4>query params</h4>
+    <div class="scroll"><table>
+      <tr><th>param</th><th>default</th><th>accepted</th></tr>
+      <tr><td>window</td><td class="t">30d</td><td><code>1d</code> | <code>7d</code> | <code>30d</code> | <code>all</code></td></tr>
+      <tr><td>chain</td><td class="t">all</td><td><code>all</code>, or one chain from the response's <code>chains</code> list</td></tr>
+      <tr><td>group</td><td class="t">bot</td><td><code>bot</code> (a series per bot) | <code>chain</code> (a series per chain)</td></tr>
+    </table></div>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>window, chain, group</td><td class="t">string</td><td>echo of the request</td></tr>
+      <tr><td>chains</td><td class="t">string[]</td><td>every chain with data from a bot in this list</td></tr>
+      <tr><td>through</td><td class="t">date</td><td>latest day in the bot data</td></tr>
+      <tr><td>days</td><td class="t">date[]</td><td>every day with data in the window, ascending</td></tr>
+      <tr><td>series</td><td class="t">array</td><td>one object per bot (or chain)</td></tr>
+      <tr><td>series[].name</td><td class="t">string</td><td>bot id (or chain), as used in <code>/bots/{bot}</code></td></tr>
+      <tr><td>series[].display_name</td><td class="t">string</td><td>display name; falls back to <code>name</code></td></tr>
+      <tr><td>series[].color</td><td class="t">string | null</td><td>chart color on the site</td></tr>
+      <tr><td>series[].logo_path</td><td class="t">string | null</td><td>site-relative logo path</td></tr>
+      <tr><td>series[].volume_usd</td><td class="t">number[]</td><td>volume per day, aligned to <code>days</code>; rounded to cents</td></tr>
+      <tr><td>series[].txns</td><td class="t">int[]</td><td>transactions per day</td></tr>
+      <tr><td>series[].fees_usd</td><td class="t">number[]</td><td>fees per day; rounded to cents</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl "https://tehcscreener.com/api/v1/bots?window=7d&amp;group=bot"</pre>
+  </section>
+
+  <section class="ep" id="bot">
+    <h3><span class="m">GET</span>/api/v1/bots/{bot}</h3>
+    <p class="muted">One trading bot: profile, lifetime totals, per-chain daily
+      series and its top 50 tokens. <code>bot</code> is a <code>name</code> from
+      <code>/bots</code> (case-insensitive), or a standalone published bot that
+      <code>/bots</code> leaves out. Unknown or unlisted bots return 404.</p>
+    <h4>query params</h4>
+    <div class="scroll"><table>
+      <tr><th>param</th><th>default</th><th>accepted</th></tr>
+      <tr><td>window</td><td class="t">all</td><td><code>1d</code> | <code>7d</code> | <code>30d</code> | <code>all</code></td></tr>
+    </table></div>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>bot</td><td class="t">string</td><td>bot id, lowercased</td></tr>
+      <tr><td>display_name</td><td class="t">string</td><td>display name; falls back to <code>bot</code></td></tr>
+      <tr><td>color, logo_path, website_url, x_url, description</td><td class="t">string | null</td><td>profile fields</td></tr>
+      <tr><td>window</td><td class="t">string</td><td>the window used</td></tr>
+      <tr><td>through</td><td class="t">date</td><td>latest day in the bot data</td></tr>
+      <tr><td>first_day</td><td class="t">date</td><td>the bot's first day with data</td></tr>
+      <tr><td>totals</td><td class="t">object</td><td><code>{volume_usd, fees_usd, txns}</code>, lifetime (ignores <code>window</code>)</td></tr>
+      <tr><td>days</td><td class="t">date[]</td><td>days with data in the window, ascending</td></tr>
+      <tr><td>wallets_dedup</td><td class="t">(int | null)[]</td><td>per day, aligned to <code>days</code>: deduplicated wallet count where the source provides one, else null</td></tr>
+      <tr><td>series</td><td class="t">array</td><td>one object per chain, highest volume first</td></tr>
+      <tr><td>series[].name</td><td class="t">string</td><td>chain</td></tr>
+      <tr><td>series[].display_name, series[].color</td><td class="t">string</td><td>chain display name (falls back to <code>name</code>) and color</td></tr>
+      <tr><td>series[].volume_usd / txns / fees_usd / wallets</td><td class="t">number[]</td><td>per day, aligned to <code>days</code></td></tr>
+      <tr><td>tokens_since</td><td class="t">date | null</td><td>first day of per-token data for this bot</td></tr>
+      <tr><td>token_windows</td><td class="t">string[]</td><td>the <code>window</code> values this bot's token data covers for <code>top_tokens</code>: always <code>1d</code> and <code>7d</code>; <code>30d</code> when token data spans the last 30 days of the volume series; <code>all</code> when it starts with the volume series (3 days of tolerance)</td></tr>
+      <tr><td>top_tokens</td><td class="t">array</td><td>up to 50, highest volume first: <code>{chain, token, volume_usd, txns, peak_wallets, first_day, last_day}</code>; <code>peak_wallets</code> is the highest single-day wallet count; tokens only: quote-to-quote swaps (no attributable token) are left out of the ranking but stay in every total. Per-token data covers only tokens that reached 25 or more wallets on some day on some terminal, from 30 days before the first such day on; a token that never did is absent from every window, however high its volume, and for <code>all</code> a token's days before that start are left out, so its <code>volume_usd</code> and <code>txns</code> can read low and <code>first_day</code> late</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl "https://tehcscreener.com/api/v1/bots/axiom?window=30d"</pre>
+  </section>
+
+  <section class="ep" id="bot-perps">
+    <h3><span class="m">GET</span>/api/v1/bots/{bot}/perps</h3>
+    <p class="muted">Daily Hyperliquid perps volume, fees, trades and traders
+      for a project, from its Hyperliquid builder codes. <code>bot</code> is a
+      <code>name</code> from <code>/bots</code>. Perps volume is notional and is
+      not included in <a href="#bots">/bots</a> or <a href="#bot">/bots/{bot}</a>.</p>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>bot</td><td class="t">string</td><td>bot id, lowercased</td></tr>
+      <tr><td>first_day</td><td class="t">date | null</td><td>the bot's first day with perps data; null when <code>days</code> is empty</td></tr>
+      <tr><td>through</td><td class="t">date | null</td><td>the bot's latest day with perps data; null when <code>days</code> is empty</td></tr>
+      <tr><td>totals</td><td class="t">object</td><td><code>{volume_usd, fees_usd, txns}</code>, lifetime sums of the fields below</td></tr>
+      <tr><td>days</td><td class="t">date[]</td><td>every day with perps activity, ascending</td></tr>
+      <tr><td>volume_usd</td><td class="t">number[]</td><td>perps notional volume in USD</td></tr>
+      <tr><td>fees_usd</td><td class="t">number[]</td><td>the project's builder fees in USD</td></tr>
+      <tr><td>txns</td><td class="t">int[]</td><td>fills</td></tr>
+      <tr><td>wallets</td><td class="t">(int | null)[]</td><td>unique Hyperliquid accounts trading through the project's builder codes, the same number as daily active perps traders on the bot page</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl https://tehcscreener.com/api/v1/bots/fomo/perps</pre>
+    <h4>example response (trimmed to the last 3 days)</h4>
+    <pre>{
+  "bot": "fomo",
+  "first_day": "2025-08-01",
+  "through": "2026-10-24",
+  "totals": {"volume_usd": 7479345261.73911, "fees_usd": 3353442.030159, "txns": 3624807},
+  "days": ["2026-10-22", "2026-10-23", "2026-10-24"],
+  "volume_usd": [185850123.51, 99320003.24, 125070258.38],
+  "fees_usd": [80055.28, 42641.85, 51908.98],
+  "txns": [51915, 39676, 36448],
+  "wallets": [3155, 2153, 2320],
+  "source": "tehcscreener.com"
+}</pre>
+  </section>
+
+  <section class="ep" id="chains">
+    <h3><span class="m">GET</span>/api/v1/chains</h3>
+    <p class="muted">Every chain with chain-wide stats, with its latest day,
+      highest latest dex volume first. This is the list of chains
+      <code>/chains/{chain}</code> covers.</p>
+    <h4>query params</h4>
+    <p class="muted">none</p>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>chains</td><td class="t">array</td><td>one object per covered chain</td></tr>
+      <tr><td>chains[].chain</td><td class="t">string</td><td>chain id, as used in <code>/chains/{chain}</code></td></tr>
+      <tr><td>chains[].display_name</td><td class="t">string</td><td>display name; falls back to <code>chain</code></td></tr>
+      <tr><td>chains[].color, chains[].logo_path</td><td class="t">string | null</td><td>profile fields</td></tr>
+      <tr><td>chains[].secondary_color</td><td class="t">string | null</td><td>second profile colour (used for line charts on the site); null when unset</td></tr>
+      <tr><td>chains[].through</td><td class="t">date</td><td>latest day for this chain</td></tr>
+      <tr><td>chains[].latest</td><td class="t">object</td><td>that day's <code>{txns, active_wallets, dex_volume_usd, dex_trades}</code></td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl https://tehcscreener.com/api/v1/chains</pre>
+  </section>
+
+  <section class="ep" id="chain">
+    <h3><span class="m">GET</span>/api/v1/chains/{chain}</h3>
+    <p class="muted">Chain-wide daily stats. Covered chains are the ones
+      <code>/chains</code> lists; any other chain returns 404.</p>
+    <h4>query params</h4>
+    <div class="scroll"><table>
+      <tr><th>param</th><th>default</th><th>accepted</th></tr>
+      <tr><td>window</td><td class="t">all</td><td><code>1d</code> | <code>7d</code> | <code>30d</code> | <code>all</code> (counted back from this chain's latest day)</td></tr>
+    </table></div>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>chain</td><td class="t">string</td><td>chain id, lowercased</td></tr>
+      <tr><td>display_name</td><td class="t">string</td><td>display name; falls back to <code>chain</code></td></tr>
+      <tr><td>color, logo_path</td><td class="t">string | null</td><td>profile fields</td></tr>
+      <tr><td>secondary_color</td><td class="t">string | null</td><td>second profile colour (used for line charts on the site); null when unset</td></tr>
+      <tr><td>website_url, x_url</td><td class="t">string | null</td><td>the chain's website and X links; null when unset</td></tr>
+      <tr><td>token_address</td><td class="t">string | null</td><td>the chain's own token contract address; null when unset</td></tr>
+      <tr><td>window</td><td class="t">string</td><td>the window used</td></tr>
+      <tr><td>through</td><td class="t">date</td><td>latest day for this chain</td></tr>
+      <tr><td>days</td><td class="t">date[]</td><td>days in the window, ascending</td></tr>
+      <tr><td>txns</td><td class="t">int[]</td><td>transactions per day</td></tr>
+      <tr><td>active_wallets</td><td class="t">int[]</td><td>active wallets per day</td></tr>
+      <tr><td>dex_volume_usd</td><td class="t">number[]</td><td>DEX volume per day</td></tr>
+      <tr><td>dex_trades</td><td class="t">int[]</td><td>DEX trades per day</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl "https://tehcscreener.com/api/v1/chains/robinhood?window=30d"</pre>
+  </section>
+
+  <section class="ep" id="rwa">
+    <h3><span class="m">GET</span>/api/v1/rwa</h3>
+    <p class="muted">Tokenized real-world assets per chain, one row per day and chain.</p>
+    <p class="muted"><code>volume_usd</code>: daily volume of every pool that holds a
+      tokenized asset. Routed swaps count in each pool they pass through. Pools of two
+      tokenized assets are excluded.</p>
+    <p class="muted"><code>value_usd</code>: end-of-day supply times closing price, summed
+      over the chain's tokenized assets. Wrapped tokens are excluded, since their
+      underlying is already counted. A token without a price uses its last price for up
+      to 7 days, then is excluded until priced again.</p>
+    <h4>query params</h4>
+    <div class="scroll"><table>
+      <tr><th>param</th><th>default</th><th>accepted</th></tr>
+      <tr><td>chain</td><td class="t">all</td><td>one chain, e.g. <code>robinhood</code>; a chain with no data returns empty <code>rows</code></td></tr>
+      <tr><td>from</td><td class="t">first day</td><td><code>YYYY-MM-DD</code>, inclusive; anything else returns 400</td></tr>
+      <tr><td>to</td><td class="t">latest day</td><td><code>YYYY-MM-DD</code>, inclusive; anything else, or a date before <code>from</code>, returns 400</td></tr>
+    </table></div>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>through</td><td class="t">date | null</td><td>latest day in the data for <code>chain</code>, whatever <code>from</code> and <code>to</code> say; null when there is none</td></tr>
+      <tr><td>rows</td><td class="t">array</td><td>one object per day and chain, days ascending</td></tr>
+      <tr><td>rows[].day</td><td class="t">date</td><td>UTC day</td></tr>
+      <tr><td>rows[].chain</td><td class="t">string</td><td>the chain</td></tr>
+      <tr><td>rows[].volume_usd</td><td class="t">number</td><td>pool volume that day; 0 on a day with value and no trading</td></tr>
+      <tr><td>rows[].value_usd</td><td class="t">number | null</td><td>total value at the end of that day; null when the chain has no value that day</td></tr>
+      <tr><td>rows[].swaps</td><td class="t">int</td><td>swaps that day, per pool</td></tr>
+      <tr><td>rows[].assets_traded</td><td class="t">int</td><td>distinct tokenized assets with volume that day</td></tr>
+      <tr><td>rows[].assets_valued</td><td class="t">int</td><td>tokenized assets priced in <code>value_usd</code> that day</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl "https://tehcscreener.com/api/v1/rwa?chain=robinhood&amp;from=2026-10-01&amp;to=2026-10-31"</pre>
+  </section>
+
+  <section class="ep" id="trench">
+    <h3><span class="m">GET</span>/api/v1/trench</h3>
+    <p class="muted">Composite 0–100 activity score for launchpads and trading
+      bots, percentile-ranked against a trailing 90-day window and blended by
+      weight. Only days with both launchpad and bot data count; a day is scored
+      once 30 such days of history exist.</p>
+    <h4>query params</h4>
+    <p class="muted">none</p>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>today</td><td class="t">object | null</td><td>latest scored day; null when there is not enough history yet</td></tr>
+      <tr><td>today.day</td><td class="t">date</td><td>the scored day</td></tr>
+      <tr><td>today.score</td><td class="t">int</td><td>0–100</td></tr>
+      <tr><td>today.band</td><td class="t">string</td><td><code>ded</code> | <code>cold</code> | <code>active</code> | <code>hot</code> | <code>euphoric</code></td></tr>
+      <tr><td>today.components</td><td class="t">object</td><td>keyed <code>pad_volume</code>, <code>tokens_launched</code>, <code>bot_volume</code>, <code>bot_fees</code>; each <code>{value, percentile}</code>: the day's raw total and its 0–100 blended percentile (see <code>method.blend</code>)</td></tr>
+      <tr><td>history</td><td class="t">array</td><td><code>{day, score}</code> for every scored day, oldest first</td></tr>
+      <tr><td>tracked</td><td class="t">object</td><td><code>{launchpads, terminals}</code>: how many listed launchpads (with any data) and listed trading bots are covered</td></tr>
+      <tr><td>method.window_days</td><td class="t">int</td><td>short trailing window length (90)</td></tr>
+      <tr><td>method.window_days_long</td><td class="t">int</td><td>long trailing window length (365)</td></tr>
+      <tr><td>method.blend</td><td class="t">object</td><td><code>{short, long}</code>: how the two windows' percentiles combine (sums to 1)</td></tr>
+      <tr><td>method.cooldown</td><td class="t">float</td><td>score drops decay by this factor per day; rises apply same-day</td></tr>
+      <tr><td>method.weights</td><td class="t">object</td><td>component → weight (sums to 1)</td></tr>
+      <tr><td>method.bands</td><td class="t">object</td><td>band → score range; omitted when <code>today</code> is null</td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl https://tehcscreener.com/api/v1/trench</pre>
+  </section>
+
+  <section class="ep" id="status">
+    <h3><span class="m">GET</span>/api/v1/status</h3>
+    <p class="muted">The most recent data sync.</p>
+    <h4>query params</h4>
+    <p class="muted">none</p>
+    <h4>response</h4>
+    <div class="scroll"><table>
+      <tr><th>field</th><th>type</th><th>description</th></tr>
+      <tr><td>synced_at</td><td class="t">string</td><td>when the last sync landed (timestamp)</td></tr>
+      <tr><td>source</td><td class="t">string</td><td>where the sync came from</td></tr>
+      <tr><td>rows_grain</td><td class="t">int</td><td>per-token rows loaded by that sync</td></tr>
+      <tr><td>rows_pad</td><td class="t">int</td><td>per-pad rows loaded by that sync</td></tr>
+      <tr><td>note</td><td class="t">string | null</td><td>free-text note; before any sync the body is just <code>{"note": "no syncs yet"}</code></td></tr>
+    </table></div>
+    <h4>example</h4>
+    <pre>curl https://tehcscreener.com/api/v1/status</pre>
+  </section>
+
+  <h2>terms</h2>
+  <p class="muted">The API is free to use. If you publish statistics or
+    charts, credit tehcscreener.com as the source.</p>
+
+  <h2>tip jar</h2>
+  <div class="tip">
+    <div class="tip__row">
+      <span class="label">solana</span>
+      <code class="tip__addr" id="tip-sol">DVgCkNymLjmi1mpg8atNRrqbQjtkJf5nAmimuk3pVUPQ</code>
+      <button type="button" class="copy" data-copy="tip-sol">copy</button>
+    </div>
+  </div>
+
+  <div class="claim">
+    <h3 class="claim__head" id="claim-head">claim your tip</h3>
+    <form class="tips__form" id="tip-form" novalidate aria-labelledby="claim-head">
+      <p class="tips__note">Paste your transaction signature to claim the tip
+        and leave a comment. Please claim right after sending. $1 minimum.
+        Tips in SOL or USDC show your name.</p>
+      <label><span class="sr-only">transaction signature</span><input name="sig"
+        required autocomplete="off" autocapitalize="off" spellcheck="false"
+        placeholder="transaction signature"></label>
+      <div class="tips__name">
+        <label><span class="sr-only">name or handle, optional</span><input
+          name="name" maxlength="40" autocomplete="off"
+          placeholder="name or handle (optional)"></label>
+        <label class="tips__anon"><input type="checkbox" id="tip-anon">stay anonymous</label>
+      </div>
+      <label><span class="sr-only">comment, optional</span><input name="comment"
+        maxlength="140" autocomplete="off" placeholder="comment (optional)"></label>
+      <div class="tips__actions">
+        <button type="submit">claim</button>
+        <span class="tips__msg" id="tip-msg" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+  </div>
+
+  <div class="tips">
+    <div class="label">recent tips</div>
+    <ul class="tips__list" id="tips-list"><li class="tips__empty">loading…</li></ul>
+  </div>
+
+  <h2>feedback</h2>
+  <p class="muted">Bugs and requests: <a href="https://x.com/adam_tehc" target="_blank" rel="noopener">@adam_tehc</a> on X.</p>
+
+  <footer class="site-foot">
+    <a href="https://www.allium.so" target="_blank" rel="noopener" data-umami-event="outbound" data-umami-event-dest="allium" data-umami-event-kind="website" aria-label="powered by Allium"><span>powered by</span><img src="/assets/allium_logo_black.png" alt="Allium"></a>
+    <a class="foot-api" href="/api">API docs</a>
+    <a class="foot-api" href="/video">video lab</a>
+    <a class="foot-api" href="https://x.com/tehcscreener" target="_blank" rel="noopener" data-umami-event="outbound" data-umami-event-dest="x" data-umami-event-kind="social">X</a>
+  </footer>
+</div>
+
+<script>
+/* tip jar: copy the address, flash "copied" on the button */
+function copyText(text){
+  if (navigator.clipboard && window.isSecureContext)
+    return navigator.clipboard.writeText(text);
+  return new Promise(function(ok, fail){
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.setAttribute("readonly", "");
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy") ? ok() : fail(); }
+    catch (e) { fail(e); }
+    document.body.removeChild(ta);
+  });
+}
+document.querySelectorAll(".copy").forEach(function(btn){
+  var timer;
+  btn.addEventListener("click", function(){
+    var text = document.getElementById(btn.dataset.copy).textContent.trim();
+    copyText(text).then(function(){
+      btn.textContent = "copied"; btn.classList.add("done");
+    }, function(){
+      btn.textContent = "failed";
+    }).then(function(){
+      clearTimeout(timer);
+      timer = setTimeout(function(){
+        btn.textContent = "copy"; btn.classList.remove("done");
+      }, 1400);
+    });
+  });
+});
+
+/* recent tips: every user-supplied string is set with textContent, never
+   parsed as HTML, and nothing is ever rendered as a link */
+var tipList = document.getElementById("tips-list");
+function tipAgo(iso){
+  var s = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (!(s >= 0)) return "";
+  if (s < 60) return "just now";
+  if (s < 3600) return Math.floor(s / 60) + "m ago";
+  if (s < 86400) return Math.floor(s / 3600) + "h ago";
+  if (s < 86400 * 30) return Math.floor(s / 86400) + "d ago";
+  return new Date(iso).toISOString().slice(0, 10);
+}
+function tipEl(t){
+  var li = document.createElement("li"); li.className = "tips__item";
+  function cell(cls, text){
+    var el = document.createElement("span"); el.className = cls;
+    el.textContent = text; li.appendChild(el);
+  }
+  /* generic: a tip in a mint off the server's display whitelist; the API
+     has already stripped its name, comment and asset */
+  var usd = "$" + Number(t.amount_usd).toFixed(2);
+  cell("tips__who", t.generic ? "token tip" : t.name || "anon");
+  cell("tips__amt", t.generic ? usd : usd + " · " + t.asset);
+  cell("tips__text", t.comment || "");
+  cell("tips__when", tipAgo(t.created_at));
+  return li;
+}
+function tipEmpty(text){
+  var li = document.createElement("li"); li.className = "tips__empty";
+  li.textContent = text; tipList.replaceChildren(li);
+}
+fetch("/api/tips/recent").then(function(r){
+  if (!r.ok) throw r; return r.json();
+}).then(function(rows){
+  if (!rows.length) return tipEmpty("no tips yet");
+  tipList.replaceChildren.apply(tipList, rows.map(tipEl));
+}).catch(function(){ tipEmpty("tips unavailable"); });
+
+var tipForm = document.getElementById("tip-form"),
+    tipMsg = document.getElementById("tip-msg"),
+    tipAnon = document.getElementById("tip-anon");
+/* stay anonymous: clears and locks the name, so the tip lists as "anon" */
+function tipAnonSync(){
+  var name = tipForm.elements.name;
+  if (tipAnon.checked) name.value = "";
+  name.disabled = tipAnon.checked;
+}
+tipAnon.addEventListener("change", tipAnonSync);
+function tipSay(text, err){
+  tipMsg.textContent = text; tipMsg.classList.toggle("is-err", !!err);
+}
+tipForm.addEventListener("submit", function(e){
+  e.preventDefault();
+  var f = tipForm.elements, btn = tipForm.querySelector("button");
+  var sig = f.sig.value.trim();
+  if (!sig) return tipSay("enter the transaction signature", true);
+  btn.disabled = true; tipSay("checking the transaction…");
+  fetch("/api/tips", {method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({sig: sig, name: tipAnon.checked ? "" : f.name.value,
+      comment: f.comment.value})})
+  .then(function(r){
+    return r.json().catch(function(){ return {}; }).then(function(body){
+      if (r.ok) return body;
+      var msg = r.status === 429 ? "too many attempts, wait a minute"
+        : r.status === 409 ? "this tip has already been claimed"
+        : typeof body.detail === "string" ? body.detail : "invalid request";
+      throw new Error(msg);
+    });
+  }).then(function(t){
+    var li = tipEl(t); li.classList.add("is-new");
+    if (tipList.querySelector(".tips__empty")) tipList.replaceChildren();
+    tipList.prepend(li);
+    while (tipList.children.length > 20) tipList.lastElementChild.remove();
+    tipForm.reset(); tipAnonSync(); tipSay("claimed");
+  }).catch(function(err){
+    tipSay(err && err.message && err.message !== "Failed to fetch"
+      ? err.message : "couldn't reach the server", true);
+  }).then(function(){ btn.disabled = false; });
+});
+</script>
+<!-- the left nav: site/app/assets/shared.js (no palette on this page) -->
+<script src="/assets/shared.js"></script>
+</body>
+</html>

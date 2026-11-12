@@ -16,6 +16,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 const NAV_ITEMS = [
   { key: "writing", path: "/writing" },
+  { key: "watchlist", path: "/watchlist" },
   { key: "about", path: "/about" },
 ] as const;
 
