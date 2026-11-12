@@ -88,8 +88,7 @@ const zh = {
   social: { x: "X（Twitter）", telegram: "Telegram", xHandle: "@0CryptoZero", tgHandle: "@YZWEB3" },
   watchlist: {
     title: "关注列表",
-    intro:
-      "我正在关注的 Memecoin：头像与行情按 CA 自动抓取（DexScreener，约 5 分钟更新）。徽章由后台维护，不构成投资建议。",
+    intro: "我正关注/持仓的memecoin，非投资建议。",
     chart: "K 线",
     trenchTitle: "Trench Index",
     trenchSource: "数据来源：tehcscreener.com",
@@ -190,8 +189,7 @@ const en: typeof zh = {
   social: { x: "X (Twitter)", telegram: "Telegram", xHandle: "@0CryptoZero", tgHandle: "@YZWEB3" },
   watchlist: {
     title: "Watchlist",
-    intro:
-      "Memecoins I'm watching. Avatars and market data are fetched by contract address (DexScreener, ~5 min refresh). Badges are managed from the admin panel. Not investment advice.",
+    intro: "Memecoins I watch / hold. Not investment advice.",
     chart: "Chart",
     trenchTitle: "Trench Index",
     trenchSource: "Data: tehcscreener.com",
