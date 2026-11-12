@@ -5,13 +5,12 @@
 import type { Metadata } from "next";
 import Container from "@/components/Container";
 import LoginForm from "@/components/admin/LoginForm";
-import { redirectIfAuthed } from "@/lib/adminGuard";
 
 export const metadata: Metadata = { title: "后台登录" };
 
+// 保持静态渲染（已登录用户提交密码后也会直接进入后台，
+// 或由 /admin 页面的守卫跳回）
 export default function AdminLoginPage() {
-  redirectIfAuthed();
-
   return (
     <Container className="py-20 sm:py-28">
       <div className="mx-auto max-w-sm rounded-2xl border border-line bg-card p-8">
