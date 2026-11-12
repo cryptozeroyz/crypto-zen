@@ -13,6 +13,11 @@ const COOKIE_NAME = "cz_locale";
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // 后台与 API 不走路由前缀
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
   const first = pathname.split("/")[1];
   if (first === "zh" || first === "en") return NextResponse.next();
 
@@ -31,6 +36,6 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  // 排除 api、_next 与带扩展名的静态资源
-  matcher: ["/((?!api|_next|.*\\..*).*)"],
+  // 排除 api、admin、_next 与带扩展名的静态资源
+  matcher: ["/((?!api|admin|_next|.*\\..*).*)"],
 };
