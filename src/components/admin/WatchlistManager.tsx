@@ -13,6 +13,7 @@ export interface WatchCoinRow {
   ca: string;
   comment: string;
   addedAt: string;
+  holding?: boolean;
   name?: string;
   symbol?: string;
   priceUsd?: number;
@@ -23,6 +24,7 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
   const router = useRouter();
   const [ca, setCa] = useState("");
   const [comment, setComment] = useState("");
+  const [holding, setHolding] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -34,7 +36,11 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
       const res = await fetch("/api/admin/watchlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ca: ca.trim(), comment: comment.trim() }),
+        body: JSON.stringify({
+          ca: ca.trim(),
+          comment: comment.trim(),
+          holding,
+        }),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) {
@@ -43,11 +49,36 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
       }
       setCa("");
       setComment("");
+      setHolding(false);
       router.refresh();
     } catch {
       setError("网络错误");
     } finally {
       setBusy(false);
+    }
+  };
+
+  /** 切换持仓状态（upsert：同 CA 更新 holding 字段） */
+  const toggleHolding = async (row: WatchCoinRow) => {
+    setError("");
+    try {
+      const res = await fetch("/api/admin/watchlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ca: row.ca,
+          comment: row.comment,
+          holding: !row.holding,
+        }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(data?.message ?? "更新失败");
+        return;
+      }
+      router.refresh();
+    } catch {
+      setError("网络错误");
     }
   };
 
@@ -103,13 +134,22 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
             className="w-full rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
           />
         </div>
-        <div className="flex items-end">
+        <div className="flex items-end gap-3">
+          <label className="flex items-center gap-2 pb-2.5 text-sm text-muted">
+            <input
+              type="checkbox"
+              checked={holding}
+              onChange={(e) => setHolding(e.target.checked)}
+              className="h-4 w-4 accent-[#176f68]"
+            />
+            当前持仓
+          </label>
           <button
             type="submit"
             disabled={busy}
-            className="w-full rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-deep disabled:opacity-60 sm:w-auto"
+            className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-deep disabled:opacity-60"
           >
-            {busy ? "添加中…" : "＋ 添加关注"}
+            {busy ? "保存中…" : "＋ 添加关注"}
           </button>
         </div>
       </form>
@@ -128,6 +168,7 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
               <th className="px-4 py-3 font-medium">代币</th>
               <th className="px-4 py-3 font-medium">价格 / 24h</th>
               <th className="px-4 py-3 font-medium">评价</th>
+              <th className="px-4 py-3 font-medium">持仓</th>
               <th className="px-4 py-3 font-medium">合约地址</th>
               <th className="px-4 py-3 text-right font-medium">操作</th>
             </tr>
@@ -164,8 +205,22 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
                       <span className="text-muted">抓取失败</span>
                     )}
                   </td>
-                  <td className="max-w-[280px] px-4 py-3 text-muted">
+                  <td className="max-w-[240px] px-4 py-3 text-muted">
                     <span className="line-clamp-2">{c.comment || "—"}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => void toggleHolding(c)}
+                      aria-pressed={c.holding === true}
+                      className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
+                        c.holding
+                          ? "border-accent bg-accent/10 font-medium text-accent dark:text-accent-mint"
+                          : "border-line text-muted hover:border-heading hover:text-heading"
+                      }`}
+                    >
+                      {c.holding ? "持仓中" : "观望"}
+                    </button>
                   </td>
                   <td className="px-4 py-3 font-mono text-xs text-muted">
                     {c.ca.slice(0, 10)}…{c.ca.slice(-6)}
@@ -184,7 +239,7 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
             })}
             {coins.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-muted">
+                <td colSpan={6} className="px-4 py-10 text-center text-muted">
                   关注列表为空，先在上方添加一个代币吧。
                 </td>
               </tr>

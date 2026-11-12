@@ -111,9 +111,9 @@ export default function PostPage({
         <div className="flex justify-center gap-14">
           {/* 正文栏 */}
           <div className="w-full max-w-content">
-            {/* 返回链接 */}
+            {/* 返回链接（首页文章区块） */}
             <Link
-              href={`/${locale}/writing`}
+              href={`/${locale}/#articles`}
               className="text-sm text-muted underline-offset-4 transition-colors hover:text-heading hover:underline"
             >
               {t.post.back}

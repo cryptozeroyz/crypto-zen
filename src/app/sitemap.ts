@@ -26,18 +26,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${siteConfig.url}/zh/writing`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${siteConfig.url}/en/writing`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
       url: `${siteConfig.url}/zh/about`,
       lastModified: new Date(),
       changeFrequency: "monthly",

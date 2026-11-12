@@ -17,3 +17,12 @@ export function avatarHue(ca: string): number {
   for (let i = 0; i < ca.length; i++) h = (h * 31 + ca.charCodeAt(i)) % 360;
   return h;
 }
+
+/** 市值（FDV）紧凑格式化：$1.83B / $28.4M / $950K */
+export function formatMcap(value?: number): string {
+  if (!value || value <= 0) return "—";
+  if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
+  if (value >= 1e6) return `$${(value / 1e6).toFixed(1)}M`;
+  if (value >= 1e3) return `$${(value / 1e3).toFixed(0)}K`;
+  return `$${value.toFixed(0)}`;
+}

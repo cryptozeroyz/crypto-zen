@@ -1,9 +1,8 @@
 "use client";
 
 /**
- * Header.tsx —— 顶部导航
- * 左侧头像 + 站点名，右侧：语言切换（中/EN）、导航、主题切换。
- * 后台入口不对外展示，通过直接输入 /admin 访问。
+ * Header.tsx —— 顶部导航（首页为单页锚点导航；其他页面跳转首页锚点）
+ * 左侧头像 + 站点名，右侧：语言切换、导航、主题切换。
  */
 
 import Link from "next/link";
@@ -14,10 +13,11 @@ import type { Dictionary, Locale } from "@/lib/i18n";
 import Container from "@/components/Container";
 import ThemeToggle from "@/components/ThemeToggle";
 
+/** 单页导航：锚点 id 与文案 key */
 const NAV_ITEMS = [
-  { key: "writing", path: "/writing" },
-  { key: "watchlist", path: "/watchlist" },
-  { key: "about", path: "/about" },
+  { key: "watchlist", anchor: "watchlist" },
+  { key: "articles", anchor: "articles" },
+  { key: "about", anchor: "about" },
 ] as const;
 
 interface HeaderProps {
@@ -28,9 +28,10 @@ interface HeaderProps {
 export default function Header({ locale, t }: HeaderProps) {
   const pathname = usePathname();
   const otherLocale: Locale = locale === "zh" ? "en" : "zh";
+  const onHome = pathname === `/${locale}`;
 
   // 切换语言：替换路径前缀，并写入 cookie 供下次访问默认
-  const switchHref = (pathname.startsWith(`/${locale}`)
+  const switchPath = (pathname.startsWith(`/${locale}`)
     ? pathname.slice(locale.length + 1)
     : pathname) || "/";
   const onSwitch = () => {
@@ -40,6 +41,9 @@ export default function Header({ locale, t }: HeaderProps) {
       /* 忽略 */
     }
   };
+
+  const navHref = (anchor: string) =>
+    onHome ? `#${anchor}` : `/${locale}/#${anchor}`;
 
   return (
     <header className="border-b border-line bg-paper">
@@ -67,7 +71,7 @@ export default function Header({ locale, t }: HeaderProps) {
             className="flex items-center rounded-full border border-line p-0.5 text-xs"
           >
             <Link
-              href={`/zh${switchHref}`}
+              href={`/zh${switchPath}`}
               onClick={locale === "zh" ? undefined : onSwitch}
               aria-current={locale === "zh" ? "true" : undefined}
               className={`rounded-full px-2.5 py-1 transition-colors ${
@@ -79,7 +83,7 @@ export default function Header({ locale, t }: HeaderProps) {
               中
             </Link>
             <Link
-              href={`/en${switchHref}`}
+              href={`/en${switchPath}`}
               onClick={locale === "en" ? undefined : onSwitch}
               aria-current={locale === "en" ? "true" : undefined}
               className={`rounded-full px-2.5 py-1 transition-colors ${
@@ -92,20 +96,20 @@ export default function Header({ locale, t }: HeaderProps) {
             </Link>
           </div>
 
-          {/* 主导航 */}
+          {/* 主导航（锚点） */}
           <nav aria-label="Main navigation">
             <ul className="flex items-center gap-4 text-sm sm:gap-5">
               {NAV_ITEMS.map((item) => {
-                const href = `/${locale}${item.path}`;
-                const active = pathname.startsWith(href);
+                const href = navHref(item.anchor);
+                const active = onHome && pathname === `/${locale}`; // 锚点不高亮，首页统一高亮
                 return (
                   <li key={item.key}>
                     <Link
                       href={href}
                       aria-current={active ? "page" : undefined}
                       className={`underline-offset-4 transition-colors duration-200 hover:text-heading hover:underline ${
-                        active
-                          ? "font-medium text-heading underline decoration-accent"
+                        onHome
+                          ? "font-medium text-heading"
                           : "text-muted"
                       }`}
                     >

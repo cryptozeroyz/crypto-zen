@@ -31,7 +31,7 @@ export default function NotFound() {
           回到首页
         </Link>
         <Link
-          href="/writing"
+          href="/#articles"
           className="font-medium text-accent underline-offset-4 hover:underline dark:text-accent-mint"
         >
           去看看文章

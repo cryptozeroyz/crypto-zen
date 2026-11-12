@@ -15,6 +15,7 @@ interface WatchCoinEntry {
   ca: string;
   comment: string;
   addedAt: string;
+  holding?: boolean;
 }
 
 function isAuthed(): boolean {
@@ -56,10 +57,12 @@ export async function POST(req: Request) {
 
   let ca = "";
   let comment = "";
+  let holding = false;
   try {
     const body = await req.json();
     ca = String(body.ca ?? "").trim();
     comment = String(body.comment ?? "").trim();
+    holding = body.holding === true;
   } catch {
     /* 下方统一校验 */
   }
@@ -72,18 +75,19 @@ export async function POST(req: Request) {
   }
 
   const list = await readList();
-  if (list.some((c) => c.ca.toLowerCase() === ca.toLowerCase())) {
-    return NextResponse.json(
-      { ok: false, message: "该代币已在关注列表中" },
-      { status: 409 }
-    );
+  const existing = list.find((c) => c.ca.toLowerCase() === ca.toLowerCase());
+  if (existing) {
+    // 已存在则更新评价与持仓状态（upsert）
+    existing.comment = comment;
+    existing.holding = holding;
+  } else {
+    list.unshift({
+      ca,
+      comment,
+      addedAt: new Date().toISOString().slice(0, 10),
+      holding,
+    });
   }
-
-  list.unshift({
-    ca,
-    comment,
-    addedAt: new Date().toISOString().slice(0, 10),
-  });
 
   try {
     await writeList(list);
@@ -93,7 +97,7 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, updated: Boolean(existing) });
 }
 
 export async function DELETE(req: Request) {

@@ -1,72 +1,62 @@
 /**
- * TrenchCard.tsx —— Trench Index 卡片
- * 今日评分（大数字 + 情绪带）+ 历史走势折线（近 90 天 SVG sparkline）
- * + 四个成分的分位条。数据来自 tehcscreener 公开 API。
+ * TrenchCard.tsx —— Trench Index 紧凑版
+ * 单行布局：大分数 + 90 天走势 + 四个成分分位条，
+ * 配色全部使用品牌青绿/灰阶，不再使用橙色等跳色。
  */
 
-import { scoreColor, type TrenchData } from "@/lib/trench";
-import type { Dictionary } from "@/lib/i18n";
+import type { TrenchData } from "@/lib/trench";
+import type { Dictionary, Locale } from "@/lib/i18n";
 
-const BAND_LABEL: Record<string, { zh: string; en: string }> = {
-  cold: { zh: "冷清", en: "Cold" },
-  active: { zh: "活跃", en: "Active" },
-  hot: { zh: "火热", en: "Hot" },
-  euphoric: { zh: "狂热", en: "Euphoric" },
-};
-
-function Sparkline({ history, color }: { history: TrenchData["history"]; color: string }) {
+function Sparkline({ history }: { history: TrenchData["history"] }) {
   const points = history.slice(-90);
   if (points.length < 2) return null;
 
-  const W = 560;
-  const H = 120;
-  const PAD = 6;
+  const W = 420;
+  const H = 56;
+  const PAD = 5;
   const max = Math.max(...points.map((p) => p.score), 100);
   const min = Math.min(...points.map((p) => p.score), 0);
   const range = Math.max(max - min, 1);
 
-  const xy = points.map((p, i) => {
-    const x = PAD + (i / (points.length - 1)) * (W - PAD * 2);
-    const y = H - PAD - ((p.score - min) / range) * (H - PAD * 2);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  });
-
+  const y50 = H - PAD - ((50 - min) / range) * (H - PAD * 2);
+  const xy = points
+    .map((p, i) => {
+      const x = PAD + (i / (points.length - 1)) * (W - PAD * 2);
+      const y = H - PAD - ((p.score - min) / range) * (H - PAD * 2);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
   const last = points[points.length - 1];
+  const lastY = H - PAD - ((last.score - min) / range) * (H - PAD * 2);
 
   return (
     <svg
       viewBox={`0 0 ${W} ${H}`}
-      className="h-28 w-full"
+      preserveAspectRatio="none"
+      className="h-14 w-full min-w-[200px] text-accent"
       role="img"
-      aria-label={`Trench Index trend, last ${points.length} days`}
+      aria-label="Trench Index trend"
     >
-      {/* 中位参考线 */}
       <line
         x1={PAD}
         x2={W - PAD}
-        y1={H - PAD - ((50 - min) / range) * (H - PAD * 2)}
-        y2={H - PAD - ((50 - min) / range) * (H - PAD * 2)}
+        y1={y50}
+        y2={y50}
         stroke="currentColor"
-        strokeOpacity="0.12"
+        strokeOpacity="0.15"
         strokeDasharray="4 4"
       />
       <polyline
-        points={xy.join(" ")}
+        points={xy}
         fill="none"
-        stroke={color}
-        strokeWidth="2.5"
+        stroke="currentColor"
+        strokeOpacity="0.75"
+        strokeWidth="2"
         strokeLinejoin="round"
         strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
       />
-      {/* 末端点 */}
-      {last && (
-        <circle
-          cx={W - PAD}
-          cy={H - PAD - ((last.score - min) / range) * (H - PAD * 2)}
-          r="4"
-          fill={color}
-        />
-      )}
+      <circle cx={W - PAD} cy={lastY} r="3.5" fill="currentColor" />
     </svg>
   );
 }
@@ -77,83 +67,69 @@ export default function TrenchCard({
   t,
 }: {
   data: TrenchData;
-  locale: "zh" | "en";
+  locale: Locale;
   t: Dictionary;
 }) {
-  const color = scoreColor(data.score);
-  const band = BAND_LABEL[data.band] ?? {
-    zh: data.band,
-    en: data.band,
-  };
-
   const components = [
-    { key: "pad_volume", label: t.watchlist.components.pad_volume },
-    { key: "tokens_launched", label: t.watchlist.components.tokens_launched },
-    { key: "bot_volume", label: t.watchlist.components.bot_volume },
-    { key: "bot_fees", label: t.watchlist.components.bot_fees },
+    { key: "pad_volume", label: t.watchlist.components.pad_volume, p: data.components.pad_volume.percentile },
+    { key: "tokens_launched", label: t.watchlist.components.tokens_launched, p: data.components.tokens_launched.percentile },
+    { key: "bot_volume", label: t.watchlist.components.bot_volume, p: data.components.bot_volume.percentile },
+    { key: "bot_fees", label: t.watchlist.components.bot_fees, p: data.components.bot_fees.percentile },
   ] as const;
 
   return (
     <section
       aria-label="Trench Index"
-      className="overflow-hidden rounded-2xl border border-line bg-card"
+      className="rounded-2xl border border-line bg-card"
     >
-      <div className="grid gap-6 p-6 sm:grid-cols-[auto_1fr] sm:gap-10">
-        {/* 左：今日评分 */}
-        <div className="flex items-center gap-5">
-          <div>
-            <p className="text-xs text-muted">{t.watchlist.trenchTitle}</p>
-            <p
-              className="mt-1 text-6xl font-bold tabular-nums tracking-tight"
-              style={{ color }}
-            >
-              {data.score}
-            </p>
-            <p className="mt-1 text-xs text-muted">
-              {locale === "en" ? band.en : band.zh}
-              {data.day && (
-                <>
-                  <span aria-hidden="true"> · </span>
-                  {data.day}
-                </>
-              )}
-            </p>
-          </div>
+      <div className="flex flex-wrap items-center gap-x-8 gap-y-4 px-6 py-4">
+        {/* 分数 */}
+        <div className="flex shrink-0 items-baseline gap-3">
+          <span className="text-[11px] text-muted">Trench Index</span>
+          <span
+            className={`text-3xl font-bold tabular-nums tracking-tight ${
+              data.score >= 45 ? "text-accent dark:text-accent-mint" : "text-muted"
+            }`}
+          >
+            {data.score}
+          </span>
+          <span className="text-[11px] text-muted">
+            {locale === "en"
+              ? data.band.charAt(0).toUpperCase() + data.band.slice(1)
+              : t.watchlist.bandLabel[data.band as keyof typeof t.watchlist.bandLabel] ?? data.band}
+            {data.day && (
+              <>
+                <span aria-hidden="true"> · </span>
+                {data.day}
+              </>
+            )}
+          </span>
         </div>
 
-        {/* 右：走势 + 成分 */}
-        <div className="min-w-0">
-          <div className="text-muted">
-            <Sparkline history={data.history} color={color} />
-          </div>
-          <ul className="mt-4 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-            {components.map(({ key, label }) => {
-              const comp = data.components[key];
-              return (
-                <li key={key}>
-                  <div className="flex items-baseline justify-between text-xs">
-                    <span className="text-muted">{label}</span>
-                    <span className="tabular-nums text-muted">
-                      {comp.percentile}
-                      <span className="text-muted/60">th</span>
-                    </span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-codebg">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${Math.min(100, Math.max(0, comp.percentile))}%`,
-                        background: color,
-                      }}
-                    />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+        {/* 走势 */}
+        <div className="min-w-[200px] flex-1">
+          <Sparkline history={data.history} />
         </div>
+
+        {/* 成分分位条（紧凑横排） */}
+        <ul className="flex shrink-0 flex-wrap gap-x-5 gap-y-2">
+          {components.map(({ key, label, p }) => (
+            <li key={key} className="w-24">
+              <div className="flex justify-between text-[10px] leading-none text-muted">
+                <span className="truncate">{label}</span>
+                <span className="tabular-nums">{p}</span>
+              </div>
+              <div className="mt-1 h-1 overflow-hidden rounded-full bg-codebg">
+                <div
+                  className="h-full rounded-full bg-accent/60 dark:bg-accent-mint/60"
+                  style={{ width: `${Math.min(100, Math.max(0, p))}%` }}
+                />
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
-      <p className="border-t border-line px-6 py-2.5 text-right text-[11px] text-muted">
+      <p className="border-t border-line px-6 py-1.5 text-right text-[10px] text-muted">
         {t.watchlist.trenchSource}
       </p>
     </section>

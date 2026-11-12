@@ -15,6 +15,8 @@ export interface WatchCoin {
   ca: string;
   comment: string;
   addedAt: string;
+  /** 是否持仓（后台控制，卡片显示徽章） */
+  holding?: boolean;
 }
 
 export interface CoinMarketData {
@@ -45,6 +47,7 @@ export function getWatchlist(): WatchCoin[] {
         ca: c.ca,
         comment: String(c.comment ?? ""),
         addedAt: String(c.addedAt ?? ""),
+        holding: c.holding === true,
       }));
   } catch {
     return [];
