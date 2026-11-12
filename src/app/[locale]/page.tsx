@@ -44,7 +44,7 @@ export default async function HomePage({
   return (
     <>
       {/* ============ Hero ============ */}
-      <section className="relative overflow-hidden border-b border-line">
+      <section className="relative overflow-hidden">
         <div
           aria-hidden="true"
           className="bg-dots absolute inset-0 opacity-70 [mask-image:radial-gradient(75%_80%_at_75%_35%,black,transparent)]"
@@ -119,7 +119,7 @@ export default async function HomePage({
 
       {/* ============ 市场温度 ============ */}
       {trench && (
-        <section id="market" className="scroll-mt-24 border-b border-line">
+        <section id="market" className="scroll-mt-24">
           <Container className="py-10">
             <TrenchCard data={trench} locale={locale} t={t} />
           </Container>
@@ -128,7 +128,7 @@ export default async function HomePage({
 
       {/* ============ 关注列表（文章之前） ============ */}
       {coins.length > 0 && (
-        <section id="watchlist" className="scroll-mt-24 border-b border-line">
+        <section id="watchlist" className="scroll-mt-24">
           <Container className="py-14">
             <SectionHead title={t.home.sections.watchlist} />
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
@@ -142,7 +142,7 @@ export default async function HomePage({
       )}
 
       {/* ============ 文章 ============ */}
-      <section id="articles" className="scroll-mt-24 border-b border-line">
+      <section id="articles" className="scroll-mt-24">
         <Container className="py-14">
           <SectionHead title={t.home.sections.articles} />
           <div className="mt-7">
@@ -152,7 +152,7 @@ export default async function HomePage({
       </section>
 
       {/* ============ 关于我 ============ */}
-      <section id="about" className="scroll-mt-24 border-b border-line">
+      <section id="about" className="scroll-mt-24">
         <Container className="py-14">
           <SectionHead title={t.home.sections.about} />
           <div className="mt-6 flex items-start gap-4">

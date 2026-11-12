@@ -46,7 +46,7 @@ export default function Header({ locale, t }: HeaderProps) {
     onHome ? `#${anchor}` : `/${locale}/#${anchor}`;
 
   return (
-    <header className="border-b border-line bg-paper">
+    <header className="bg-paper">
       <Container className="flex h-16 items-center justify-between gap-4">
         {/* Logo：个人头像 + 站点名 */}
         <Link href={`/${locale}`} className="flex items-center gap-2.5" aria-label={t.nav.homeAria}>

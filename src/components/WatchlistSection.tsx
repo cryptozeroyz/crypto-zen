@@ -134,7 +134,7 @@ export default function WatchlistSection({ coins, locale, t }: WatchlistSectionP
                 </div>
 
                 {/* 底部：CA 复制 + 关注日期 + K 线 */}
-                <div className="mt-3 flex items-center justify-between gap-2 border-t border-line pt-2.5">
+                <div className="mt-4 flex items-center justify-between gap-2">
                   <button
                     type="button"
                     onClick={() => void onCopy(coin.ca)}

@@ -187,7 +187,7 @@ export default function PostPage({
             {/* 上一篇 / 下一篇 */}
             <nav
               aria-label="prev/next"
-              className="mt-16 grid gap-6 border-t border-line pt-8 sm:grid-cols-2"
+              className="mt-16 grid gap-6 sm:grid-cols-2"
             >
               {prev ? (
                 <Link
