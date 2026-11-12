@@ -1,14 +1,13 @@
 ---
 title: "FloatLaunch（Float）项目研究报告"
-date: "2026-10-08"
-category: "essay"
+date: "2026-11-12"
+updated: "2026-09-18"
+category: "research"
 excerpt: "Float 是“Raydium LaunchLab 发行层＋自有费用分配层”的早期实验。差异化在激励组合，不在底层发行技术；产品想象力较高，但安全、治理与真实采用仍处验证期。"
 tags:
   - "研究报告"
 draft: false
 ---
-
-**WEB3 项目研究**
 
 **FloatLaunch（Float）项目研究报告**
 
@@ -86,11 +85,11 @@ Pump.fun 强在分发、流动性与自有 PumpSwap 闭环；StonkFun 强在任�
 
 ## **最重要的五项发现**
 
--   差异化真实存在，但技术护城河偏弱。Float 的 LaunchLab 费率层是公开平台，其他应用可以绕开 Float 自研分配层发行；其独特性主要是激励规则与前端社区，而非不可复制的底层协议。
--   “股票配对”已不是独占功能。Pump.fun 已支持自定义配对资产和持仓奖励；StonkFun 支持更广泛的资产类别。Float 需要证明其费用设计能够带来持续、真实且低成本的用户留存。
--   创建者并非最大受益者。以 1% 总费率为例，Raydium 扣除 0.25 个百分点后，剩余部分仅 5% 分给创建者，相当于总成交额的 0.0375%；持有人、$FLOAT 回购和交易者空投分别对应 0.1125%、0.2625% 和 0.2625%。
--   采用仍极早期。官网快照显示 350 个代币、3 个毕业，当前毕业数量占比约 0.86%；累计总费用为 7.137 万美元。该比例不是严格的长期成功率，但足以说明样本和成熟度有限。
--   安全与治理是当前最大折价的来源。Float 官方明确披露未经外部审计，升级权限和设置暂由团队部署密钥控制，正计划转向多签；服务条款只称“Float team”，未公开具体法律实体。
+- 差异化真实存在，但技术护城河偏弱。Float 的 LaunchLab 费率层是公开平台，其他应用可以绕开 Float 自研分配层发行；其独特性主要是激励规则与前端社区，而非不可复制的底层协议。
+- “股票配对”已不是独占功能。Pump.fun 已支持自定义配对资产和持仓奖励；StonkFun 支持更广泛的资产类别。Float 需要证明其费用设计能够带来持续、真实且低成本的用户留存。
+- 创建者并非最大受益者。以 1% 总费率为例，Raydium 扣除 0.25 个百分点后，剩余部分仅 5% 分给创建者，相当于总成交额的 0.0375%；持有人、$FLOAT 回购和交易者空投分别对应 0.1125%、0.2625% 和 0.2625%。
+- 采用仍极早期。官网快照显示 350 个代币、3 个毕业，当前毕业数量占比约 0.86%；累计总费用为 7.137 万美元。该比例不是严格的长期成功率，但足以说明样本和成熟度有限。
+- 安全与治理是当前最大折价的来源。Float 官方明确披露未经外部审计，升级权限和设置暂由团队部署密钥控制，正计划转向多签；服务条款只称“Float team”，未公开具体法律实体。
 
 ## **综合定性评价**
 
@@ -136,9 +135,9 @@ Pump.fun 强在分发、流动性与自有 PumpSwap 闭环；StonkFun 强在任�
 
 ## **证据层级**
 
--   一级证据：项目官方文档、创建页面、实时数据看板、服务条款和官方代币页面。用于确认机制、费率及项目自报数据。
--   二级证据：DEX Screener、Bitquery、Raydium 技术文档及可信媒体。用于补充市场数据、链上结构与历史事件。
--   研究推算：毕业数量占比、Float 有效费率和交易榜集中度。所有推算均给出公式或四舍五入限制，不与官方统计混同。
+- 一级证据：项目官方文档、创建页面、实时数据看板、服务条款和官方代币页面。用于确认机制、费率及项目自报数据。
+- 二级证据：DEX Screener、Bitquery、Raydium 技术文档及可信媒体。用于补充市场数据、链上结构与历史事件。
+- 研究推算：毕业数量占比、Float 有效费率和交易榜集中度。所有推算均给出公式或四舍五入限制，不与官方统计混同。
 
 ## **重要口径限制**
 
@@ -192,7 +191,7 @@ Float 因此包含两层协议：Raydium 负责标准化发行、曲线与流动
 
 在联合曲线阶段，创建者选择的总交易费为 1%、2% 或 2.5%。Raydium 保留其中 0.25 个百分点，余额由 Float 程序按固定比例分配：15% 给持有人、5% 给创建者、35% 用于回购并销毁 $FLOAT、35% 转为 USDC 空投给交易量领先者、10% 进入平台金库。该分配比例在毕业前后保持一致，但官方文档没有同样清晰地逐项列出毕业后 Raydium/LP 费用，实际总成本应以交易预览为准。[\[4\]](#footnote-1)
 
-![](/uploads/mwdjrqor-era5nk6q.png)
+![](/uploads/mwdjz8b7-hlci04cg.png)
 
 _图 1｜Float 1% 费率档的总费用拆解。来源：官方文档；研究换算。_
 
@@ -208,9 +207,9 @@ $FLOAT 是独立的平台旗舰代币。Float 将旗舰份额换成 SOL，分批
 
 因此，$FLOAT 的主要价值链接是“全平台费用→公开市场买入→供应减少”，不是持币分红或治理权。其价格仍会受买入需求、市场流动性、持筹集中度和整体情绪影响；销毁减少供应，并不自动等于每枚代币的内在价值上升。
 
--   正面：回购规则与全平台交易活动挂钩，价值捕获路径比纯叙事代币更清晰。
--   限制：回购具有顺周期性，交易低迷时买入金额同步收缩；回购资金来自用户支付的高额费用，不是无成本收益。
--   待披露：本次官方文档未完整说明团队及关联钱包持筹、治理权、未来费用政策约束和金库支出规则。
+- 正面：回购规则与全平台交易活动挂钩，价值捕获路径比纯叙事代币更清晰。
+- 限制：回购具有顺周期性，交易低迷时买入金额同步收缩；回购资金来自用户支付的高额费用，不是无成本收益。
+- 待披露：本次官方文档未完整说明团队及关联钱包持筹、治理权、未来费用政策约束和金库支出规则。
 
 # **四、采用数据与市场信号**
 
@@ -278,7 +277,7 @@ $25.13K
 
 官网交易榜显示，第一名钱包成交量为 1,586 万美元，预计获得 2,030 美元空投；金库总额为 25,130 美元。以这些四舍五入数值反推，前 100 名钱包总成交量约 1.963 亿美元，前三大钱包约占 21%，前十大钱包约占 44%。该推算不代表独立真实用户，也不构成刷量证据。[\[7\]](#footnote-3)
 
-![](/uploads/mwdjrs32-hsyrzy3f.png)
+![](/uploads/mwdjz9ov-w1nk4jvn.png)
 
 _图 2｜Float 前十大交易钱包成交量及集中度推算。来源：官网榜单；研究计算。_
 
@@ -412,11 +411,11 @@ _注：平台代币回购百分比的分母不同，不能直接比较“慷慨�
 
 三者都已超出早期“只能 SOL 配对”的发行模式。Pump.fun 官方文档明确支持自定义配对资产与持仓奖励；因此，Float 和 StonkFun 的股票配对功能应被视为赛道演进的一部分，而非永久独占。[\[12\]](#footnote-6) [\[13\]](#footnote-7)
 
--   均为 Solana 上的低门槛代币发行与交易产品，用户通过钱包签名，不需要自行编写代币合约。
--   均使用联合曲线或类似渐进价格发现机制，并将毕业后的交易迁移到自动化做市池。
--   均可围绕非 SOL 资产定价，并以配对资产支付部分费用或奖励。
--   均提供某种形式的持仓激励和平台代币回购销毁，试图把交易活动转化为社区与代币价值。
--   均不审查用户发行代币的基本面；毕业、锁仓和奖励都不能消除 rug、砸盘、操纵或归零风险。
+- 均为 Solana 上的低门槛代币发行与交易产品，用户通过钱包签名，不需要自行编写代币合约。
+- 均使用联合曲线或类似渐进价格发现机制，并将毕业后的交易迁移到自动化做市池。
+- 均可围绕非 SOL 资产定价，并以配对资产支付部分费用或奖励。
+- 均提供某种形式的持仓激励和平台代币回购销毁，试图把交易活动转化为社区与代币价值。
+- 均不审查用户发行代币的基本面；毕业、锁仓和奖励都不能消除 rug、砸盘、操纵或归零风险。
 
 ## **5.3 关键差异及实际影响**
 
@@ -500,9 +499,9 @@ Float 若能证明“较低获客成本＋较高真实留存＋可持续回购�
 
 ## **对创建者与交易者的适配**
 
--   更适合：希望以特定股票/资产计价、重视持有人奖励和平台代币回购叙事，并能承担早期合约风险的实验型创建者。
--   较不适合：追求最大自然流量、最深交易分发、低交易摩擦或明确机构级安全治理的创建者与交易者。
--   创建者应比较长期费用收益，而非只看平台回购；在 Float 1% 档下，创建者直接费用仅为成交额的 0.0375%。
+- 更适合：希望以特定股票/资产计价、重视持有人奖励和平台代币回购叙事，并能承担早期合约风险的实验型创建者。
+- 较不适合：追求最大自然流量、最深交易分发、低交易摩擦或明确机构级安全治理的创建者与交易者。
+- 创建者应比较长期费用收益，而非只看平台回购；在 Float 1% 档下，创建者直接费用仅为成交额的 0.0375%。
 
 # **七、风险评估**
 
@@ -614,16 +613,16 @@ Float 成为小众激励型 Launchpad，费用和回购低于高峰期，代币�
 
 ## **建议每周跟踪的十项指标**
 
--   首轮及后续空投后 7 天、30 天的日成交量与费用留存率。
--   剔除前十大及关联钱包后的成交量占比；独立交易钱包数和重复交易率。
--   新增发行数、7/30 天毕业率、毕业后 7/30 天市值与流动性中位数。
--   真实持有人数量、前十大持币地址集中度及创建者首买比例。
--   费用分配链上金额与官网看板的一致性，尤其是回购、空投和金库余额。
--   $FLOAT 回购成交均价、销毁量、流动性/FDV 与回购金额之间的关系。
--   外部审计发布、发现项修复、升级权限多签及时间锁实施进度。
--   配对资产集中度，以及 xStocks、Sunrise、PreStocks 等发行人的冻结或地域政策变化。
--   创建者实际收益与交易者双边总成本，包含界面费、转账税和路由滑点。
--   Pump.fun 与 StonkFun 对相同激励功能的复制速度，以及 Float 的自然用户份额变化。
+- 首轮及后续空投后 7 天、30 天的日成交量与费用留存率。
+- 剔除前十大及关联钱包后的成交量占比；独立交易钱包数和重复交易率。
+- 新增发行数、7/30 天毕业率、毕业后 7/30 天市值与流动性中位数。
+- 真实持有人数量、前十大持币地址集中度及创建者首买比例。
+- 费用分配链上金额与官网看板的一致性，尤其是回购、空投和金库余额。
+- $FLOAT 回购成交均价、销毁量、流动性/FDV 与回购金额之间的关系。
+- 外部审计发布、发现项修复、升级权限多签及时间锁实施进度。
+- 配对资产集中度，以及 xStocks、Sunrise、PreStocks 等发行人的冻结或地域政策变化。
+- 创建者实际收益与交易者双边总成本，包含界面费、转账税和路由滑点。
+- Pump.fun 与 StonkFun 对相同激励功能的复制速度，以及 Float 的自然用户份额变化。
 
 **最关键的单项验证**
 
@@ -643,10 +642,10 @@ Float 可以被视为股票配对 Launchpad 的一种激励设计实验，而不
 
 ## **分对象建议**
 
--   研究者：优先做空投前后留存与钱包关联分析，而非继续追踪单日涨幅；将回购金额与真实费用、独立用户匹配。
--   创建者：先计算自己在不同费率下的实际收入与用户的双边成本；若主要目标是分发与毕业，需同时比较 Pump.fun 的流量和 StonkFun 的生态。
--   交易者：把持仓奖励视为高波动资产中的可变费用返还，不是固定收益；核对合约地址、配对资产发行人权限、持筹集中度和真实流动性。
--   潜在机构合作方：在外部审计、多签、法律实体和金库透明化之前，宜保持观察或小额沙盒测试，不宜将其视为机构级基础设施。
+- 研究者：优先做空投前后留存与钱包关联分析，而非继续追踪单日涨幅；将回购金额与真实费用、独立用户匹配。
+- 创建者：先计算自己在不同费率下的实际收入与用户的双边成本；若主要目标是分发与毕业，需同时比较 Pump.fun 的流量和 StonkFun 的生态。
+- 交易者：把持仓奖励视为高波动资产中的可变费用返还，不是固定收益；核对合约地址、配对资产发行人权限、持筹集中度和真实流动性。
+- 潜在机构合作方：在外部审计、多签、法律实体和金库透明化之前，宜保持观察或小额沙盒测试，不宜将其视为机构级基础设施。
 
 _本报告不构成对 $FLOAT、$PUMP、$STONK 或任何平台发行代币的买卖建议。_
 
@@ -836,66 +835,41 @@ LockrWmn6K5twhz3y9w1dQERbmgSaRkfnTeTKbpofwE
 
 ## **交易或合作前的最小尽调清单**
 
--   在 Float 官网重新进入 Docs 与 Analytics，不通过陌生私信链接访问。
--   核对目标代币 mint、配对资产 mint、发行人条款、地域限制和转账/冻结权限。
--   查看创建者首买、前十大持仓、关联钱包、早期交易与卖出记录。
--   模拟计算买入和卖出的全部成本：平台费、转账税、界面费、交换滑点、网络费和奖励分配成本。
--   检查流动性锁定对象与比例，不把锁仓等同于价格或退出保障。
--   查验外部审计报告的实际范围、 commit/程序地址、严重发现项修复及多签时间锁。
--   把奖励按高波动配对资产计价，不将预计空投或分红视为确定收益。
+- 在 Float 官网重新进入 Docs 与 Analytics，不通过陌生私信链接访问。
+- 核对目标代币 mint、配对资产 mint、发行人条款、地域限制和转账/冻结权限。
+- 查看创建者首买、前十大持仓、关联钱包、早期交易与卖出记录。
+- 模拟计算买入和卖出的全部成本：平台费、转账税、界面费、交换滑点、网络费和奖励分配成本。
+- 检查流动性锁定对象与比例，不把锁仓等同于价格或退出保障。
+- 查验外部审计报告的实际范围、 commit/程序地址、严重发现项修复及多签时间锁。
+- 把奖励按高波动配对资产计价，不将预计空投或分红视为确定收益。
 
 ## **主要官方来源**
 
 _Float：floatlaunch.xyz/docs、/create、/analytics、/terms；Pump.fun：pump.fun/docs/fees、/docs/custom-pairs、/holder-rewards、/pump-token；StonkFun：stonkfun.xyz/rewards、/revenue、/flywheel；补充来源：Bitquery StonkFun API 文档、DEX Screener。完整链接与抓取说明见对应页脚注。_
 
-1.  Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
-    
-2.  Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
-    
-3.  Float，Create：配对资产类别、交易费档、首买与发行预览。抓取于 2026-10-29。https://www.floatlaunch.xyz/create [↑](#footnote-ref-2)
-    
-4.  Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
-    
-5.  Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
-    
-6.  Float，Analytics：累计费用、发行与毕业、回购销毁、空投金库和交易榜。项目自报实时快照，抓取于 2026-10-29。https://www.floatlaunch.xyz/analytics [↑](#footnote-ref-3)
-    
-7.  Float，Analytics：累计费用、发行与毕业、回购销毁、空投金库和交易榜。项目自报实时快照，抓取于 2026-10-29。https://www.floatlaunch.xyz/analytics [↑](#footnote-ref-3)
-    
-8.  DEX Screener，FLOAT/SOL（Raydium CPMM）市场页。价格、FDV、流动性、成交量与交易对年龄均为抓取时快照，2026-10-29。https://dexscreener.com/solana/Bv1a7cEj5aRnJQhMw4kRQqAFesMSd5LwcDnUzq52BMmr [↑](#footnote-ref-4)
-    
-9.  Pump.fun，Fees，最后更新 2026-10-17；曲线、PumpSwap、自定义配对、持有人奖励与官方 App Platform Fee。https://pump.fun/docs/fees [↑](#footnote-ref-6)
-    
-10.  StonkFun，Rewards；v3 奖励币以 1% 或 3% 转账税资助持有人分配。抓取于 2026-10-29。https://www.stonkfun.xyz/rewards [↑](#footnote-ref-10)
-     
-11.  Bitquery，StonkFun API 文档；LaunchLab 结构、1% 曲线费、10 亿供应、Token-2022 转账税、CPMM 迁移与 LP 归属。https://docs.bitquery.io/docs/blockchain/Solana/stonkfun-api/ [↑](#footnote-ref-13)
-     
-12.  Pump.fun，Fees，最后更新 2026-10-17；曲线、PumpSwap、自定义配对、持有人奖励与官方 App Platform Fee。https://pump.fun/docs/fees [↑](#footnote-ref-6)
-     
-13.  Pump.fun，Supported Pair Assets，最后更新 2026-10-09；自定义资产、发行人风险与一层 Secondary Pair Asset 规则。https://pump.fun/docs/custom-pairs [↑](#footnote-ref-7)
-     
-14.  Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
-     
-15.  Pump.fun，Fees，最后更新 2026-10-17；曲线、PumpSwap、自定义配对、持有人奖励与官方 App Platform Fee。https://pump.fun/docs/fees [↑](#footnote-ref-6)
-     
-16.  Pump.fun，Fees，最后更新 2026-10-17；曲线、PumpSwap、自定义配对、持有人奖励与官方 App Platform Fee。https://pump.fun/docs/fees [↑](#footnote-ref-6)
-     
-17.  Pump.fun，$PUMP Token 页面；50% 收入回购目标及累计销毁数据。页面同时提示自定义配对后的收入/回购看板存在显示问题。抓取于 2026-10-29。https://pump.fun/pump-token [↑](#footnote-ref-9)
-     
-18.  StonkFun，Revenue；约 60% 平台收入用于 $STONK 回购销毁，以及累计收入和回购快照。抓取于 2026-10-29。https://www.stonkfun.xyz/revenue [↑](#footnote-ref-11)
-     
-19.  StonkFun，Ecosystem Flywheel；按市值加权的 Top 10 生态代币回购销毁。抓取于 2026-10-29。https://www.stonkfun.xyz/flywheel [↑](#footnote-ref-12)
-     
-20.  Float，Analytics：累计费用、发行与毕业、回购销毁、空投金库和交易榜。项目自报实时快照，抓取于 2026-10-29。https://www.floatlaunch.xyz/analytics [↑](#footnote-ref-3)
-     
-21.  Pump.fun，Holder Rewards 实时页面；累计奖励和钱包数为抓取时快照，2026-10-29。https://pump.fun/holder-rewards [↑](#footnote-ref-8)
-     
-22.  StonkFun，Revenue；约 60% 平台收入用于 $STONK 回购销毁，以及累计收入和回购快照。抓取于 2026-10-29。https://www.stonkfun.xyz/revenue [↑](#footnote-ref-11)
-     
-23.  Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
-     
-24.  Float，Terms of Use，最后更新 2026-10-28；未经审计、团队、第三方代币及责任限制披露。https://www.floatlaunch.xyz/terms [↑](#footnote-ref-5)
-     
-25.  DL News，Pump.fun's record week marred by $2m exploit，2024-05-16。https://www.dlnews.com/articles/defi/pumpfuns-record-week-marred-by-2-million-exploit/ [↑](#footnote-ref-15)
-     
-26.  Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
+1. Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
+2. Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
+3. Float，Create：配对资产类别、交易费档、首买与发行预览。抓取于 2026-10-29。https://www.floatlaunch.xyz/create [↑](#footnote-ref-2)
+4. Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
+5. Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
+6. Float，Analytics：累计费用、发行与毕业、回购销毁、空投金库和交易榜。项目自报实时快照，抓取于 2026-10-29。https://www.floatlaunch.xyz/analytics [↑](#footnote-ref-3)
+7. Float，Analytics：累计费用、发行与毕业、回购销毁、空投金库和交易榜。项目自报实时快照，抓取于 2026-10-29。https://www.floatlaunch.xyz/analytics [↑](#footnote-ref-3)
+8. DEX Screener，FLOAT/SOL（Raydium CPMM）市场页。价格、FDV、流动性、成交量与交易对年龄均为抓取时快照，2026-10-29。https://dexscreener.com/solana/Bv1a7cEj5aRnJQhMw4kRQqAFesMSd5LwcDnUzq52BMmr [↑](#footnote-ref-4)
+9. Pump.fun，Fees，最后更新 2026-10-17；曲线、PumpSwap、自定义配对、持有人奖励与官方 App Platform Fee。https://pump.fun/docs/fees [↑](#footnote-ref-6)
+10. StonkFun，Rewards；v3 奖励币以 1% 或 3% 转账税资助持有人分配。抓取于 2026-10-29。https://www.stonkfun.xyz/rewards [↑](#footnote-ref-10)
+11. Bitquery，StonkFun API 文档；LaunchLab 结构、1% 曲线费、10 亿供应、Token-2022 转账税、CPMM 迁移与 LP 归属。https://docs.bitquery.io/docs/blockchain/Solana/stonkfun-api/ [↑](#footnote-ref-13)
+12. Pump.fun，Fees，最后更新 2026-10-17；曲线、PumpSwap、自定义配对、持有人奖励与官方 App Platform Fee。https://pump.fun/docs/fees [↑](#footnote-ref-6)
+13. Pump.fun，Supported Pair Assets，最后更新 2026-10-09；自定义资产、发行人风险与一层 Secondary Pair Asset 规则。https://pump.fun/docs/custom-pairs [↑](#footnote-ref-7)
+14. Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
+15. Pump.fun，Fees，最后更新 2026-10-17；曲线、PumpSwap、自定义配对、持有人奖励与官方 App Platform Fee。https://pump.fun/docs/fees [↑](#footnote-ref-6)
+16. Pump.fun，Fees，最后更新 2026-10-17；曲线、PumpSwap、自定义配对、持有人奖励与官方 App Platform Fee。https://pump.fun/docs/fees [↑](#footnote-ref-6)
+17. Pump.fun，$PUMP Token 页面；50% 收入回购目标及累计销毁数据。页面同时提示自定义配对后的收入/回购看板存在显示问题。抓取于 2026-10-29。https://pump.fun/pump-token [↑](#footnote-ref-9)
+18. StonkFun，Revenue；约 60% 平台收入用于 $STONK 回购销毁，以及累计收入和回购快照。抓取于 2026-10-29。https://www.stonkfun.xyz/revenue [↑](#footnote-ref-11)
+19. StonkFun，Ecosystem Flywheel；按市值加权的 Top 10 生态代币回购销毁。抓取于 2026-10-29。https://www.stonkfun.xyz/flywheel [↑](#footnote-ref-12)
+20. Float，Analytics：累计费用、发行与毕业、回购销毁、空投金库和交易榜。项目自报实时快照，抓取于 2026-10-29。https://www.floatlaunch.xyz/analytics [↑](#footnote-ref-3)
+21. Pump.fun，Holder Rewards 实时页面；累计奖励和钱包数为抓取时快照，2026-10-29。https://pump.fun/holder-rewards [↑](#footnote-ref-8)
+22. StonkFun，Revenue；约 60% 平台收入用于 $STONK 回购销毁，以及累计收入和回购快照。抓取于 2026-10-29。https://www.stonkfun.xyz/revenue [↑](#footnote-ref-11)
+23. Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
+24. Float，Terms of Use，最后更新 2026-10-28；未经审计、团队、第三方代币及责任限制披露。https://www.floatlaunch.xyz/terms [↑](#footnote-ref-5)
+25. DL News，Pump.fun's record week marred by $2m exploit，2024-05-16。https://www.dlnews.com/articles/defi/pumpfuns-record-week-marred-by-2-million-exploit/ [↑](#footnote-ref-15)
+26. Float，Docs：How it works、Fees、Rewards、Risks、Contracts。抓取于 2026-10-29。https://www.floatlaunch.xyz/docs [↑](#footnote-ref-1)
