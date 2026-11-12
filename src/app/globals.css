@@ -1,0 +1,297 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   主题变量：亮色优先，.dark class 切换（class 由页面内联脚本写入）
+   ============================================================ */
+
+:root {
+  --bg: #f7f8fa;
+  --card: #ffffff;
+  --text: #3b4654;
+  --heading: #192536;
+  --muted: #7a8590;
+  --line: rgba(25, 37, 54, 0.1);
+  --code-bg: #eef1f4;
+}
+
+.dark {
+  --bg: #141719;
+  --card: #1d2125;
+  --text: #dde2e7;
+  --heading: #eef1f4;
+  --muted: #96a0a9;
+  --line: rgba(255, 255, 255, 0.1);
+  --code-bg: #20252a;
+}
+
+/* ============================================================
+   基础层：背景、文字、选区、焦点态
+   ============================================================ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: rgba(23, 111, 104, 0.18);
+  }
+
+  .dark ::selection {
+    background: rgba(129, 216, 208, 0.25);
+  }
+
+  /* 焦点态可见：品牌青描边 */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid #176f68;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* 尊重系统的减少动效设置 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-spin-slow {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Hero 装饰工具：点阵底纹
+   ============================================================ */
+
+@layer utilities {
+  .bg-dots {
+    background-image: radial-gradient(
+      circle,
+      rgba(25, 37, 54, 0.14) 1.2px,
+      transparent 1.2px
+    );
+    background-size: 22px 22px;
+  }
+  .dark .bg-dots {
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.14) 1.2px,
+      transparent 1.2px
+    );
+  }
+}
+
+/* ============================================================
+   文章正文排版（.prose）
+   无衬线正文、行高 1.85、青色链接、细线表格
+   ============================================================ */
+
+.prose {
+  color: var(--text);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  overflow-wrap: break-word;
+}
+
+.prose > *:first-child {
+  margin-top: 0;
+}
+
+.prose p {
+  margin: 1.2em 0;
+}
+
+.prose h2 {
+  margin: 2em 0 0.7em;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--heading);
+}
+
+.prose h3 {
+  margin: 1.7em 0 0.6em;
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--heading);
+}
+
+/* 链接：品牌青，悬停下划线 */
+.prose a {
+  color: #176f68;
+  text-decoration: none;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 200ms ease;
+}
+
+.dark .prose a {
+  color: #81d8d0;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+.prose strong {
+  color: var(--heading);
+  font-weight: 600;
+}
+
+.prose ul,
+.prose ol {
+  margin: 1.2em 0;
+  padding-left: 1.4em;
+}
+
+.prose ul > li,
+.prose ol > li {
+  margin: 0.45em 0;
+  padding-left: 0.25em;
+}
+
+.prose ul > li::marker {
+  color: #176f68;
+}
+
+.dark .prose ul > li::marker {
+  color: #81d8d0;
+}
+
+.prose ol > li::marker {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 引用块：左侧青色细线，无底色 */
+.prose blockquote {
+  margin: 1.6em 0;
+  padding-left: 1.1em;
+  border-left: 3px solid #176f68;
+  color: var(--muted);
+}
+
+.dark .prose blockquote {
+  border-left-color: #81d8d0;
+}
+
+.prose blockquote p {
+  margin: 0;
+}
+
+/* 表格（GFM）：细线、表头弱化 */
+.prose table {
+  width: 100%;
+  margin: 1.6em 0;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.prose th,
+.prose td {
+  padding: 0.6em 0.8em;
+  text-align: left;
+  border-top: 1px solid var(--line);
+}
+
+.prose th {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+.prose tbody tr:first-child td {
+  border-top: 2px solid var(--line);
+}
+
+/* 行内代码 */
+.prose code {
+  font-family: theme("fontFamily.mono");
+  font-size: 0.85em;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  background: var(--code-bg);
+  color: var(--heading);
+}
+
+/* 代码块 */
+.prose pre {
+  margin: 1.5em 0;
+  padding: 1em 1.2em;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--code-bg);
+}
+
+.prose pre code {
+  padding: 0;
+  background: transparent;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* 图片：圆角 + 细描边 */
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 2em auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+/* 分割线 */
+.prose hr {
+  margin: 2.4em 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+/* 锚点跳转时避开顶部固定区域 */
+.prose h2,
+.prose h3 {
+  scroll-margin-top: 5.5rem;
+}
+
+/* ============================================================
+   后台 MD 编辑器（@uiw/react-md-editor）主题贴合与字号档
+   ============================================================ */
+
+.w-md-editor {
+  border-radius: 12px !important;
+  border-color: var(--line) !important;
+  background: var(--card) !important;
+}
+
+.w-md-editor-toolbar {
+  border-bottom-color: var(--line) !important;
+}
+
+.w-md-editor-text-input,
+.w-md-editor-preview .wmde-markdown {
+  line-height: 1.75 !important;
+}
+
+.mdfs-13 .w-md-editor-text-input,
+.mdfs-13 .w-md-editor-preview .wmde-markdown {
+  font-size: 13px !important;
+}
+
+.mdfs-14 .w-md-editor-text-input,
+.mdfs-14 .w-md-editor-preview .wmde-markdown {
+  font-size: 14.5px !important;
+}
+
+.mdfs-16 .w-md-editor-text-input,
+.mdfs-16 .w-md-editor-preview .wmde-markdown {
+  font-size: 16.5px !important;
+}

@@ -1,0 +1,177 @@
+/**
+ * i18n.ts —— 多语言支持：语言列表 + 中英文文案字典
+ *
+ * 所有面向用户的文案都在这里，组件通过 props 接收对应语言的字典（可序列化）。
+ * 文章正文的多语言由 content/posts-en/*.md 提供（后台自动翻译生成）。
+ */
+
+export const locales = ["zh", "en"] as const;
+export type Locale = (typeof locales)[number];
+
+export function isLocale(value: string): value is Locale {
+  return value === "zh" || value === "en";
+}
+
+const zh = {
+  meta: {
+    description:
+      "Crypto Zen 的个人主页与写作空间：分享 Memecoin 研究报告、链上数据分析方法与 DYOR 心得。",
+    titleTemplate: "%s · Crypto Zen",
+    defaultTitle: "Crypto Zen",
+  },
+  nav: {
+    writing: "写作",
+    about: "关于",
+    homeAria: "Crypto Zen 的首页",
+    switchLang: "切换语言",
+  },
+  footer: {
+    rights: "© {year} {name} · 保留所有权利",
+    signature: "以慢为快，以静制动。",
+  },
+  home: {
+    hero: {
+      line1: "在 Meme 世界的喧嚣里，",
+      line2: "做真正严肃的研究。",
+      sub: [
+        "穿越噪音，让值得研究的 Meme 被看见。",
+        "独立研究，审慎判断，为每一次 FOMO 按下暂停键。",
+      ],
+    },
+    primaryCta: "阅读研究报告",
+    secondaryCta: "个人随笔",
+    stats: {
+      all: "全部文章",
+      research: "研究报告",
+      essay: "个人随笔",
+      ops: "产品运营",
+    },
+    sections: {
+      research: "研究报告",
+      essay: "随笔",
+      ops: "产品运营",
+      social: "找到我",
+    },
+    viewAll: "查看全部 →",
+  },
+  writing: {
+    title: "写作",
+    intro: "研究报告看数据，随笔看心情。两者都不构成投资建议。",
+    tabs: { all: "全部", research: "研究报告", essay: "个人随笔", ops: "产品运营" },
+    searchPlaceholder: "搜索标题、摘要或标签",
+    noResults: "没有符合条件的文章。",
+  },
+  category: { research: "研究报告", essay: "随笔", ops: "产品运营" },
+  post: {
+    back: "← 返回全部文章",
+    minRead: "约 {n} 分钟",
+    updated: "更新于",
+    prev: "← 上一篇（更早）",
+    next: "下一篇（更新）→",
+    toc: "目录",
+    liveChart: "实时 K 线",
+    notTranslatedTitle: "本文暂无英文版",
+    notTranslatedBody: "这篇文章还没有英文翻译，先看看中文版吧。",
+    readZhVersion: "阅读中文版 →",
+  },
+  disclosure: {
+    title: "免责声明",
+    content:
+      "本文仅为个人研究记录，不构成任何投资建议；加密资产波动巨大，请始终 DYOR。",
+  },
+  about: {
+    title: "关于我",
+    paragraphs: [
+      "你好，我是 Crypto Zen。过去几年我一直在加密行业里打转：参与创业、做运营、做交易、赚过钱、亏过钱。",
+      "这个网站是我给自己的一块自留地。不发币、不带单、不接广告，只记录我作为一个普通参与者对 Meme 市场的观察。我既写严肃分析，也写不那么严肃的段子，因为我始终觉得：如果你不能笑着面对这个市场，你迟早会被它气死。",
+      "我的所有内容都不构成投资建议。市场有风险，钱包归你，决策也归你。",
+    ],
+  },
+  social: { x: "X（Twitter）", telegram: "Telegram", xHandle: "@0CryptoZero", tgHandle: "@YZWEB3" },
+  theme: { toDark: "切换到暗色模式", toLight: "切换到亮色模式" },
+};
+
+const en: typeof zh = {
+  meta: {
+    description:
+      "Crypto Zen's personal site and writing space: memecoin research reports, on-chain analysis, and DYOR notes.",
+    titleTemplate: "%s · Crypto Zen",
+    defaultTitle: "Crypto Zen",
+  },
+  nav: {
+    writing: "Writing",
+    about: "About",
+    homeAria: "Crypto Zen home",
+    switchLang: "Switch language",
+  },
+  footer: {
+    rights: "© {year} {name}. All rights reserved.",
+    signature: "Slow is fast. Stillness moves.",
+  },
+  home: {
+    hero: {
+      line1: "In the noise of the Meme world,",
+      line2: "do the serious research.",
+      sub: [
+        "Cut through the noise and surface memes worth studying.",
+        "Independent research, careful judgment, a pause button for every FOMO.",
+      ],
+    },
+    primaryCta: "Read Research Reports",
+    secondaryCta: "Personal Essays",
+    stats: {
+      all: "All Posts",
+      research: "Research",
+      essay: "Essays",
+      ops: "Product & Ops",
+    },
+    sections: {
+      research: "Research Reports",
+      essay: "Essays",
+      ops: "Product & Ops",
+      social: "Find Me",
+    },
+    viewAll: "View all →",
+  },
+  writing: {
+    title: "Writing",
+    intro: "Research reports are about data, essays are about mood. Neither is investment advice.",
+    tabs: { all: "All", research: "Research", essay: "Essays", ops: "Product & Ops" },
+    searchPlaceholder: "Search title, excerpt or tags",
+    noResults: "No posts match your filters.",
+  },
+  category: { research: "Research", essay: "Essay", ops: "Product & Ops" },
+  post: {
+    back: "← All posts",
+    minRead: "{n} min read",
+    updated: "Updated",
+    prev: "← Older post",
+    next: "Newer post →",
+    toc: "Contents",
+    liveChart: "Live Chart",
+    notTranslatedTitle: "No English version yet",
+    notTranslatedBody: "This post hasn't been translated into English yet. Check out the Chinese version.",
+    readZhVersion: "Read the Chinese version →",
+  },
+  disclosure: {
+    title: "Disclaimer",
+    content:
+      "This post is a personal research note only and does not constitute investment advice. Crypto assets are extremely volatile — always DYOR.",
+  },
+  about: {
+    title: "About",
+    paragraphs: [
+      "Hi, I'm Crypto Zen. I've spent the past few years deep in the crypto industry: founding startups, running operations, trading — I've made money and lost money.",
+      "This site is a quiet corner I keep for myself. No token launches, no trade calls, no ads — just observations from an ordinary participant in the memecoin market. I write serious analysis and less-serious shitposts, because I've always believed: if you can't laugh at this market, it will eventually drive you mad.",
+      "Nothing here is investment advice. The market carries risk; your wallet, your decisions.",
+    ],
+  },
+  social: { x: "X (Twitter)", telegram: "Telegram", xHandle: "@0CryptoZero", tgHandle: "@YZWEB3" },
+  theme: { toDark: "Switch to dark mode", toLight: "Switch to light mode" },
+};
+
+export type Dictionary = typeof zh;
+
+export function getDictionary(locale: Locale): Dictionary {
+  return locale === "en" ? en : zh;
+}
