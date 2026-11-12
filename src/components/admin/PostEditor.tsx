@@ -317,7 +317,9 @@ export default function PostEditor({
       {fields.category === "research" && (
         <>
           <div>
-            <span className={labelClass}>封面图（点击上传，16:9 效果最佳）</span>
+            <span className={labelClass}>
+              封面图（可选：不上传则按标题自动生成品牌封面）
+            </span>
             <div className="flex items-start gap-4">
               <label
                 htmlFor="pe-cover"

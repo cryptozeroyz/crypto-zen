@@ -11,45 +11,15 @@ import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
 import { getPostBySlug } from "@/lib/posts";
 import { siteConfig } from "@/lib/siteConfig";
+import { loadOgFont, type OgFont } from "@/lib/og-fonts";
 
 export const runtime = "nodejs";
 export const alt = siteConfig.title;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-/* ---------- 中文字体加载 ---------- */
-
-interface OgFont {
-  name: string;
-  data: ArrayBuffer;
-  weight: 400 | 700;
-  style: "normal";
-}
-
-const fontCache = new Map<number, OgFont | null>();
-
-async function loadFont(weight: 400 | 700): Promise<OgFont | null> {
-  if (fontCache.has(weight)) return fontCache.get(weight) ?? null;
-  try {
-    const css = await fetch(
-      "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap",
-      { headers: { "User-Agent": "Mozilla/4.0" } }
-    ).then((r) => r.text());
-    const re = new RegExp(
-      `@font-face\\s*{[^}]*font-weight:\\s*${weight}[^}]*url\\((https:[^)]+?\\.ttf)\\)`
-    );
-    let url: string | null = css.match(re)?.[1] ?? null;
-    if (!url) url = css.match(/url\((https:[^)]+?\.ttf)\)/)?.[1] ?? null;
-    if (!url) throw new Error("no ttf url");
-    const data = await fetch(url).then((r) => r.arrayBuffer());
-    const font: OgFont = { name: "NotoSansSC", data, weight, style: "normal" };
-    fontCache.set(weight, font);
-    return font;
-  } catch {
-    fontCache.set(weight, null);
-    return null;
-  }
-}
+// 中文字体加载在 src/lib/og-fonts.ts（与自动封面共用，模块级缓存）
+const loadFont = loadOgFont;
 
 /* ---------- 组件 ---------- */
 

@@ -20,7 +20,7 @@ export default function ArticleCard({ post, locale, t }: ArticleCardProps) {
       href={`/${locale}/writing/${post.slug}`}
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/40"
     >
-      {/* 封面（16:9）；无封面时用渐变 + 标题自动生成 */}
+      {/* 封面（16:9）；未上传封面时由 /api/cover 按标题自动生成 */}
       <div className="aspect-[16/9] overflow-hidden bg-codebg">
         {post.cover ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -32,30 +32,14 @@ export default function ArticleCard({ post, locale, t }: ArticleCardProps) {
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="relative flex h-full flex-col justify-between bg-gradient-to-br from-accent to-accent-deep p-4">
-            <span className="font-serif text-[15px] font-semibold leading-snug text-white line-clamp-3">
-              {post.title}
-            </span>
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 200 200"
-              className="absolute bottom-3 right-3 h-8 w-8 text-white/25"
-            >
-              <g
-                stroke="currentColor"
-                strokeWidth="16"
-                strokeLinecap="round"
-                transform="translate(100,100)"
-              >
-                <line y1="-70" y2="70" />
-                <line y1="-70" y2="70" transform="rotate(60)" opacity="0.6" />
-                <line y1="-70" y2="70" transform="rotate(120)" opacity="0.6" />
-              </g>
-            </svg>
-            <span className="text-[11px] tracking-widest text-white/70">
-              CRYPTO ZEN
-            </span>
-          </div>
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`/api/cover/${post.slug}?locale=${locale}`}
+            alt={`${post.title} cover`}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
         )}
       </div>
 
