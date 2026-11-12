@@ -262,12 +262,25 @@
   scroll-margin-top: 5.5rem;
 }
 
+/* 防止任何子元素（如编辑器工具栏）把页面撑出横向滚动条；
+   用 clip 而不是 hidden，避免破坏文章页目录的 sticky 定位 */
+html,
+body {
+  overflow-x: clip;
+}
+
 /* ============================================================
    后台 Vditor 编辑器主题贴合与字号档
    ============================================================ */
 
 .vditor {
   border: 0 !important;
+}
+
+/* 窄窗口下工具栏自动换行，不撑破布局 */
+.vditor-toolbar {
+  flex-wrap: wrap;
+  row-gap: 2px;
 }
 
 .vditor-toolbar {

@@ -47,8 +47,8 @@ export default function MarkdownEditor({
     const vditor = new Vditor(hostRef.current, {
       lang: "zh_CN",
       mode: "ir",
-      height: 460,
-      minHeight: 320,
+      height: 420,
+      minHeight: 280,
       value: initialValue ?? "",
       theme: dark ? "dark" : "classic",
       preview: {
