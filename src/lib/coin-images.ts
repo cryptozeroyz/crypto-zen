@@ -1,6 +1,9 @@
 /**
- * coin-images.ts —— Hero 漂浮币 logo（构建期从 CoinGecko 抓取，SSR 友好）
- * 失败返回空数组，组件会回退到字母圆片。
+ * coin-images.ts —— Hero 漂浮币的静态 logo 地址
+ *
+ * 直接引用 CoinGecko 静态 CDN（coin-images.coingecko.com 是纯文件服务，
+ * 没有 API 速率限制，运行时零请求）。图片地址通过 search API 一次性查证，
+ * 若某天 404 可重新查询替换。
  */
 
 export interface HeroLogo {
@@ -9,26 +12,12 @@ export interface HeroLogo {
   sym: string;
 }
 
-const HERO_IDS =
-  "bitcoin,ethereum,solana,pepe,bonk,dogwifhat,dogecoin";
-
-export async function fetchHeroLogos(): Promise<HeroLogo[]> {
-  try {
-    const res = await fetch(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${HERO_IDS}`,
-      { signal: AbortSignal.timeout(8000), cache: "no-store" }
-    );
-    if (!res.ok) return [];
-    const json = (await res.json()) as Array<{
-      id?: string;
-      image?: string;
-      symbol?: string;
-    }>;
-    if (!Array.isArray(json)) return [];
-    return json
-      .filter((c) => c.id && c.image)
-      .map((c) => ({ id: c.id as string, image: c.image as string, sym: (c.symbol ?? "?").toUpperCase() }));
-  } catch {
-    return [];
-  }
-}
+export const HERO_LOGOS: HeroLogo[] = [
+  { id: "bitcoin", image: "https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png", sym: "BTC" },
+  { id: "ethereum", image: "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png", sym: "ETH" },
+  { id: "solana", image: "https://coin-images.coingecko.com/coins/images/4128/large/solana.png", sym: "SOL" },
+  { id: "pepe", image: "https://coin-images.coingecko.com/coins/images/29850/large/pepe-token.jpeg", sym: "PEPE" },
+  { id: "bonk", image: "https://coin-images.coingecko.com/coins/images/28600/large/bonk.jpg", sym: "BONK" },
+  { id: "dogwifcoin", image: "https://coin-images.coingecko.com/coins/images/33566/large/dogwifhat.jpg", sym: "WIF" },
+  { id: "dogecoin", image: "https://coin-images.coingecko.com/coins/images/5/large/dogecoin.png", sym: "DOGE" },
+];

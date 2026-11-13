@@ -19,7 +19,7 @@ import NowPlaying from "@/components/NowPlaying";
 import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
-import { fetchHeroLogos } from "@/lib/coin-images";
+import { HERO_LOGOS } from "@/lib/coin-images";
 import { siteConfig } from "@/lib/siteConfig";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 
@@ -35,10 +35,7 @@ export default async function HomePage({
 
   const posts = getAllPosts(locale);
   const links = getLinks();
-  const [coins, heroLogos] = await Promise.all([
-    fetchWatchlistWithData(),
-    fetchHeroLogos(),
-  ]);
+  const coins = await fetchWatchlistWithData();
 
   return (
     <>
@@ -106,7 +103,7 @@ export default async function HomePage({
 
           {/* Meme 币漂浮元素（桌面端，官方 logo） */}
           <div className="relative hidden h-64 lg:block">
-            <MemeHeroArt logos={heroLogos} className="h-full w-full max-w-[320px]" />
+            <MemeHeroArt logos={HERO_LOGOS} className="h-full w-full max-w-[320px]" />
           </div>
         </Container>
 

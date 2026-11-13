@@ -22,7 +22,7 @@ const SLOTS: Slot[] = [
   { id: "solana", sym: "◎", bg: "#9945ff", fg: "#fff", size: 46, className: "left-20 bottom-2", delay: "1.6s" },
   { id: "pepe", sym: "P", bg: "#3d8130", fg: "#fff", size: 54, className: "right-14 bottom-4", delay: "0.4s" },
   { id: "bonk", sym: "B", bg: "#f2a900", fg: "#fff", size: 48, className: "left-0 bottom-20", delay: "1.2s" },
-  { id: "dogwifhat", sym: "W", bg: "#e8734a", fg: "#fff", size: 42, className: "right-0 top-28", delay: "2s" },
+  { id: "dogwifcoin", sym: "W", bg: "#e8734a", fg: "#fff", size: 42, className: "right-0 top-28", delay: "2s" },
   { id: "dogecoin", sym: "Ð", bg: "#c2a633", fg: "#fff", size: 44, className: "left-2 top-24", delay: "2.6s" },
 ];
 
