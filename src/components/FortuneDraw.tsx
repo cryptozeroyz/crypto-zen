@@ -139,22 +139,19 @@ export default function FortuneDraw({
 
   return (
     <>
-      {/* 浮动入口 */}
+      {/* 导航入口（内联样式，由 Header 放置于导航前） */}
       <button
         type="button"
         onClick={openModal}
         aria-label={labels.button}
         title={labels.button}
-        className="fixed bottom-5 right-5 z-40 flex h-12 items-center gap-2 rounded-full border border-accent/30 bg-card px-4 text-sm font-medium text-heading shadow-lg shadow-black/5 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/60 hover:shadow-[0_0_20px_rgba(37,99,235,0.25)] dark:shadow-black/40"
+        className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-card px-3 py-1.5 text-[13px] font-medium text-heading transition-all duration-200 hover:border-accent/60 hover:shadow-[0_0_14px_rgba(37,99,235,0.2)]"
       >
-        <span aria-hidden="true" className="text-base">
+        <span aria-hidden="true">
           🎐
         </span>
         <span className="hidden sm:inline">
           {mounted && drawnToday ? labels.already : labels.button}
-        </span>
-        <span className="sm:hidden">
-          {mounted && drawnToday ? "✓" : "签"}
         </span>
       </button>
 

@@ -23,6 +23,7 @@ const zh = {
     articles: "文章",
     watchlist: "关注",
     links: "推荐",
+    bookmarks: "收藏",
     about: "关于",
     homeAria: "Crypto Zen 的首页",
     switchLang: "切换语言",
@@ -119,6 +120,7 @@ const zh = {
     hoursAgo: "{n} 小时前",
     daysAgo: "{n} 天前",
     bookmarkedList: "我的收藏",
+    emptyBookmarks: "还没有收藏。在文章页点 ☆ 收藏按钮，你喜欢的文章会出现在这里（只保存在你的浏览器里）。",
   },
   resources: {
     title: "好物推荐",
@@ -157,6 +159,7 @@ const en: typeof zh = {
     articles: "Articles",
     watchlist: "Watchlist",
     links: "Resources",
+    bookmarks: "Saved",
     about: "About",
     homeAria: "Crypto Zen home",
     switchLang: "Switch language",
@@ -253,6 +256,7 @@ const en: typeof zh = {
     hoursAgo: "{n} h ago",
     daysAgo: "{n} d ago",
     bookmarkedList: "My bookmarks",
+    emptyBookmarks: "Nothing saved yet. Hit the ☆ bookmark button on any post and it will show up here (stored only in your browser).",
   },
   resources: {
     title: "Resources",

@@ -93,6 +93,19 @@
   }
 }
 
+/* 收藏星标弹跳 */
+@keyframes bookmark-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
+
 /* 币名滚动带 */
 @keyframes marquee-x {
   from {

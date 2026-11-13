@@ -8,7 +8,7 @@
  * - 底部：CA 一键复制（带反馈）、关注日期、K 线链接
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { WatchCoinWithData } from "@/lib/watchlist";
 import { formatMcap, avatarHue } from "@/lib/coin-format";
 import { formatDate } from "@/lib/utils";
@@ -43,6 +43,47 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
+/** 评价段落：渲染后实测是否被 line-clamp-3 截断，截断了才显示「展开全文」 */
+function ClampedComment({
+  comment,
+  expandLabel,
+  onExpand,
+}: {
+  comment: string;
+  expandLabel: string;
+  onExpand: () => void;
+}) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const [overflow, setOverflow] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // scrollHeight > clientHeight 即被截断（含一点容差）
+    setOverflow(el.scrollHeight > el.clientHeight + 2);
+  }, [comment]);
+
+  return (
+    <div className="flex-1">
+      <p
+        ref={ref}
+        className="border-l-2 border-accent/40 pl-2.5 text-[13px] leading-relaxed text-muted dark:border-accent-mint/40 line-clamp-3"
+      >
+        {comment}
+      </p>
+      {overflow && (
+        <button
+          type="button"
+          onClick={onExpand}
+          className="mt-1.5 text-xs font-medium text-accent hover:underline dark:text-accent-mint"
+        >
+          {expandLabel} →
+        </button>
+      )}
+    </div>
+  );
+}
+
 export default function WatchlistSection({ coins, locale, t }: WatchlistSectionProps) {
   // 浮窗展开的评论对象
   const [expanded, setExpanded] = useState<WatchCoinWithData | null>(null);
@@ -73,7 +114,6 @@ export default function WatchlistSection({ coins, locale, t }: WatchlistSectionP
         {coins.map((coin) => {
           const d = coin.data;
           const hue = avatarHue(coin.ca);
-          const isLong = coin.comment.length > 72;
           return (
             <article
               key={coin.ca}
@@ -117,20 +157,13 @@ export default function WatchlistSection({ coins, locale, t }: WatchlistSectionP
                   </p>
                 </div>
 
-                {/* 一句话评价（超长可展开） */}
+                {/* 一句话评价（实测超行才可展开） */}
                 <div className="mt-2.5 flex-1">
-                  <p className="border-l-2 border-accent/40 pl-2.5 text-[13px] leading-relaxed text-muted dark:border-accent-mint/40 line-clamp-3">
-                    {coin.comment}
-                  </p>
-                  {isLong && (
-                    <button
-                      type="button"
-                      onClick={() => setExpanded(coin)}
-                      className="mt-1.5 text-xs font-medium text-accent hover:underline dark:text-accent-mint"
-                    >
-                      {t.watchlist.expand} →
-                    </button>
-                  )}
+                  <ClampedComment
+                    comment={coin.comment}
+                    expandLabel={t.watchlist.expand}
+                    onExpand={() => setExpanded(coin)}
+                  />
                 </div>
 
                 {/* 底部：CA 复制 + 关注日期 + K 线 */}

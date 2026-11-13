@@ -8,7 +8,6 @@ import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/Container";
 import MemeHeroArt from "@/components/MemeHeroArt";
-import MemeTape from "@/components/MemeTape";
 import SectionHead from "@/components/SectionHead";
 import SocialLinks from "@/components/SocialLinks";
 import WatchlistSection from "@/components/WatchlistSection";
@@ -106,9 +105,6 @@ export default async function HomePage({
             <MemeHeroArt logos={HERO_LOGOS} className="h-full w-full max-w-[320px]" />
           </div>
         </Container>
-
-        {/* 币名滚动带 */}
-        <MemeTape />
       </section>
 
       {/* ============ 关注列表 ============ */}

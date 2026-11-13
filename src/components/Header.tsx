@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Header.tsx —— 顶部导航（首页为单页锚点导航；其他页面跳转首页锚点）
- * 左侧头像 + 站点名，右侧：语言切换、导航、主题切换。
+ * Header.tsx —— 顶部导航
+ * 好运签入口在导航最前，其后是锚点导航（关注/文章/推荐/收藏/关于）；
+ * 其他页面跳转首页锚点，「推荐」跳独立页 /resources。
  */
 
 import Link from "next/link";
@@ -13,12 +14,14 @@ import type { Dictionary, Locale } from "@/lib/i18n";
 import Container from "@/components/Container";
 import ThemeToggle from "@/components/ThemeToggle";
 import PriceTicker from "@/components/PriceTicker";
+import FortuneDraw from "@/components/FortuneDraw";
 
 /** 单页导航：锚点 id 与文案 key（links 是独立页 /resources） */
 const NAV_ITEMS = [
   { key: "watchlist", anchor: "watchlist" },
   { key: "articles", anchor: "articles" },
   { key: "links", anchor: "links" },
+  { key: "bookmarks", anchor: "reading" },
   { key: "about", anchor: "about" },
 ] as const;
 
@@ -53,9 +56,9 @@ export default function Header({ locale, t }: HeaderProps) {
 
   return (
     <header className="bg-paper">
-      <Container className="flex h-16 items-center justify-between gap-4">
+      <Container className="flex h-16 items-center justify-between gap-3">
         {/* Logo：个人头像 + 站点名 */}
-        <Link href={`/${locale}`} className="flex items-center gap-2.5" aria-label={t.nav.homeAria}>
+        <Link href={`/${locale}`} className="flex shrink-0 items-center gap-2.5" aria-label={t.nav.homeAria}>
           <Image
             src="/avatar.png"
             alt="Crypto Zen avatar"
@@ -64,14 +67,28 @@ export default function Header({ locale, t }: HeaderProps) {
             priority
             className="rounded-full border border-line"
           />
-          <span className="text-[15px] font-bold tracking-tight text-heading">
+          <span className="hidden text-[15px] font-bold tracking-tight text-heading min-[420px]:inline">
             {siteConfig.title}
           </span>
         </Link>
 
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* 实时行情（BTC/ETH/SOL） */}
           <PriceTicker ariaLabel={t.ticker.aria} />
+
+          {/* 每日好运签 */}
+          <FortuneDraw
+            locale={locale}
+            labels={{
+              button: t.fortune.button,
+              draw: t.fortune.draw,
+              already: t.fortune.already,
+              yi: t.fortune.yi,
+              ji: t.fortune.ji,
+              close: t.fortune.close,
+              brand: t.fortune.brand,
+            }}
+          />
 
           {/* 语言切换 */}
           <div
@@ -107,19 +124,15 @@ export default function Header({ locale, t }: HeaderProps) {
 
           {/* 主导航（锚点） */}
           <nav aria-label="Main navigation">
-            <ul className="flex items-center gap-4 text-sm sm:gap-5">
+            <ul className="flex items-center gap-3 text-sm sm:gap-4">
               {NAV_ITEMS.map((item) => {
                 const href = navHref(item.anchor);
-                const active = onHome && pathname === `/${locale}`; // 锚点不高亮，首页统一高亮
                 return (
                   <li key={item.key}>
                     <Link
                       href={href}
-                      aria-current={active ? "page" : undefined}
                       className={`underline-offset-4 transition-colors duration-200 hover:text-heading hover:underline ${
-                        onHome
-                          ? "font-medium text-heading"
-                          : "text-muted"
+                        onHome ? "font-medium text-heading" : "text-muted"
                       }`}
                     >
                       {t.nav[item.key]}

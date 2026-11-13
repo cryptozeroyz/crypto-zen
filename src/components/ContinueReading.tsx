@@ -39,7 +39,19 @@ export default function ContinueReading({ posts, locale, t }: ContinueReadingPro
     .filter((r) => bySlug.has(r.slug))
     .slice(0, 6);
 
-  if (history.length === 0 && bookmarks.length === 0) return null;
+  if (history.length === 0 && bookmarks.length === 0) {
+    // 都没数据时也渲染收藏区块（导航「收藏」需要锚点目标），给空态提示
+    return (
+      <section id="bookmarks" aria-label={t.reading.bookmarkedList}>
+        <h2 className="text-2xl font-bold tracking-tight text-heading">
+          {t.reading.bookmarkedList}
+        </h2>
+        <p className="mt-3 max-w-xl rounded-xl border border-dashed border-line px-4 py-3 text-sm text-muted">
+          {t.reading.emptyBookmarks}
+        </p>
+      </section>
+    );
+  }
 
   return (
     <div className="space-y-8">
