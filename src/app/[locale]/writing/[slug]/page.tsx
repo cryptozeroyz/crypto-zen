@@ -16,6 +16,8 @@ import DexChart from "@/components/DexChart";
 import Toc from "@/components/Toc";
 import Disclosure from "@/components/Disclosure";
 import RandomPostButton from "@/components/RandomPostButton";
+import ReadingTracker from "@/components/ReadingTracker";
+import BookmarkButton from "@/components/BookmarkButton";
 
 /** 构建期生成全部文章路径（英文缺失的文章在渲染时给出提示页） */
 export function generateStaticParams() {
@@ -109,6 +111,8 @@ export default function PostPage({
       />
 
       <Container size="site">
+        {/* 阅读记录器：把当前文章写入本地阅读历史 */}
+        <ReadingTracker slug={post.slug} />
         <div className="flex justify-center gap-14">
           {/* 正文栏 */}
           <div className="w-full max-w-content">
@@ -169,6 +173,16 @@ export default function PostPage({
                 <span aria-hidden="true"> · </span>
                 Crypto Zen
               </p>
+              <div className="mt-3">
+                <BookmarkButton
+                  slug={post.slug}
+                  labels={{
+                    bookmark: t.reading.bookmark,
+                    bookmarked: t.reading.bookmarked,
+                    unbookmark: t.reading.unbookmark,
+                  }}
+                />
+              </div>
             </header>
 
             {/* 免责声明 */}

@@ -1,44 +1,108 @@
 [
   {
+    "title": "穷查理宝典",
+    "url": "https://search.douban.com/book/subject_search?search_text=%E7%A9%B7%E6%9F%A5%E7%90%86%E5%AE%9D%E5%85%B8",
+    "type": "book",
+    "author": "查理·芒格",
+    "comment": "多元思维模型的源头。在加密市场这种跨学科赌场里，芒格的「逆向思考」比任何技术分析都值钱。",
+    "tags": [
+      "投资",
+      "思维模型"
+    ],
+    "addedAt": "2026-11-13"
+  },
+  {
+    "title": "黑天鹅",
+    "url": "https://search.douban.com/book/subject_search?search_text=%E9%BB%91%E5%A4%A9%E9%B9%85",
+    "type": "book",
+    "author": "纳西姆·塔勒布",
+    "comment": "理解肥尾巴是 Meme 玩家的必修课。读完你会重新理解「归零」和「百倍」其实是同一件事的两面。",
+    "tags": [
+      "风险",
+      "肥尾巴"
+    ],
+    "addedAt": "2026-11-13"
+  },
+  {
+    "title": "HHKB Professional 键盘",
+    "url": "https://hhkeyboard.com",
+    "type": "goods",
+    "comment": "静电容的手感让写作变成一种享受。贵，但按字数摊下来是书房里最值的投资。",
+    "tags": [
+      "写作装备"
+    ],
+    "addedAt": "2026-11-13"
+  },
+  {
+    "title": "DYOR 半小时速查清单",
+    "url": "https://crypto-zen.vercel.app/zh/writing/dyor-checklist",
+    "type": "file",
+    "comment": "我的博客文章同款的 Markdown 模板，保存到备忘录里，每次出手前过一遍。",
+    "tags": [
+      "模板",
+      "Markdown"
+    ],
+    "copyText": "# DYOR 半小时速查清单\n\n1. mint 权限已丢弃、LP 已锁仓\n2. 前 10 大持仓占比 < 50%\n3. 开发者静默期 ≥ 10 天\n4. 聪明钱集群小额试探（≥5 个地址）\n5. 问自己：跌 80% 能不能接受？\n\n—— Crypto Zen",
+    "addedAt": "2026-11-13"
+  },
+  {
     "title": "AXIOM",
     "url": "https://axiom.trade/@czero",
-    "category": "交易工具",
+    "type": "tool",
     "comment": "强在产品体验的trading终端",
+    "tags": [
+      "交易工具"
+    ],
     "addedAt": "2026-11-13"
   },
   {
     "title": "GMGN",
     "url": "https://gmgn.ai/r/dDH6vebL",
-    "category": "交易工具",
+    "type": "tool",
     "comment": "强在数据的trading 终端",
+    "tags": [
+      "交易工具"
+    ],
     "addedAt": "2026-11-13"
   },
   {
     "title": "Arkham",
     "url": "https://arkhamintelligence.com",
-    "category": "链上工具",
+    "type": "tool",
     "comment": "链上地址追踪与聪明钱监控的第一选择，我的早期信号研究主要靠它。",
+    "tags": [
+      "链上工具"
+    ],
     "addedAt": "2026-11-13"
   },
   {
     "title": "DexScreener",
     "url": "https://dexscreener.com",
-    "category": "链上工具",
+    "type": "tool",
     "comment": "看 K 线、按 CA 抓取行情的标配，本站关注列表的数据源。",
+    "tags": [
+      "链上工具"
+    ],
     "addedAt": "2026-11-13"
   },
   {
     "title": "tehcscreener",
     "url": "https://tehcscreener.com",
-    "category": "数据看板",
+    "type": "tool",
     "comment": "Trench Index 和发射盘数据的出处，首页「市场温度」就来自这里。",
+    "tags": [
+      "数据看板"
+    ],
     "addedAt": "2026-11-13"
   },
   {
     "title": "Dune",
     "url": "https://dune.com",
-    "category": "数据看板",
+    "type": "tool",
     "comment": "自定义链上仪表盘，写研报时的数据验证工具。",
+    "tags": [
+      "数据看板"
+    ],
     "addedAt": "2026-11-13"
   }
 ]

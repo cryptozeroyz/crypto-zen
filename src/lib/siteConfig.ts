@@ -19,6 +19,16 @@ export const siteConfig = {
     telegram: "https://t.me/YZWEB3",
   },
 
+  /**
+   * Last.fm「最近在听」（可选）：
+   * 在 https://www.last.fm/api/account/create 申请免费 API key 后填入 user + apiKey。
+   * 留空则首页显示 public/status.json 里的「现在在做什么」。
+   */
+  lastfm: {
+    user: "",
+    apiKey: "",
+  },
+
   /** 页脚 */
   footer: {
     copyrightName: "CryptoZen",

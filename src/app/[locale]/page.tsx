@@ -1,7 +1,7 @@
 /**
  * [locale]/page.tsx —— 首页（单页架构）
- * Hero + 统计 → Trench 市场温度（紧凑）→ 关注列表 → 文章（统一卡片 + 加载更多）
- * → 关于我 → 找到我。行情每 5 分钟增量再生成（ISR）。
+ * Hero（+实时行情/最近在听）→ 关注列表 → 文章 → 继续阅读 → 好物精选
+ * → 关于我 → 找到我。
  */
 
 import Link from "next/link";
@@ -10,15 +10,15 @@ import Container from "@/components/Container";
 import AsteriskMark from "@/components/AsteriskMark";
 import SectionHead from "@/components/SectionHead";
 import SocialLinks from "@/components/SocialLinks";
-import TrenchCard from "@/components/TrenchCard";
 import WatchlistSection from "@/components/WatchlistSection";
 import ArticlesSection from "@/components/ArticlesSection";
-import LinksSection from "@/components/LinksSection";
+import ContinueReading from "@/components/ContinueReading";
 import RandomPostButton from "@/components/RandomPostButton";
+import NowPlaying from "@/components/NowPlaying";
 import { getAllPosts, getSiteStats } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
-import { fetchTrench } from "@/lib/trench";
+import { siteConfig } from "@/lib/siteConfig";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 
 export const revalidate = 300;
@@ -34,15 +34,12 @@ export default async function HomePage({
   const posts = getAllPosts(locale);
   const stats = getSiteStats(locale);
   const links = getLinks();
-  const [coins, trench] = await Promise.all([
-    fetchWatchlistWithData(),
-    fetchTrench(),
-  ]);
+  const coins = await fetchWatchlistWithData();
 
   const statCells = [
     { label: t.home.stats.all, value: String(stats.total).padStart(2, "0"), href: "#articles" },
     { label: t.home.stats.watch, value: String(coins.length).padStart(2, "0"), href: "#watchlist" },
-    { label: t.home.stats.trench, value: trench ? String(trench.score) : "—", href: "#market" },
+    { label: t.home.stats.links, value: String(links.length).padStart(2, "0"), href: `/${locale}/resources` },
   ];
 
   return (
@@ -82,6 +79,16 @@ export default async function HomePage({
               ))}
             </div>
 
+            {/* 最近在听 / 现在在做什么（实时） */}
+            <NowPlaying
+              lastfm={siteConfig.lastfm}
+              labels={{
+                listening: t.nowPlaying.listening,
+                recent: t.nowPlaying.recent,
+                now: t.nowPlaying.now,
+              }}
+            />
+
             <div className="mt-8 flex flex-wrap items-center gap-6">
               <a
                 href="#articles"
@@ -101,7 +108,7 @@ export default async function HomePage({
             {/* 统计带 */}
             <div className="stats mt-10 grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-line bg-line">
               {statCells.map((cell) => (
-                <a
+                <Link
                   key={cell.label}
                   href={cell.href}
                   className="bg-card p-5 transition-colors duration-200 hover:bg-accent/5"
@@ -110,7 +117,7 @@ export default async function HomePage({
                     {cell.value}
                   </p>
                   <p className="mt-1 text-xs text-muted">{cell.label}</p>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -121,16 +128,7 @@ export default async function HomePage({
         </Container>
       </section>
 
-      {/* ============ 市场温度 ============ */}
-      {trench && (
-        <section id="market" className="scroll-mt-24">
-          <Container className="py-10">
-            <TrenchCard data={trench} locale={locale} t={t} />
-          </Container>
-        </section>
-      )}
-
-      {/* ============ 关注列表（文章之前） ============ */}
+      {/* ============ 关注列表 ============ */}
       {coins.length > 0 && (
         <section id="watchlist" className="scroll-mt-24">
           <Container className="py-14">
@@ -169,13 +167,46 @@ export default async function HomePage({
         </Container>
       </section>
 
-      {/* ============ 推荐（链接收藏） ============ */}
+      {/* ============ 继续阅读 / 我的收藏（localStorage，客户端） ============ */}
+      <section id="reading" className="scroll-mt-24">
+        <Container className="py-14">
+          <ContinueReading
+            posts={posts.map((p) => ({ slug: p.slug, title: p.title, cover: p.cover }))}
+            locale={locale}
+            t={t}
+          />
+        </Container>
+      </section>
+
+      {/* ============ 好物精选（全集见 /resources） ============ */}
       {links.length > 0 && (
         <section id="links" className="scroll-mt-24">
           <Container className="py-14">
-            <SectionHead title={t.home.sections.links} />
-            <div className="mt-7">
-              <LinksSection links={links} />
+            <SectionHead
+              title={t.home.sections.links}
+              href={`/${locale}/resources`}
+              linkText={`${t.home.viewAll ?? "查看全部 →"}`}
+            />
+            <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {links.slice(0, 4).map((l) => (
+                <Link
+                  key={l.url}
+                  href={`/${locale}/resources`}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-card transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/40"
+                >
+                  <div className="flex aspect-[16/9] items-center justify-center bg-codebg px-4">
+                    <span className="min-w-0 truncate text-sm font-semibold text-heading transition-colors group-hover:text-accent dark:group-hover:text-accent-mint">
+                      {l.type === "file" ? "📄 " : l.type === "book" ? "📖 " : l.type === "goods" ? "🎒 " : "🔧 "}
+                      {l.title}
+                    </span>
+                  </div>
+                  <div className="p-4">
+                    <p className="line-clamp-2 text-[13px] leading-relaxed text-muted">
+                      {l.comment}
+                    </p>
+                  </div>
+                </Link>
+              ))}
             </div>
           </Container>
         </section>

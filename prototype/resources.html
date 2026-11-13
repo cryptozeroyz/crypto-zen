@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>好物推荐 · 原型 v1</title>
+<style>
+:root{
+  --bg:#f5f8fc; --card:#ffffff; --text:#3a4a63; --heading:#16233a;
+  --muted:#7186a1; --line:rgba(30,60,120,.12); --code:#eaf1f9;
+  --accent:#2563eb; --deep:#1d4ed8; --mint:#38bdf8;
+}
+html.dark{
+  --bg:#0a1424; --card:#101d33; --text:#c9d6e8; --heading:#eef4ff;
+  --muted:#8296b0; --line:rgba(148,184,255,.14); --code:#14233d;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;background:none;border:0;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* 顶栏 */
+header{position:sticky;top:0;z-index:50;background:var(--bg)}
+.hbar{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--heading)}
+.brand .logo{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#f6b17a,#e78fb3);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+nav{display:flex;gap:20px;font-size:14px}
+nav a{color:var(--muted);transition:.2s}
+nav a:hover{color:var(--heading)}
+nav a.on{color:var(--heading);font-weight:500;text-decoration:underline;text-underline-offset:6px;text-decoration-color:var(--accent)}
+.tools{display:flex;align-items:center;gap:10px;color:var(--muted)}
+
+/* 页头 */
+.phead{padding:48px 0 8px}
+.phead h1{font-size:34px;font-weight:700;letter-spacing:-.02em;color:var(--heading)}
+.phead p{margin-top:10px;max-width:560px;color:var(--muted);font-size:15px}
+.phead .note{margin-top:14px;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:999px;padding:5px 14px}
+
+/* 筛选 */
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin:28px 0 22px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs button{border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:13px;color:var(--muted);transition:.2s}
+.tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+.tabs button:not(.on):hover{border-color:var(--heading);color:var(--heading)}
+.search{position:relative;width:100%;max-width:240px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--muted)}
+.search input{width:100%;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:8px 16px 8px 36px;font-size:13px;color:var(--heading);outline:none}
+.search input:focus{border-color:var(--accent)}
+.search input::placeholder{color:var(--muted)}
+
+/* 卡片网格 */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;background:var(--card);overflow:hidden;transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 30px -12px rgba(30,60,120,.18);border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+/* 媒体区 */
+.media{position:relative;display:flex;align-items:center;justify-content:center;background:var(--code);overflow:hidden}
+.media.book{aspect-ratio:3/4;max-height:230px;width:100%}
+.media.ico{aspect-ratio:16/9}
+.badge{position:absolute;left:10px;top:10px;z-index:2;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:600;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent)}
+html.dark .badge{color:var(--mint)}
+/* 图书封面（自动生成样式：渐变+标题） */
+.bcov{display:flex;flex-direction:column;justify-between;width:78%;max-width:170px;height:82%;padding:14px;border-radius:4px 10px 10px 4px;background:linear-gradient(135deg,var(--accent),var(--deep));color:#fff;box-shadow:3px 4px 0 rgba(0,0,0,.12)}
+.bcov .bt{font-family:Georgia,"Songti SC",serif;font-weight:700;font-size:15px;line-height:1.4}
+.bcov .ba{font-size:10px;opacity:.75;margin-top:4px}
+.bcov .bs{font-size:9px;letter-spacing:3px;opacity:.6}
+/* 物品/工具图标位 */
+.pimg{font-size:44px}
+.tico{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px;color:#fff;background:linear-gradient(135deg,var(--accent),var(--deep))}
+/* 资料文件卡 */
+.file{display:flex;align-items:center;gap:12px;padding:18px;width:86%}
+.file .fi{width:42px;height:42px;border-radius:10px;background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:20px}
+.file .fn{font-size:13px;font-weight:600;color:var(--heading);word-break:break-all}
+.file .fm{font-size:11px;color:var(--muted);margin-top:2px}
+/* 内容区 */
+.bd{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+.bd h3{font-size:15px;font-weight:700;color:var(--heading);line-height:1.45}
+.bd .cm{margin-top:6px;font-size:13px;color:var(--muted);flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tags{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+/* 动作区 */
+.act{display:flex;gap:8px;margin-top:12px}
+.btn{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:6px 14px;font-size:12px;font-weight:500;transition:.2s;border:1px solid transparent}
+.btn.link{border-color:color-mix(in srgb,var(--accent) 35%,transparent);color:var(--accent)}
+html.dark .btn.link{color:var(--mint)}
+.btn.link:hover{border-color:var(--accent);box-shadow:0 0 14px color-mix(in srgb,var(--accent) 22%,transparent)}
+.btn.solid{background:var(--accent);color:#fff}
+.btn.solid:hover{background:var(--deep)}
+.btn.done{background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--accent);pointer-events:none}
+.empty{display:none;padding:40px 0;text-align:center;color:var(--muted);font-size:13px}
+
+footer{margin-top:56px;padding:24px 0;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+
+/* 标注 */
+.notebtn{position:fixed;right:18px;bottom:18px;z-index:99;background:var(--heading);color:var(--bg);border-radius:999px;padding:9px 18px;font-size:13px;font-weight:600}
+.legend{position:fixed;right:18px;bottom:66px;z-index:99;width:300px;max-width:calc(100vw - 36px);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;font-size:12.5px;line-height:1.7;display:none}
+.legend.show{display:block}
+.legend b{color:var(--heading)}
+.legend .item{display:flex;gap:8px;margin-top:6px}
+.legend .num{flex-shrink:0;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.annot{display:none;position:absolute;top:-8px;left:-8px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;align-items:center;justify-content:center;z-index:5}
+body.annot-on .annot{display:flex}
+.rel{position:relative}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hbar">
+    <a class="brand" href="#"><span class="logo">C</span>Crypto Zen</a>
+    <nav>
+      <a href="#">关注</a><a href="#">文章</a><a href="#" class="on">推荐</a><a href="#">关于</a>
+    </nav>
+    <div class="tools">中 / EN · ☾</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="phead">
+    <h1 class="rel"><span class="annot">1</span>好物推荐</h1>
+    <p>我读过的好书、用过的物件、顺手的工具，以及可以直接拿去用的资料。全部亲自验证，不接推广。</p>
+    <span class="note">🛈 商品链接不含返利 · 资料可自由下载/复制，注明出处即可</span>
+  </div>
+
+  <div class="toolbar">
+    <div class="tabs" role="tablist">
+      <button class="on" data-t="all">全部 9</button>
+      <button data-t="book">📖 图书 3</button>
+      <button data-t="goods">🎒 物品 2</button>
+      <button data-t="tool">🔧 工具 2</button>
+      <button data-t="file">📄 资料 2</button>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+      <input id="q" type="search" placeholder="搜索名称、推荐语或标签" />
+    </div>
+  </div>
+
+  <div class="grid" id="grid">
+
+    <!-- 图书：自动封面 -->
+    <article class="card item" data-t="book" data-s="穷查理宝典 查理芒格 投资 思维模型 多元思维">
+      <div class="media book">
+        <span class="badge">图书</span>
+        <div class="bcov"><div><div class="bt">穷查理宝典</div><div class="ba">查理·芒格</div></div><div class="bs">CRYPTO ZEN</div></div>
+      </div>
+      <div class="bd">
+        <h3>穷查理宝典</h3>
+        <p class="cm">多元思维模型的源头。在加密市场这种跨学科赌场里，芒格的「逆向思考」比任何技术分析都值钱。</p>
+        <div class="tags"><span class="tag">投资</span><span class="tag">思维模型</span></div>
+        <div class="act"><a class="btn link" href="#">购买 ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card item" data-t="book" data-s="黑天鹅 塔勒布 肥尾巴 风险 反脆弱">
+      <div class="media book">
+        <span class="badge">图书</span>
+        <div class="bcov" style="background:linear-gradient(135deg,#4f66d2,#26327e)"><div><div class="bt">黑天鹅</div><div class="ba">纳西姆·塔勒布</div></div><div class="bs">CRYPTO ZEN</div></div>
+      </div>
+      <div class="bd">
+        <h3>黑天鹅</h3>
+        <p class="cm">理解肥尾巴是 Meme 玩家的必修课。读完你会重新理解「归零」和「百倍」其实是同一件事的两面。</p>
+        <div class="tags"><span class="tag">风险</span><span class="tag">肥尾巴</span></div>
+        <div class="act"><a class="btn link" href="#">购买 ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card item" data-t="book" data-s="主权个人 戴维森 加密 未来 政治">
+      <div class="media book">
+        <span class="badge">图书</span>
+        <div class="bcov" style="background:linear-gradient(135deg,#6d5bd0,#3d2f86)"><div><div class="bt">主权个人</div><div class="ba">戴维森 / 里斯-莫格</div></div><div class="bs">CRYPTO ZEN</div></div>
+      </div>
+      <div class="bd">
+        <h3>主权个人</h3>
+        <p class="cm">1997 年预言了加密时代的书，圈内圣经。很多你看不懂的行业叙事，答案都在这本书里。</p>
+        <div class="tags"><span class="tag">加密</span><span class="tag">长视角</span></div>
+        <div class="act"><a class="btn link" href="#">购买 ↗</a></div>
+      </div>
+    </article>
+
+    <!-- 物品 -->
+    <article class="card item" data-t="goods" data-s="hhkb 键盘 静电容 打字 写作">
+      <div class="media ico"><span class="badge">物品</span><span class="pimg">⌨️</span></div>
+      <div class="bd">
+        <h3>HHKB Professional 键盘</h3>
+        <p class="cm">静电容的手感让写作变成一种享受。贵，但按字数摊下来是书房里最值的投资。</p>
+        <div class="tags"><span class="tag">写作装备</span></div>
+        <div class="act"><a class="btn link" href="#">查看 ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card item" data-t="goods" data-s="screenbar 挂灯 屏幕灯 明基 深夜">
+      <div class="media ico"><span class="badge">物品</span><span class="pimg">💡</span></div>
+      <div class="bd">
+        <h3>明基 ScreenBar 屏幕挂灯</h3>
+        <p class="cm">深夜看盘的护眼神器，不反光、不占桌面。凌晨三点复盘鲸鱼动向的标配。</p>
+        <div class="tags"><span class="tag">桌面</span><span class="tag">护眼</span></div>
+        <div class="act"><a class="btn link" href="#">查看 ↗</a></div>
+      </div>
+    </article>
+
+    <!-- 工具 -->
+    <article class="card item" data-t="tool" data-s="arkham 链上 追踪 聪明钱">
+      <div class="media ico"><span class="badge">工具</span><span class="tico">A</span></div>
+      <div class="bd">
+        <h3>Arkham</h3>
+        <p class="cm">链上地址追踪与聪明钱监控的第一选择，早期信号研究主要靠它。</p>
+        <div class="tags"><span class="tag">链上</span></div>
+        <div class="act"><a class="btn link" href="https://arkhamintelligence.com" target="_blank">打开 ↗</a></div>
+      </div>
+    </article>
+
+    <article class="card item" data-t="tool" data-s="tehcscreener trench index 发射盘 数据">
+      <div class="media ico"><span class="badge">工具</span><span class="tico" style="background:linear-gradient(135deg,#4f66d2,#26327e)">T</span></div>
+      <div class="bd">
+        <h3>tehcscreener</h3>
+        <p class="cm">Trench Index 和发射盘数据的出处，首页「市场温度」就来自这里。</p>
+        <div class="tags"><span class="tag">数据</span></div>
+        <div class="act"><a class="btn link" href="https://tehcscreener.com" target="_blank">打开 ↗</a></div>
+      </div>
+    </article>
+
+    <!-- 资料：复制 / 下载 -->
+    <article class="card item" data-t="file" data-s="dyor 速查清单 模板 markdown 可复制">
+      <div class="media ico"><span class="badge">资料</span>
+        <div class="file"><div class="fi">📝</div><div><div class="fn">DYOR-速查清单.md</div><div class="fm">Markdown · 2 KB · 可自由复制</div></div></div>
+      </div>
+      <div class="bd">
+        <h3>DYOR 半小时速查清单</h3>
+        <p class="cm">我的博客文章同款的 Markdown 模板，保存到备忘录里，每次出手前过一遍。</p>
+        <div class="tags"><span class="tag">模板</span><span class="tag">Markdown</span></div>
+        <div class="act">
+          <button class="btn solid copy" data-copy="# DYOR 速查清单\n\n1. mint 权限已丢弃\n2. 前 10 持仓 < 50%\n……（示例文本）">复制 ⧉</button>
+          <a class="btn link" href="#">下载 ↓</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="card item" data-t="file" data-s="聪明钱 地址列表 csv 下载 监控">
+      <div class="media ico"><span class="badge">资料</span>
+        <div class="file"><div class="fi">📊</div><div><div class="fn">smart-money-watchlist.csv</div><div class="fm">CSV · 18 KB · 每月更新</div></div></div>
+      </div>
+      <div class="bd">
+        <h3>聪明钱地址监控清单</h3>
+        <p class="cm">我在用的 300 个已知聪明钱地址列表，导入 Arkham 即可开始监控。</p>
+        <div class="tags"><span class="tag">数据</span><span class="tag">CSV</span></div>
+        <div class="act">
+          <button class="btn solid copy" data-copy="address,label,note\n0xabc...,smart money,…（示例文本）">复制 ⧉</button>
+          <a class="btn link" href="#">下载 ↓</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+  <p class="empty" id="empty">没有符合条件的条目。</p>
+
+  <footer>
+    <span>© 2026 CryptoZen · 保留所有权利</span>
+    <span>以慢为快，以静制动。</span>
+  </footer>
+</div>
+
+<button class="notebtn" id="noteBtn">查看原型标注</button>
+<div class="legend" id="legend">
+  <b>好物推荐页 · 原型 v1 变更说明</b>
+  <div class="item"><span class="num">1</span><span><b>独立页 /resources</b>：从首页区块升级为集散地；首页「推荐」保留精选 4 条 + 「查看全部」入口。</span></div>
+  <div class="item"><span class="num">2</span><span><b>四类好物</b>：图书 / 物品 / 工具 / 资料，tab 筛选 + 实时搜索。</span></div>
+  <div class="item"><span class="num">3</span><span><b>资料是核心差异</b>：一键复制（Markdown/CSV 文本）+ 文件下载两种动作，复制有「已复制 ✓」反馈。</span></div>
+  <div class="item"><span class="num">4</span><span><b>图书自动封面</b>：标题 + 渐变自动生成（蓝/靛/紫三色轮换），与文章封面同一套风格；也支持后续上传实体封面。</span></div>
+  <div class="item"><span class="num">5</span><span><b>数据字段</b>：名称 / 类型 / 推荐语 / 标签 / 外链 / 可复制文本 / 资源文件，后台管理复用现有 catch-all 模式。</span></div>
+  <div class="item"><span class="num">6</span><span><b>信任声明</b>：页头注明不接推广、无返利链接，资料自由取用。</span></div>
+</div>
+
+<script>
+/* 主题 */
+(function(){try{var t=localStorage.getItem("theme");var m=matchMedia("(prefers-color-scheme: dark)");var a=function(d){document.documentElement.classList.toggle("dark",d)};if(t==="light")a(false);else if(t==="dark")a(true);else a(m.matches)}catch(e){}})();
+
+/* 筛选 + 搜索 */
+var tab="all",q="";
+function apply(){
+  var n=0;
+  document.querySelectorAll(".item").forEach(function(el){
+    var okT=(tab==="all")||el.getAttribute("data-t")===tab;
+    var okQ=!q||(el.getAttribute("data-s")||"").toLowerCase().indexOf(q)>-1;
+    var ok=okT&&okQ;
+    el.style.display=ok?"":"none";if(ok)n++;
+  });
+  document.getElementById("empty").style.display=n===0?"block":"none";
+}
+document.querySelectorAll(".tabs button").forEach(function(b){
+  b.onclick=function(){tab=this.getAttribute("data-t");document.querySelectorAll(".tabs button").forEach(function(x){x.classList.remove("on")});this.classList.add("on");apply()};
+});
+document.getElementById("q").oninput=function(){q=this.value.trim().toLowerCase();apply()};
+
+/* 复制反馈 */
+document.querySelectorAll(".copy").forEach(function(b){
+  b.onclick=function(){
+    var txt=this.getAttribute("data-copy").replace(/\\n/g,"\n");
+    try{navigator.clipboard.writeText(txt)}catch(e){}
+    var old=this.textContent;
+    this.textContent="已复制 ✓";this.classList.add("done");
+    setTimeout(function(){b.textContent=old;b.classList.remove("done")},1400);
+  };
+});
+
+/* 标注 */
+document.getElementById("noteBtn").onclick=function(){document.body.classList.toggle("annot-on");document.getElementById("legend").classList.toggle("show");this.textContent=document.body.classList.contains("annot-on")?"隐藏原型标注":"查看原型标注"};
+</script>
+</body>
+</html>

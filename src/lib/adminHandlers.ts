@@ -363,15 +363,22 @@ export async function watchlistDELETE(req: Request) {
   return NextResponse.json({ ok: true });
 }
 
-/* ---------------- 链接收藏 ---------------- */
+/* ---------------- 链接收藏（好物推荐） ---------------- */
 
 interface LinkEntry {
   title: string;
   url: string;
-  category: string;
+  type: "book" | "goods" | "tool" | "file";
+  author?: string;
   comment: string;
+  tags: string[];
+  copyText?: string;
+  fileUrl?: string;
+  cover?: string;
   addedAt: string;
 }
+
+const LINK_TYPES = ["book", "goods", "tool", "file"] as const;
 
 async function readLinks(): Promise<LinkEntry[]> {
   const raw = await readTextFile(LINKS_PATH);
@@ -402,34 +409,61 @@ export async function linksPOST(req: Request) {
 
   let title = "";
   let url = "";
-  let category = "";
+  let type: LinkEntry["type"] = "tool";
+  let author = "";
   let comment = "";
+  let tags: string[] = [];
+  let copyText = "";
+  let fileUrl = "";
+  let cover = "";
   try {
     const body = await req.json();
     title = String(body.title ?? "").trim();
     url = String(body.url ?? "").trim();
-    category = String(body.category ?? "").trim() || "其他";
+    type = LINK_TYPES.includes(body.type) ? (body.type as LinkEntry["type"]) : "tool";
+    author = String(body.author ?? "").trim();
     comment = String(body.comment ?? "").trim();
+    tags = Array.isArray(body.tags)
+      ? body.tags.map((t: unknown) => String(t).trim()).filter(Boolean)
+      : [];
+    copyText = String(body.copyText ?? "").trim();
+    fileUrl = String(body.fileUrl ?? "").trim();
+    cover = String(body.cover ?? "").trim();
   } catch {
     /* 下方统一校验 */
   }
 
   if (!title) return badRequest("请填写名称");
   if (!isValidUrl(url)) return badRequest("链接格式不正确（需以 http(s):// 开头）");
+  if (type === "file" && !copyText && !fileUrl) {
+    return badRequest("资料类条目请至少填写可复制文本或上传文件");
+  }
 
   const list = await readLinks();
   const existing = list.find((l) => l.url === url);
   if (existing) {
-    // 同 URL 视为更新（改分类 / 评价）
-    existing.title = title;
-    existing.category = category;
-    existing.comment = comment;
+    // 同 URL 视为更新
+    Object.assign(existing, {
+      title,
+      type,
+      author: author || undefined,
+      comment,
+      tags,
+      copyText: copyText || undefined,
+      fileUrl: fileUrl || undefined,
+      cover: cover || undefined,
+    });
   } else {
     list.unshift({
       title,
       url,
-      category,
+      type,
+      author: author || undefined,
       comment,
+      tags,
+      copyText: copyText || undefined,
+      fileUrl: fileUrl || undefined,
+      cover: cover || undefined,
       addedAt: new Date().toISOString().slice(0, 10),
     });
   }

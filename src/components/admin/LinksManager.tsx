@@ -1,22 +1,56 @@
 "use client";
 
 /**
- * LinksManager.tsx —— 后台链接收藏管理
- * 添加（名称 + 链接 + 分类 + 一句话推荐）、删除；同 URL 保存视为更新。
+ * LinksManager.tsx —— 后台好物推荐管理
+ * 字段随「类型」切换：图书需作者；资料需可复制文本和/或上传文件；
+ * 标签逗号分隔；同 URL 保存视为更新。
  */
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { LinkItem } from "@/lib/links";
+import type { LinkItem, LinkType } from "@/lib/links";
+
+const TYPE_LABEL: Record<LinkType, string> = {
+  book: "图书",
+  goods: "物品",
+  tool: "工具",
+  file: "资料",
+};
+
+const inputClass =
+  "w-full rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent";
 
 export default function LinksManager({ links }: { links: LinkItem[] }) {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
-  const [category, setCategory] = useState("");
+  const [type, setType] = useState<LinkType>("tool");
+  const [author, setAuthor] = useState("");
+  const [tagsInput, setTagsInput] = useState("");
   const [comment, setComment] = useState("");
+  const [copyText, setCopyText] = useState("");
+  const [fileUrl, setFileUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const uploadFile = async (file: File | undefined) => {
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.message ?? "上传失败");
+      setFileUrl(data.url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "上传失败");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,8 +63,12 @@ export default function LinksManager({ links }: { links: LinkItem[] }) {
         body: JSON.stringify({
           title: title.trim(),
           url: url.trim(),
-          category: category.trim(),
+          type,
+          author: author.trim(),
+          tags: tagsInput.split(/[,，]/).map((s) => s.trim()).filter(Boolean),
           comment: comment.trim(),
+          copyText: copyText.trim(),
+          fileUrl: fileUrl.trim(),
         }),
       });
       const data = await res.json().catch(() => null);
@@ -40,8 +78,11 @@ export default function LinksManager({ links }: { links: LinkItem[] }) {
       }
       setTitle("");
       setUrl("");
-      setCategory("");
+      setAuthor("");
+      setTagsInput("");
       setComment("");
+      setCopyText("");
+      setFileUrl("");
       router.refresh();
     } catch {
       setError("网络错误");
@@ -72,11 +113,26 @@ export default function LinksManager({ links }: { links: LinkItem[] }) {
 
   return (
     <div className="space-y-6">
-      {/* 添加表单 */}
       <form
         onSubmit={add}
         className="grid gap-4 rounded-xl border border-line bg-paper p-5 sm:grid-cols-2"
       >
+        <div>
+          <label htmlFor="lk-type" className="mb-1.5 block text-sm text-muted">
+            类型
+          </label>
+          <select
+            id="lk-type"
+            value={type}
+            onChange={(e) => setType(e.target.value as LinkType)}
+            className={inputClass}
+          >
+            <option value="book">📖 图书</option>
+            <option value="goods">🎒 物品</option>
+            <option value="tool">🔧 工具</option>
+            <option value="file">📄 资料（可复制/下载）</option>
+          </select>
+        </div>
         <div>
           <label htmlFor="lk-title" className="mb-1.5 block text-sm text-muted">
             名称
@@ -86,8 +142,8 @@ export default function LinksManager({ links }: { links: LinkItem[] }) {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="例如：Arkham"
-            className="w-full rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
+            placeholder="例如：Arkham / 穷查理宝典"
+            className={inputClass}
           />
         </div>
         <div>
@@ -101,40 +157,110 @@ export default function LinksManager({ links }: { links: LinkItem[] }) {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://example.com"
-            className="w-full rounded-lg border border-line bg-card px-3.5 py-2.5 font-mono text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
+            className={`${inputClass} font-mono`}
           />
         </div>
-        <div>
-          <label htmlFor="lk-category" className="mb-1.5 block text-sm text-muted">
-            分类
-          </label>
-          <input
-            id="lk-category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            placeholder="链上工具 / 数据看板 / 好文章…"
-            className="w-full rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
-          />
-        </div>
-        <div>
+        {type === "book" ? (
+          <div>
+            <label htmlFor="lk-author" className="mb-1.5 block text-sm text-muted">
+              作者（可选）
+            </label>
+            <input
+              id="lk-author"
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              placeholder="查理·芒格"
+              className={inputClass}
+            />
+          </div>
+        ) : (
+          <div>
+            <label htmlFor="lk-tags" className="mb-1.5 block text-sm text-muted">
+              标签（逗号分隔，可选）
+            </label>
+            <input
+              id="lk-tags"
+              value={tagsInput}
+              onChange={(e) => setTagsInput(e.target.value)}
+              placeholder="链上, 数据"
+              className={inputClass}
+            />
+          </div>
+        )}
+
+        {type === "book" && (
+          <div>
+            <label htmlFor="lk-tags2" className="mb-1.5 block text-sm text-muted">
+              标签（逗号分隔，可选）
+            </label>
+            <input
+              id="lk-tags2"
+              value={tagsInput}
+              onChange={(e) => setTagsInput(e.target.value)}
+              placeholder="投资, 思维模型"
+              className={inputClass}
+            />
+          </div>
+        )}
+
+        <div className={type === "book" ? "" : "sm:col-span-2"}>
           <label htmlFor="lk-comment" className="mb-1.5 block text-sm text-muted">
-            一句话推荐（可选）
+            一句话推荐
           </label>
           <input
             id="lk-comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="为什么值得收藏"
-            className="w-full rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
+            className={inputClass}
           />
         </div>
+
+        {type === "file" && (
+          <>
+            <div className="sm:col-span-2">
+              <label htmlFor="lk-copy" className="mb-1.5 block text-sm text-muted">
+                可复制文本（可选：一键复制按钮的内容）
+              </label>
+              <textarea
+                id="lk-copy"
+                rows={4}
+                value={copyText}
+                onChange={(e) => setCopyText(e.target.value)}
+                placeholder={"# DYOR 清单\n\n1. …\n2. …"}
+                className={`${inputClass} resize-y font-mono text-[13px]`}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <span className="mb-1.5 block text-sm text-muted">
+                资料文件（可选：PDF / CSV / ZIP 等）
+              </span>
+              <div className="flex items-center gap-3">
+                <label className="inline-flex cursor-pointer items-center rounded-lg border border-line px-4 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading">
+                  {uploading ? "上传中…" : fileUrl ? "重新上传" : "选择文件上传"}
+                  <input
+                    type="file"
+                    className="sr-only"
+                    disabled={uploading}
+                    accept=".pdf,.csv,.txt,.md,.zip,.json,.png,.jpg"
+                    onChange={(e) => void uploadFile(e.target.files?.[0])}
+                  />
+                </label>
+                {fileUrl && (
+                  <span className="truncate font-mono text-xs text-muted">{fileUrl}</span>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+
         <div className="sm:col-span-2">
           <button
             type="submit"
             disabled={busy}
             className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-deep disabled:opacity-60"
           >
-            {busy ? "保存中…" : "＋ 添加收藏"}
+            {busy ? "保存中…" : "＋ 添加好物"}
           </button>
         </div>
       </form>
@@ -145,13 +271,12 @@ export default function LinksManager({ links }: { links: LinkItem[] }) {
         </p>
       )}
 
-      {/* 列表（按分类分组展示） */}
       <div className="overflow-x-auto rounded-2xl border border-line bg-card">
         <table className="w-full min-w-[680px] text-left text-sm">
           <thead>
             <tr className="text-xs text-muted">
               <th className="border-b border-line px-4 py-3 font-medium">名称</th>
-              <th className="border-b border-line px-4 py-3 font-medium">分类</th>
+              <th className="border-b border-line px-4 py-3 font-medium">类型</th>
               <th className="border-b border-line px-4 py-3 font-medium">推荐</th>
               <th className="border-b border-line px-4 py-3 font-medium">链接</th>
               <th className="border-b border-line px-4 py-3 text-right font-medium">操作</th>
@@ -160,16 +285,21 @@ export default function LinksManager({ links }: { links: LinkItem[] }) {
           <tbody>
             {links.map((l) => (
               <tr key={l.url} className="border-b border-line last:border-0">
-                <td className="px-4 py-3 font-medium text-heading">{l.title}</td>
+                <td className="px-4 py-3 font-medium text-heading">
+                  {l.title}
+                  {l.type === "book" && l.author && (
+                    <span className="ml-1 text-xs font-normal text-muted">{l.author}</span>
+                  )}
+                </td>
                 <td className="px-4 py-3">
-                  <span className="rounded-full border border-line px-2 py-0.5 text-xs text-muted">
-                    {l.category}
+                  <span className="rounded-full bg-accent/10 px-2 py-0.5 text-xs text-accent dark:text-accent-mint">
+                    {TYPE_LABEL[l.type]}
                   </span>
                 </td>
-                <td className="max-w-[280px] px-4 py-3 text-muted">
+                <td className="max-w-[260px] px-4 py-3 text-muted">
                   <span className="line-clamp-2">{l.comment || "—"}</span>
                 </td>
-                <td className="max-w-[220px] truncate px-4 py-3 font-mono text-xs text-muted">
+                <td className="max-w-[200px] truncate px-4 py-3 font-mono text-xs text-muted">
                   {l.url}
                 </td>
                 <td className="px-4 py-3 text-right">

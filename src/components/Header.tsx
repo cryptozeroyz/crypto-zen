@@ -12,8 +12,9 @@ import { siteConfig } from "@/lib/siteConfig";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import Container from "@/components/Container";
 import ThemeToggle from "@/components/ThemeToggle";
+import PriceTicker from "@/components/PriceTicker";
 
-/** 单页导航：锚点 id 与文案 key */
+/** 单页导航：锚点 id 与文案 key（links 是独立页 /resources） */
 const NAV_ITEMS = [
   { key: "watchlist", anchor: "watchlist" },
   { key: "articles", anchor: "articles" },
@@ -44,7 +45,11 @@ export default function Header({ locale, t }: HeaderProps) {
   };
 
   const navHref = (anchor: string) =>
-    onHome ? `#${anchor}` : `/${locale}/#${anchor}`;
+    anchor === "links"
+      ? `/${locale}/resources`
+      : onHome
+        ? `#${anchor}`
+        : `/${locale}/#${anchor}`;
 
   return (
     <header className="bg-paper">
@@ -65,6 +70,9 @@ export default function Header({ locale, t }: HeaderProps) {
         </Link>
 
         <div className="flex items-center gap-3 sm:gap-5">
+          {/* 实时行情（BTC/ETH/SOL） */}
+          <PriceTicker ariaLabel={t.ticker.aria} />
+
           {/* 语言切换 */}
           <div
             role="group"
