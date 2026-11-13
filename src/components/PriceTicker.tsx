@@ -2,8 +2,8 @@
 
 /**
  * PriceTicker.tsx —— 头部行情条（BTC / ETH / SOL）
- * 纯前端：CoinGecko 免费公开 API（CORS 开放），挂载时拉取 + 每 60 秒刷新。
- * 拉取失败时保持旧数据，从未成功过则整体隐藏。
+ * 纯前端：CoinGecko markets 免费接口（含官方币 logo，CORS 开放），
+ * 挂载时拉取 + 每 60 秒刷新。失败保持旧数据，从未成功过则整体隐藏。
  */
 
 import { useEffect, useState } from "react";
@@ -11,16 +11,20 @@ import { useEffect, useState } from "react";
 interface CoinDef {
   id: string;
   sym: string;
-  icon: string;
 }
 
 const COINS: CoinDef[] = [
-  { id: "bitcoin", sym: "BTC", icon: "₿" },
-  { id: "ethereum", sym: "ETH", icon: "Ξ" },
-  { id: "solana", sym: "SOL", icon: "◎" },
+  { id: "bitcoin", sym: "BTC" },
+  { id: "ethereum", sym: "ETH" },
+  { id: "solana", sym: "SOL" },
 ];
 
-type Prices = Record<string, { usd: number; usd_24h_change?: number }>;
+interface CoinMarket {
+  id: string;
+  current_price: number;
+  price_change_percentage_24h?: number;
+  image?: string;
+}
 
 function formatPrice(p: number): string {
   if (p >= 1000)
@@ -30,7 +34,7 @@ function formatPrice(p: number): string {
 }
 
 export default function PriceTicker({ ariaLabel }: { ariaLabel: string }) {
-  const [prices, setPrices] = useState<Prices | null>(null);
+  const [markets, setMarkets] = useState<CoinMarket[] | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -39,12 +43,12 @@ export default function PriceTicker({ ariaLabel }: { ariaLabel: string }) {
       try {
         const ids = COINS.map((c) => c.id).join(",");
         const res = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`,
+          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`,
           { cache: "no-store" }
         );
         if (!res.ok) return;
-        const json = (await res.json()) as Prices;
-        if (!cancelled && json && json.bitcoin) setPrices(json);
+        const json = (await res.json()) as CoinMarket[];
+        if (!cancelled && Array.isArray(json) && json.length > 0) setMarkets(json);
       } catch {
         /* 网络失败保持旧数据 */
       }
@@ -59,24 +63,32 @@ export default function PriceTicker({ ariaLabel }: { ariaLabel: string }) {
   }, []);
 
   // 从未加载成功不渲染（避免闪烁）
-  if (!prices) return null;
+  if (!markets) return null;
 
   return (
     <div
       aria-label={ariaLabel}
       className="hidden items-center gap-4 font-mono text-xs lg:flex"
     >
-      {COINS.map(({ id, sym, icon }) => {
-        const item = prices[id];
+      {COINS.map(({ id, sym }) => {
+        const item = markets.find((m) => m.id === id);
         if (!item) return null;
-        const up = (item.usd_24h_change ?? 0) >= 0;
+        const up = (item.price_change_percentage_24h ?? 0) >= 0;
         return (
           <span key={id} className="flex items-center gap-1.5 whitespace-nowrap">
-            <span className="text-muted" aria-hidden="true">
-              {icon}
-            </span>
+            {item.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={item.image}
+                alt=""
+                width={16}
+                height={16}
+                loading="lazy"
+                className="h-4 w-4 rounded-full"
+              />
+            ) : null}
             <span className="font-semibold tabular-nums text-heading">
-              ${formatPrice(item.usd)}
+              ${formatPrice(item.current_price)}
             </span>
             <span
               className={`tabular-nums ${
@@ -86,7 +98,7 @@ export default function PriceTicker({ ariaLabel }: { ariaLabel: string }) {
               }`}
             >
               {up ? "+" : ""}
-              {(item.usd_24h_change ?? 0).toFixed(1)}%
+              {(item.price_change_percentage_24h ?? 0).toFixed(1)}%
             </span>
           </span>
         );

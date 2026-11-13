@@ -82,8 +82,34 @@
   animation: eq-bounce 0.9s ease-in-out infinite;
 }
 
+/* Hero 漂浮币元素 */
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(-6px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+/* 币名滚动带 */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-x 36s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .eq-bar {
+  .eq-bar,
+  .marquee-track {
     animation: none;
   }
 }

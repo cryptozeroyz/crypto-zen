@@ -8,7 +8,7 @@ import Container from "@/components/Container";
 
 export default function Footer({ t }: { t: Dictionary }) {
   return (
-    <footer className="mt-24 py-8">
+    <footer className="mt-10 py-8">
       <Container className="flex flex-col gap-1.5 font-sans text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
         <p>
           {t.footer.rights

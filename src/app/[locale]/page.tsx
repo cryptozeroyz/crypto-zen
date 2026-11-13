@@ -7,7 +7,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/Container";
-import AsteriskMark from "@/components/AsteriskMark";
+import MemeHeroArt from "@/components/MemeHeroArt";
+import MemeTape from "@/components/MemeTape";
 import SectionHead from "@/components/SectionHead";
 import SocialLinks from "@/components/SocialLinks";
 import WatchlistSection from "@/components/WatchlistSection";
@@ -15,7 +16,7 @@ import ArticlesSection from "@/components/ArticlesSection";
 import ContinueReading from "@/components/ContinueReading";
 import RandomPostButton from "@/components/RandomPostButton";
 import NowPlaying from "@/components/NowPlaying";
-import { getAllPosts, getSiteStats } from "@/lib/posts";
+import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
 import { siteConfig } from "@/lib/siteConfig";
@@ -32,15 +33,8 @@ export default async function HomePage({
   const t = getDictionary(locale);
 
   const posts = getAllPosts(locale);
-  const stats = getSiteStats(locale);
   const links = getLinks();
   const coins = await fetchWatchlistWithData();
-
-  const statCells = [
-    { label: t.home.stats.all, value: String(stats.total).padStart(2, "0"), href: "#articles" },
-    { label: t.home.stats.watch, value: String(coins.length).padStart(2, "0"), href: "#watchlist" },
-    { label: t.home.stats.links, value: String(links.length).padStart(2, "0"), href: `/${locale}/resources` },
-  ];
 
   return (
     <>
@@ -50,7 +44,7 @@ export default async function HomePage({
           aria-hidden="true"
           className="bg-dots absolute inset-0 opacity-70 [mask-image:radial-gradient(75%_80%_at_75%_35%,black,transparent)]"
         />
-        <Container className="relative grid gap-14 py-14 sm:py-16 lg:grid-cols-[1fr_300px] lg:items-center">
+        <Container className="relative grid gap-10 py-10 sm:py-12 lg:grid-cols-[1fr_320px] lg:items-center">
           <div>
             <h1 className="text-4xl font-bold leading-[1.18] tracking-tight sm:text-5xl">
               <span className="block text-heading">{t.home.hero.line1}</span>
@@ -89,7 +83,7 @@ export default async function HomePage({
               }}
             />
 
-            <div className="mt-8 flex flex-wrap items-center gap-6">
+            <div className="mt-7 flex flex-wrap items-center gap-6">
               <a
                 href="#articles"
                 className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-accent-deep hover:shadow-lg hover:shadow-accent/25"
@@ -104,39 +98,27 @@ export default async function HomePage({
                 {t.home.secondaryCta} <span aria-hidden="true">→</span>
               </a>
             </div>
-
-            {/* 统计带 */}
-            <div className="stats mt-10 grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-line bg-line">
-              {statCells.map((cell) => (
-                <Link
-                  key={cell.label}
-                  href={cell.href}
-                  className="bg-card p-5 transition-colors duration-200 hover:bg-accent/5"
-                >
-                  <p className="text-2xl font-bold tabular-nums tracking-tight text-heading">
-                    {cell.value}
-                  </p>
-                  <p className="mt-1 text-xs text-muted">{cell.label}</p>
-                </Link>
-              ))}
-            </div>
           </div>
 
-          <div className="relative hidden lg:block">
-            <AsteriskMark className="mx-auto aspect-square w-full max-w-[280px]" />
+          {/* Meme 币漂浮元素（桌面端） */}
+          <div className="relative hidden h-64 lg:block">
+            <MemeHeroArt className="h-full w-full max-w-[320px]" />
           </div>
         </Container>
+
+        {/* 币名滚动带 */}
+        <MemeTape />
       </section>
 
       {/* ============ 关注列表 ============ */}
       {coins.length > 0 && (
         <section id="watchlist" className="scroll-mt-24">
-          <Container className="py-14">
+          <Container className="py-7 sm:py-8">
             <SectionHead title={t.home.sections.watchlist} />
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
               {t.watchlist.intro}
             </p>
-            <div className="mt-7">
+            <div className="mt-5">
               <WatchlistSection coins={coins} locale={locale} t={t} />
             </div>
           </Container>
@@ -145,7 +127,7 @@ export default async function HomePage({
 
       {/* ============ 文章 ============ */}
       <section id="articles" className="scroll-mt-24">
-        <Container className="py-14">
+        <Container className="py-7 sm:py-8">
           <SectionHead
             title={t.home.sections.articles}
             action={
@@ -161,7 +143,7 @@ export default async function HomePage({
               />
             }
           />
-          <div className="mt-7">
+          <div className="mt-5">
             <ArticlesSection posts={posts} locale={locale} t={t} />
           </div>
         </Container>
@@ -169,7 +151,7 @@ export default async function HomePage({
 
       {/* ============ 继续阅读 / 我的收藏（localStorage，客户端） ============ */}
       <section id="reading" className="scroll-mt-24">
-        <Container className="py-14">
+        <Container className="py-7 sm:py-8">
           <ContinueReading
             posts={posts.map((p) => ({ slug: p.slug, title: p.title, cover: p.cover }))}
             locale={locale}
@@ -181,7 +163,7 @@ export default async function HomePage({
       {/* ============ 好物精选（全集见 /resources） ============ */}
       {links.length > 0 && (
         <section id="links" className="scroll-mt-24">
-          <Container className="py-14">
+          <Container className="py-7 sm:py-8">
             <SectionHead
               title={t.home.sections.links}
               href={`/${locale}/resources`}
@@ -214,7 +196,7 @@ export default async function HomePage({
 
       {/* ============ 关于我 ============ */}
       <section id="about" className="scroll-mt-24">
-        <Container className="py-14">
+        <Container className="py-7 sm:py-8">
           <SectionHead title={t.home.sections.about} />
           <div className="mt-6 flex items-start gap-4">
             <Image
@@ -235,9 +217,9 @@ export default async function HomePage({
 
       {/* ============ 找到我 ============ */}
       <section id="contact" className="scroll-mt-24">
-        <Container className="py-14">
+        <Container className="py-7 sm:py-8">
           <SectionHead title={t.home.sections.social} />
-          <div className="mt-7">
+          <div className="mt-5">
             <SocialLinks t={t} />
           </div>
         </Container>

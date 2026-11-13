@@ -42,11 +42,6 @@ const zh = {
     },
     primaryCta: "阅读文章",
     secondaryCta: "看看我在关注什么",
-    stats: {
-      all: "全部文章",
-      watch: "关注代币",
-      links: "好物推荐",
-    },
     sections: {
       articles: "文章",
       watchlist: "关注列表",
@@ -172,11 +167,6 @@ const en: typeof zh = {
     },
     primaryCta: "Read Articles",
     secondaryCta: "See what I'm watching",
-    stats: {
-      all: "Posts",
-      watch: "Watching",
-      links: "Resources",
-    },
     sections: {
       articles: "Articles",
       watchlist: "Watchlist",
