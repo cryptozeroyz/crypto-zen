@@ -25,6 +25,7 @@ import {
   POSTS_DIR,
   POSTS_EN_DIR,
   WATCHLIST_PATH,
+  LINKS_PATH,
 } from "@/lib/storage";
 import { parseMarkdown, isValidSlug } from "@/lib/frontmatter";
 import { translateMarkdown } from "@/lib/translate";
@@ -353,6 +354,117 @@ export async function watchlistDELETE(req: Request) {
 
   try {
     await writeWatchlist(next);
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, message: `保存失败：${e instanceof Error ? e.message : e}` },
+      { status: 500 }
+    );
+  }
+  return NextResponse.json({ ok: true });
+}
+
+/* ---------------- 链接收藏 ---------------- */
+
+interface LinkEntry {
+  title: string;
+  url: string;
+  category: string;
+  comment: string;
+  addedAt: string;
+}
+
+async function readLinks(): Promise<LinkEntry[]> {
+  const raw = await readTextFile(LINKS_PATH);
+  if (!raw) return [];
+  try {
+    const json = JSON.parse(raw);
+    return Array.isArray(json) ? json : [];
+  } catch {
+    return [];
+  }
+}
+
+async function writeLinks(list: LinkEntry[]): Promise<void> {
+  await saveTextFile(LINKS_PATH, JSON.stringify(list, null, 2) + "\n");
+}
+
+function isValidUrl(url: string): boolean {
+  return /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(url) && url.length <= 500;
+}
+
+export async function linksGET() {
+  if (!isAuthed()) return unauthorized();
+  return NextResponse.json({ ok: true, links: await readLinks() });
+}
+
+export async function linksPOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+
+  let title = "";
+  let url = "";
+  let category = "";
+  let comment = "";
+  try {
+    const body = await req.json();
+    title = String(body.title ?? "").trim();
+    url = String(body.url ?? "").trim();
+    category = String(body.category ?? "").trim() || "其他";
+    comment = String(body.comment ?? "").trim();
+  } catch {
+    /* 下方统一校验 */
+  }
+
+  if (!title) return badRequest("请填写名称");
+  if (!isValidUrl(url)) return badRequest("链接格式不正确（需以 http(s):// 开头）");
+
+  const list = await readLinks();
+  const existing = list.find((l) => l.url === url);
+  if (existing) {
+    // 同 URL 视为更新（改分类 / 评价）
+    existing.title = title;
+    existing.category = category;
+    existing.comment = comment;
+  } else {
+    list.unshift({
+      title,
+      url,
+      category,
+      comment,
+      addedAt: new Date().toISOString().slice(0, 10),
+    });
+  }
+
+  try {
+    await writeLinks(list);
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, message: `保存失败：${e instanceof Error ? e.message : e}` },
+      { status: 500 }
+    );
+  }
+  return NextResponse.json({ ok: true, updated: Boolean(existing) });
+}
+
+export async function linksDELETE(req: Request) {
+  if (!isAuthed()) return unauthorized();
+
+  let url = "";
+  try {
+    const body = await req.json();
+    url = String(body.url ?? "").trim();
+  } catch {
+    /* 下方统一校验 */
+  }
+  if (!url) return badRequest("缺少 url");
+
+  const list = await readLinks();
+  const next = list.filter((l) => l.url !== url);
+  if (next.length === list.length) {
+    return NextResponse.json({ ok: false, message: "未找到该链接" }, { status: 404 });
+  }
+
+  try {
+    await writeLinks(next);
   } catch (e) {
     return NextResponse.json(
       { ok: false, message: `保存失败：${e instanceof Error ? e.message : e}` },

@@ -13,7 +13,9 @@ import SocialLinks from "@/components/SocialLinks";
 import TrenchCard from "@/components/TrenchCard";
 import WatchlistSection from "@/components/WatchlistSection";
 import ArticlesSection from "@/components/ArticlesSection";
+import LinksSection from "@/components/LinksSection";
 import { getAllPosts, getSiteStats } from "@/lib/posts";
+import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
 import { fetchTrench } from "@/lib/trench";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
@@ -30,6 +32,7 @@ export default async function HomePage({
 
   const posts = getAllPosts(locale);
   const stats = getSiteStats(locale);
+  const links = getLinks();
   const [coins, trench] = await Promise.all([
     fetchWatchlistWithData(),
     fetchTrench(),
@@ -63,7 +66,7 @@ export default async function HomePage({
                 >
                   <path
                     d="M3 9 C 50 3, 140 12, 217 6"
-                    stroke="#81d8d0"
+                    stroke="#7dd3fc"
                     strokeWidth="5"
                     fill="none"
                     strokeLinecap="round"
@@ -150,6 +153,18 @@ export default async function HomePage({
           </div>
         </Container>
       </section>
+
+      {/* ============ 推荐（链接收藏） ============ */}
+      {links.length > 0 && (
+        <section id="links" className="scroll-mt-24">
+          <Container className="py-14">
+            <SectionHead title={t.home.sections.links} />
+            <div className="mt-7">
+              <LinksSection links={links} />
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* ============ 关于我 ============ */}
       <section id="about" className="scroll-mt-24">

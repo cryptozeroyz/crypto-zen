@@ -1,11 +1,11 @@
 import type { Config } from "tailwindcss";
 
 /**
- * 设计系统说明（v3 —— 参考 Glow 的清爽研究站风格）：
- * - 亮色优先：浅冷灰底 #F7F8FA、深墨蓝标题 #192536、正文 #3B4654
- * - 强调色：深青 #176F68（按钮/链接）、薄荷 #81D8D0（装饰图形）
- * - 大标题用厚重无衬线粗体，正文系统无衬线，衬线仅作点缀
- * - 暗色：近黑 #141719 + 同色系青绿，通过 .dark class 切换（CSS 变量驱动）
+ * 设计系统说明（v4 —— 蓝色系动态主题）：
+ * - 亮色：浅蓝灰底 #f5f8fc、深墨蓝标题、品牌蓝 #2563eb 强调
+ * - 暗色：深夜蓝底 #0a1424（深蓝不再是非黑），同族蓝色提亮
+ * - 主题随系统/时间自动切换，也可手动锁定浅色或深色（globals.css 的 .dark class）
+ * - 字体：无衬线正文，衬线仅作点缀
  */
 const config: Config = {
   darkMode: "class",
@@ -21,11 +21,11 @@ const config: Config = {
         muted: "var(--muted)",
         line: "var(--line)",
         codebg: "var(--code-bg)",
-        /** 品牌强调色（固定，不随主题变化） */
+        /** 品牌强调色（蓝色系，固定） */
         accent: {
-          DEFAULT: "#176f68",
-          deep: "#0f4f4a",
-          mint: "#81d8d0",
+          DEFAULT: "#2563eb",
+          deep: "#1d4ed8",
+          mint: "#38bdf8",
         },
       },
       fontFamily: {

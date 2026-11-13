@@ -17,6 +17,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 const NAV_ITEMS = [
   { key: "watchlist", anchor: "watchlist" },
   { key: "articles", anchor: "articles" },
+  { key: "links", anchor: "links" },
   { key: "about", anchor: "about" },
 ] as const;
 
@@ -121,10 +122,7 @@ export default function Header({ locale, t }: HeaderProps) {
             </ul>
           </nav>
 
-          <ThemeToggle
-            toDarkLabel={t.theme.toDark}
-            toLightLabel={t.theme.toLight}
-          />
+          <ThemeToggle labels={t.theme} />
         </div>
       </Container>
     </header>

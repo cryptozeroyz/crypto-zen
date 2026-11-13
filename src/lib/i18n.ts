@@ -22,6 +22,7 @@ const zh = {
   nav: {
     articles: "文章",
     watchlist: "关注",
+    links: "推荐",
     about: "关于",
     homeAria: "Crypto Zen 的首页",
     switchLang: "切换语言",
@@ -49,6 +50,7 @@ const zh = {
     sections: {
       articles: "文章",
       watchlist: "关注列表",
+      links: "推荐",
       about: "关于我",
       social: "找到我",
     },
@@ -110,7 +112,7 @@ const zh = {
       bot_fees: "终端手续费",
     },
   },
-  theme: { toDark: "切换到暗色模式", toLight: "切换到亮色模式" },
+  theme: { auto: "跟随系统", light: "浅色模式", dark: "暗色模式" },
 };
 
 const en: typeof zh = {
@@ -123,6 +125,7 @@ const en: typeof zh = {
   nav: {
     articles: "Articles",
     watchlist: "Watchlist",
+    links: "Resources",
     about: "About",
     homeAria: "Crypto Zen home",
     switchLang: "Switch language",
@@ -150,6 +153,7 @@ const en: typeof zh = {
     sections: {
       articles: "Articles",
       watchlist: "Watchlist",
+      links: "Resources",
       about: "About",
       social: "Find Me",
     },
@@ -211,7 +215,7 @@ const en: typeof zh = {
       bot_fees: "Terminal Fees",
     },
   },
-  theme: { toDark: "Switch to dark mode", toLight: "Switch to light mode" },
+  theme: { auto: "Auto", light: "Light", dark: "Dark" },
 };
 
 export type Dictionary = typeof zh;

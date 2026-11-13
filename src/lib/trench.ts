@@ -111,7 +111,7 @@ export function formatCount(value: number): string {
 const BAND_COLOR: Record<string, string> = {
   ded: "#98a2ad",
   cold: "#7a93a8",
-  active: "#176f68",
+  active: "#2563eb",
   hot: "#b45309",
   euphoric: "#b91c1c",
 };

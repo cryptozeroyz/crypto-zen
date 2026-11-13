@@ -140,7 +140,7 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
               type="checkbox"
               checked={holding}
               onChange={(e) => setHolding(e.target.checked)}
-              className="h-4 w-4 accent-[#176f68]"
+              className="h-4 w-4 accent-[#2563eb]"
             />
             当前持仓
           </label>

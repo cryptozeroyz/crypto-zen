@@ -421,7 +421,7 @@ export default function PostEditor({
             type="checkbox"
             checked={translate}
             onChange={(e) => setTranslate(e.target.checked)}
-            className="h-4 w-4 accent-[#176f68]"
+            className="h-4 w-4 accent-[#2563eb]"
           />
           同时生成英文版（保存后自动翻译，存为 content/posts-en）
         </label>
@@ -430,7 +430,7 @@ export default function PostEditor({
             type="checkbox"
             checked={fields.draft}
             onChange={(e) => set("draft", e.target.checked)}
-            className="h-4 w-4 accent-[#176f68]"
+            className="h-4 w-4 accent-[#2563eb]"
           />
           存为草稿（不会在网站上显示）
         </label>

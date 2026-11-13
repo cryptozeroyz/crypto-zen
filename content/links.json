@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Arkham",
+    "url": "https://arkhamintelligence.com",
+    "category": "链上工具",
+    "comment": "链上地址追踪与聪明钱监控的第一选择，我的早期信号研究主要靠它。",
+    "addedAt": "2026-11-13"
+  },
+  {
+    "title": "DexScreener",
+    "url": "https://dexscreener.com",
+    "category": "链上工具",
+    "comment": "看 K 线、按 CA 抓取行情的标配，本站关注列表的数据源。",
+    "addedAt": "2026-11-13"
+  },
+  {
+    "title": "tehcscreener",
+    "url": "https://tehcscreener.com",
+    "category": "数据看板",
+    "comment": "Trench Index 和发射盘数据的出处，首页「市场温度」就来自这里。",
+    "addedAt": "2026-11-13"
+  },
+  {
+    "title": "Dune",
+    "url": "https://dune.com",
+    "category": "数据看板",
+    "comment": "自定义链上仪表盘，写研报时的数据验证工具。",
+    "addedAt": "2026-11-13"
+  }
+]

@@ -7,7 +7,7 @@
 import type { Viewport } from "next";
 import "./globals.css";
 
-const themeInitScript = `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})();`;
+const themeInitScript = `(function(){try{var t=localStorage.getItem("theme");var m=window.matchMedia("(prefers-color-scheme: dark)");var apply=function(d){document.documentElement.classList.toggle("dark",d)};if(t==="light")apply(false);else if(t==="dark")apply(true);else{apply(m.matches);m.addEventListener("change",function(e){if(!localStorage.getItem("theme"))apply(e.matches)})}}catch(e){}})();`;
 
 /* 移动端浏览器主题色：亮暗分别适配 */
 export const viewport: Viewport = {

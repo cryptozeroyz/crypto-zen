@@ -7,23 +7,23 @@
    ============================================================ */
 
 :root {
-  --bg: #f7f8fa;
+  --bg: #f5f8fc;
   --card: #ffffff;
-  --text: #3b4654;
-  --heading: #192536;
-  --muted: #7a8590;
-  --line: rgba(25, 37, 54, 0.1);
-  --code-bg: #eef1f4;
+  --text: #3a4a63;
+  --heading: #16233a;
+  --muted: #7186a1;
+  --line: rgba(30, 60, 120, 0.12);
+  --code-bg: #eaf1f9;
 }
 
 .dark {
-  --bg: #141719;
-  --card: #1d2125;
-  --text: #dde2e7;
-  --heading: #eef1f4;
-  --muted: #96a0a9;
-  --line: rgba(255, 255, 255, 0.1);
-  --code-bg: #20252a;
+  --bg: #0a1424;
+  --card: #101d33;
+  --text: #c9d6e8;
+  --heading: #eef4ff;
+  --muted: #8296b0;
+  --line: rgba(148, 184, 255, 0.14);
+  --code-bg: #14233d;
 }
 
 /* ============================================================
@@ -41,16 +41,16 @@
   }
 
   ::selection {
-    background: rgba(23, 111, 104, 0.18);
+    background: rgba(37, 99, 235, 0.16);
   }
 
   .dark ::selection {
-    background: rgba(129, 216, 208, 0.25);
+    background: rgba(56, 189, 248, 0.25);
   }
 
-  /* 焦点态可见：品牌青描边 */
+  /* 焦点态可见：品牌蓝描边 */
   :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-    outline: 2px solid #176f68;
+    outline: 2px solid #2563eb;
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -74,7 +74,7 @@
   .bg-dots {
     background-image: radial-gradient(
       circle,
-      rgba(25, 37, 54, 0.14) 1.2px,
+      rgba(37, 99, 235, 0.14) 1.2px,
       transparent 1.2px
     );
     background-size: 22px 22px;
@@ -82,7 +82,7 @@
   .dark .bg-dots {
     background-image: radial-gradient(
       circle,
-      rgba(255, 255, 255, 0.14) 1.2px,
+      rgba(125, 211, 252, 0.16) 1.2px,
       transparent 1.2px
     );
   }
@@ -125,16 +125,16 @@
   color: var(--heading);
 }
 
-/* 链接：品牌青，悬停下划线 */
+/* 链接：品牌蓝，悬停下划线 */
 .prose a {
-  color: #176f68;
+  color: #2563eb;
   text-decoration: none;
   text-underline-offset: 3px;
   transition: text-decoration-color 200ms ease;
 }
 
 .dark .prose a {
-  color: #81d8d0;
+  color: #7dd3fc;
 }
 
 .prose a:hover {
@@ -159,11 +159,11 @@
 }
 
 .prose ul > li::marker {
-  color: #176f68;
+  color: #2563eb;
 }
 
 .dark .prose ul > li::marker {
-  color: #81d8d0;
+  color: #7dd3fc;
 }
 
 .prose ol > li::marker {
@@ -171,16 +171,16 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* 引用块：左侧青色细线，无底色 */
+/* 引用块：左侧蓝色细线，无底色 */
 .prose blockquote {
   margin: 1.6em 0;
   padding-left: 1.1em;
-  border-left: 3px solid #176f68;
+  border-left: 3px solid #2563eb;
   color: var(--muted);
 }
 
 .dark .prose blockquote {
-  border-left-color: #81d8d0;
+  border-left-color: #7dd3fc;
 }
 
 .prose blockquote p {

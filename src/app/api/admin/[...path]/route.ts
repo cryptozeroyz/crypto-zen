@@ -24,6 +24,7 @@ export async function GET(_req: Request, { params }: Ctx) {
   const [a, b] = params.path ?? [];
   if (a === "posts" && !b) return H.postsGET();
   if (a === "watchlist" && !b) return H.watchlistGET();
+  if (a === "links" && !b) return H.linksGET();
   return NOT_FOUND();
 }
 
@@ -40,6 +41,8 @@ export async function POST(req: Request, { params }: Ctx) {
       return H.uploadPOST(req);
     case "watchlist":
       return H.watchlistPOST(req);
+    case "links":
+      return H.linksPOST(req);
     case "posts":
       return b ? H.postPUT(b, req) : H.postsPOST(req);
     default:
@@ -57,5 +60,6 @@ export async function DELETE(req: Request, { params }: Ctx) {
   const [a, b] = params.path ?? [];
   if (a === "posts" && b) return H.postDELETE(b);
   if (a === "watchlist" && !b) return H.watchlistDELETE(req);
+  if (a === "links" && !b) return H.linksDELETE(req);
   return NOT_FOUND();
 }

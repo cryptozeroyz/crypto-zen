@@ -48,7 +48,7 @@ export default async function OgImage({
           height: "100%",
           display: "flex",
           background:
-            "linear-gradient(135deg, #0d3f3b 0%, #176f68 60%, #1b7a72 100%)",
+            "linear-gradient(135deg, #172554 0%, #1e40af 60%, #2563eb 100%)",
           color: "#f2f7f6",
           fontFamily: "NotoSansSC",
           position: "relative",
@@ -82,7 +82,7 @@ export default async function OgImage({
                   width: 4,
                   height: 44,
                   borderRadius: 4,
-                  background: "#81d8d0",
+                  background: "#7dd3fc",
                   transform: `rotate(${deg}deg)`,
                   opacity: deg % 60 === 0 ? 1 : 0.55,
                 }}
@@ -105,8 +105,8 @@ export default async function OgImage({
             fontWeight: 700,
             padding: "10px 24px",
             borderRadius: 12,
-            background: "#81d8d0",
-            color: "#0d3f3b",
+            background: "#7dd3fc",
+            color: "#172554",
           }}
         >
           {locale === "en"
@@ -130,7 +130,7 @@ export default async function OgImage({
             left: 72,
             top: 250,
             fontSize: 24,
-            color: "#81d8d0",
+            color: "#7dd3fc",
             letterSpacing: 4,
           }}
         >
@@ -161,7 +161,7 @@ export default async function OgImage({
             left: 72,
             bottom: 72,
             fontSize: 24,
-            color: "#a7ccc7",
+            color: "#a8c3ee",
           }}
         >
           {siteConfig.title}
@@ -175,7 +175,7 @@ export default async function OgImage({
             right: 72,
             bottom: 72,
             fontSize: 24,
-            color: "#a7ccc7",
+            color: "#a8c3ee",
           }}
         >
           {post.date}

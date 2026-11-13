@@ -8,7 +8,7 @@ export default function AsteriskMark({ className = "" }: { className?: string })
   return (
     <div aria-hidden="true" className={`relative ${className}`}>
       {/* 光晕 */}
-      <div className="absolute inset-[-18%] rounded-full bg-[radial-gradient(circle,rgba(129,216,208,0.3),transparent_65%)]" />
+      <div className="absolute inset-[-18%] rounded-full bg-[radial-gradient(circle,rgba(125,211,252,0.3),transparent_65%)]" />
       {/* 星芒本体 */}
       <svg
         viewBox="0 0 200 200"

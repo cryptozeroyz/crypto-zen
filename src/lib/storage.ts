@@ -145,6 +145,7 @@ async function ghDelete(dir: string, slug: string): Promise<void> {
 /* ---------------- 通用文本文件（JSON 数据等） ---------------- */
 
 const WATCHLIST_PATH = "content/watchlist.json";
+const LINKS_PATH = "content/links.json";
 
 function localReadText(relPath: string): string | null {
   const abs = path.join(process.cwd(), relPath);
@@ -211,7 +212,7 @@ export async function saveTextFile(relPath: string, content: string): Promise<vo
   localSaveText(relPath, content);
 }
 
-export { WATCHLIST_PATH };
+export { WATCHLIST_PATH, LINKS_PATH };
 
 /* ---------------- 统一接口 ---------------- */
 
