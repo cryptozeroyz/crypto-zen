@@ -9,6 +9,7 @@ import { locales, isLocale, getDictionary } from "@/lib/i18n";
 import { siteConfig } from "@/lib/siteConfig";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FortuneDraw from "@/components/FortuneDraw";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -65,6 +66,19 @@ export default function LocaleLayout({
         {children}
       </main>
       <Footer t={t} />
+      {/* 每日好运签（浮动入口） */}
+      <FortuneDraw
+        locale={locale}
+        labels={{
+          button: t.fortune.button,
+          draw: t.fortune.draw,
+          already: t.fortune.already,
+          yi: t.fortune.yi,
+          ji: t.fortune.ji,
+          close: t.fortune.close,
+          brand: t.fortune.brand,
+        }}
+      />
     </>
   );
 }

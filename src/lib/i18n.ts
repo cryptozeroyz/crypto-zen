@@ -134,6 +134,15 @@ const zh = {
     download: "下载 ↓",
     empty: "没有符合条件的条目。",
   },
+  fortune: {
+    button: "每日好运签",
+    draw: "正在为你抽签…",
+    already: "今日签已抽",
+    yi: "宜",
+    ji: "忌",
+    close: "关闭",
+    brand: "CRYPTO ZEN · 每日好运签",
+  },
   theme: { auto: "跟随系统", light: "浅色模式", dark: "暗色模式" },
 };
 
@@ -258,6 +267,15 @@ const en: typeof zh = {
     copied: "Copied ✓",
     download: "Download ↓",
     empty: "Nothing matches your filters.",
+  },
+  fortune: {
+    button: "Daily Fortune",
+    draw: "Drawing your fortune…",
+    already: "Today's draw",
+    yi: "Do",
+    ji: "Avoid",
+    close: "Close",
+    brand: "CRYPTO ZEN · DAILY FORTUNE",
   },
   theme: { auto: "Auto", light: "Light", dark: "Dark" },
 };
