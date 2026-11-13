@@ -60,6 +60,9 @@ const zh = {
     noResult: "没有符合条件的文章。",
     loadMore: "加载更多 · 还有 {n} 篇",
     noMore: "已经到底了。",
+    random: "随便看看",
+    randomDrawing: "正在抽取…",
+    randomAria: "随机打开一篇文章",
   },
   category: { research: "研究报告", essay: "随笔", ops: "产品运营" },
   post: {
@@ -163,6 +166,9 @@ const en: typeof zh = {
     noResult: "No posts match your filters.",
     loadMore: "Load more · {n} left",
     noMore: "That's all.",
+    random: "Random post",
+    randomDrawing: "Picking…",
+    randomAria: "Open a random post",
   },
   category: { research: "Research", essay: "Essay", ops: "Product & Ops" },
   post: {

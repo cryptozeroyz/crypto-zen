@@ -14,6 +14,7 @@ import TrenchCard from "@/components/TrenchCard";
 import WatchlistSection from "@/components/WatchlistSection";
 import ArticlesSection from "@/components/ArticlesSection";
 import LinksSection from "@/components/LinksSection";
+import RandomPostButton from "@/components/RandomPostButton";
 import { getAllPosts, getSiteStats } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
@@ -147,7 +148,21 @@ export default async function HomePage({
       {/* ============ 文章 ============ */}
       <section id="articles" className="scroll-mt-24">
         <Container className="py-14">
-          <SectionHead title={t.home.sections.articles} />
+          <SectionHead
+            title={t.home.sections.articles}
+            action={
+              <RandomPostButton
+                slugs={posts.map((p) => p.slug)}
+                locale={locale}
+                variant="primary"
+                labels={{
+                  idle: t.articles.random,
+                  drawing: t.articles.randomDrawing,
+                  aria: t.articles.randomAria,
+                }}
+              />
+            }
+          />
           <div className="mt-7">
             <ArticlesSection posts={posts} locale={locale} t={t} />
           </div>

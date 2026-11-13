@@ -15,6 +15,7 @@ import Container from "@/components/Container";
 import DexChart from "@/components/DexChart";
 import Toc from "@/components/Toc";
 import Disclosure from "@/components/Disclosure";
+import RandomPostButton from "@/components/RandomPostButton";
 
 /** 构建期生成全部文章路径（英文缺失的文章在渲染时给出提示页） */
 export function generateStaticParams() {
@@ -111,13 +112,26 @@ export default function PostPage({
         <div className="flex justify-center gap-14">
           {/* 正文栏 */}
           <div className="w-full max-w-content">
-            {/* 返回链接（首页文章区块） */}
-            <Link
-              href={`/${locale}/#articles`}
-              className="text-sm text-muted underline-offset-4 transition-colors hover:text-heading hover:underline"
-            >
-              {t.post.back}
-            </Link>
+            {/* 返回链接（首页文章区块）+ 随便看看（排除当前篇） */}
+            <div className="flex items-center justify-between gap-4">
+              <Link
+                href={`/${locale}/#articles`}
+                className="text-sm text-muted underline-offset-4 transition-colors hover:text-heading hover:underline"
+              >
+                {t.post.back}
+              </Link>
+              <RandomPostButton
+                slugs={getAllPosts(locale).map((p) => p.slug)}
+                locale={locale}
+                excludeSlug={post.slug}
+                variant="ghost"
+                labels={{
+                  idle: t.articles.random,
+                  drawing: t.articles.randomDrawing,
+                  aria: t.articles.randomAria,
+                }}
+              />
+            </div>
 
             {/* 文章头部 */}
             <header className="mt-8">
