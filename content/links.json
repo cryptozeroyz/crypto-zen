@@ -1,5 +1,15 @@
 [
   {
+    "title": "方程式新闻",
+    "url": "https://eqn.news/api#catalog",
+    "type": "tool",
+    "comment": "方程式新闻是速度最快的华语加密快讯。毫秒级加密快讯， 直接推进你的程序。",
+    "tags": [
+      "监控"
+    ],
+    "addedAt": "2026-11-16"
+  },
+  {
     "title": "穷查理宝典",
     "url": "https://search.douban.com/book/subject_search?search_text=%E7%A9%B7%E6%9F%A5%E7%90%86%E5%AE%9D%E5%85%B8",
     "type": "book",
