@@ -164,6 +164,10 @@ const zh = {
     tomorrow: "明天再来，领取下一份 Alpha。",
     no: "NO.",
   },
+  flowers: {
+    send: "送一朵花",
+    received: "已收到鲜花",
+  },
   theme: { auto: "跟随系统", light: "浅色模式", dark: "暗色模式" },
 };
 
@@ -318,6 +322,10 @@ const en: typeof zh = {
     historyEmpty: "No history yet — draw today's first.",
     tomorrow: "Come back tomorrow for your next Alpha.",
     no: "NO.",
+  },
+  flowers: {
+    send: "Send a flower",
+    received: "Flowers received",
   },
   theme: { auto: "Auto", light: "Light", dark: "Dark" },
 };

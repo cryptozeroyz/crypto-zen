@@ -93,6 +93,28 @@
   }
 }
 
+/* 送花浮标：轻柔上下漂浮（幅度比 Hero 币小）+ 点击涟漪 */
+@keyframes float-y-soft {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+@keyframes flower-ping {
+  0% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
 /* 收藏星标弹跳 */
 @keyframes bookmark-pop {
   0% {

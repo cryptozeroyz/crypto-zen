@@ -9,6 +9,7 @@ import { locales, isLocale, getDictionary } from "@/lib/i18n";
 import { siteConfig } from "@/lib/siteConfig";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FlowerFloat from "@/components/FlowerFloat";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -65,6 +66,7 @@ export default function LocaleLayout({
         {children}
       </main>
       <Footer t={t} />
+      <FlowerFloat sendLabel={t.flowers.send} receivedLabel={t.flowers.received} />
     </>
   );
 }
