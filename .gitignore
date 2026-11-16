@@ -24,6 +24,9 @@ yarn-error.log*
 .env*.local
 .env
 
+# VPS 部署工具（含连接参数与密钥，勿入库）
+/.deploy/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
