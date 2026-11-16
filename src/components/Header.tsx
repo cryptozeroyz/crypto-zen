@@ -14,7 +14,6 @@ import type { Dictionary, Locale } from "@/lib/i18n";
 import Container from "@/components/Container";
 import ThemeToggle from "@/components/ThemeToggle";
 import PriceTicker from "@/components/PriceTicker";
-import FortuneDraw from "@/components/FortuneDraw";
 
 /** 单页导航：锚点 id 与文案 key（links → /resources，news → /news） */
 const NAV_ITEMS = [
@@ -79,19 +78,14 @@ export default function Header({ locale, t }: HeaderProps) {
           {/* 实时行情（BTC/ETH/SOL） */}
           <PriceTicker ariaLabel={t.ticker.aria} />
 
-          {/* 每日好运签 */}
-          <FortuneDraw
-            locale={locale}
-            labels={{
-              button: t.fortune.button,
-              draw: t.fortune.draw,
-              already: t.fortune.already,
-              yi: t.fortune.yi,
-              ji: t.fortune.ji,
-              close: t.fortune.close,
-              brand: t.fortune.brand,
-            }}
-          />
+          {/* Daily Alpha · 每日好运签 */}
+          <Link
+            href={`/${locale}/alpha`}
+            className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-card px-3 py-1.5 text-[13px] font-medium text-heading transition-all duration-200 hover:border-accent/60 hover:shadow-[0_0_14px_rgba(37,99,235,0.2)]"
+          >
+            <span aria-hidden="true">🎐</span>
+            <span className="hidden sm:inline">{t.fortune.button}</span>
+          </Link>
 
           {/* 语言切换 */}
           <div
