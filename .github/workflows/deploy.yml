@@ -1,0 +1,48 @@
+# Deploy to VPS（阿里云·首尔）—— 推送到 main 自动构建并部署
+# 前置条件（GitHub 仓库 Settings → Secrets 已配置）：
+#   DEPLOY_HOST   服务器 IP
+#   DEPLOY_KEY    部署专用 SSH 私钥（公钥在服务器的 /root/.ssh/authorized_keys）
+# 说明：服务器用 standalone 产物 + PM2 运行；送花计数的提交不触发部署。
+
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "content/flowers.json"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 构建 standalone 产物
+        run: |
+          npm ci
+          npm run build
+          rm -rf .next/standalone/.next/cache
+          cp -r .next/static .next/standalone/.next/static
+
+      - name: 同步到服务器（保留服务器上的 .env 与鲜花计数）
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+          rsync -avz --exclude=".env" -e "ssh -i ~/.ssh/deploy_key" .next/standalone/ root@${{ secrets.DEPLOY_HOST }}:/home/crypto/app/
+
+      - name: 重启应用
+        run: |
+          echo "${{ secrets.DEPLOY_KEY }}" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=accept-new root@${{ secrets.DEPLOY_HOST }} "
+            chown -R crypto:crypto /home/crypto/app
+            su - crypto -c 'pm2 reload crypto-zen --update-env' || su - crypto -c 'cd /home/crypto/app && pm2 start server.js --name crypto-zen --time'
+            su - crypto -c 'pm2 save'
+          "
