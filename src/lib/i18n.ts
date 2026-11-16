@@ -22,11 +22,18 @@ const zh = {
   nav: {
     articles: "文章",
     watchlist: "关注",
+    news: "快讯",
     links: "推荐",
     bookmarks: "收藏",
     about: "关于",
     homeAria: "Crypto Zen 的首页",
     switchLang: "切换语言",
+  },
+  news: {
+    title: "链上快讯",
+    intro: "毫秒级加密快讯，每 2 分钟自动更新。点击标题跳转原文。",
+    empty: "暂时没有快讯，稍后再来看看。",
+    source: "数据来自 EquationNews · 每 2 分钟更新",
   },
   footer: {
     rights: "© {year} {name} · 保留所有权利",
@@ -158,11 +165,18 @@ const en: typeof zh = {
   nav: {
     articles: "Articles",
     watchlist: "Watchlist",
+    news: "News",
     links: "Resources",
     bookmarks: "Saved",
     about: "About",
     homeAria: "Crypto Zen home",
     switchLang: "Switch language",
+  },
+  news: {
+    title: "Flash News",
+    intro: "Millisecond-level crypto news, refreshed every 2 minutes. Click a headline for the source.",
+    empty: "No headlines right now — check back soon.",
+    source: "Data: EquationNews · updates every 2 min",
   },
   footer: {
     rights: "© {year} {name}. All rights reserved.",

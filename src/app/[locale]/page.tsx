@@ -9,6 +9,8 @@ import Image from "next/image";
 import Container from "@/components/Container";
 import MemeHeroArt from "@/components/MemeHeroArt";
 import SectionHead from "@/components/SectionHead";
+import NewsMarquee from "@/components/NewsMarquee";
+import NewsList from "@/components/NewsList";
 import SocialLinks from "@/components/SocialLinks";
 import WatchlistSection from "@/components/WatchlistSection";
 import ArticlesSection from "@/components/ArticlesSection";
@@ -18,6 +20,7 @@ import NowPlaying from "@/components/NowPlaying";
 import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
+import { fetchEqnNews } from "@/lib/eqn";
 import { HERO_LOGOS } from "@/lib/coin-images";
 import { siteConfig } from "@/lib/siteConfig";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
@@ -34,7 +37,10 @@ export default async function HomePage({
 
   const posts = getAllPosts(locale);
   const links = getLinks();
-  const coins = await fetchWatchlistWithData();
+  const [coins, news] = await Promise.all([
+    fetchWatchlistWithData(),
+    fetchEqnNews(8),
+  ]);
 
   return (
     <>
@@ -105,6 +111,11 @@ export default async function HomePage({
             <MemeHeroArt logos={HERO_LOGOS} className="h-full w-full max-w-[320px]" />
           </div>
         </Container>
+
+        {/* 快讯跑马灯（点击进入 /news） */}
+        <Container>
+          <NewsMarquee items={news} href={`/${locale}/news`} />
+        </Container>
       </section>
 
       {/* ============ 关注列表 ============ */}
@@ -117,6 +128,22 @@ export default async function HomePage({
             </p>
             <div className="mt-5">
               <WatchlistSection coins={coins} locale={locale} t={t} />
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* ============ 链上快讯 ============ */}
+      {news.length > 0 && (
+        <section id="news" className="scroll-mt-24">
+          <Container className="py-7 sm:py-8">
+            <SectionHead
+              title={t.news.title}
+              href={`/${locale}/news`}
+              linkText={t.home.viewAll}
+            />
+            <div className="mt-4">
+              <NewsList items={news} locale={locale} t={t} compact />
             </div>
           </Container>
         </section>

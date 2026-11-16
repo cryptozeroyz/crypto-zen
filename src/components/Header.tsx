@@ -16,10 +16,11 @@ import ThemeToggle from "@/components/ThemeToggle";
 import PriceTicker from "@/components/PriceTicker";
 import FortuneDraw from "@/components/FortuneDraw";
 
-/** 单页导航：锚点 id 与文案 key（links 是独立页 /resources） */
+/** 单页导航：锚点 id 与文案 key（links → /resources，news → /news） */
 const NAV_ITEMS = [
   { key: "watchlist", anchor: "watchlist" },
   { key: "articles", anchor: "articles" },
+  { key: "news", anchor: "news" },
   { key: "links", anchor: "links" },
   { key: "bookmarks", anchor: "reading" },
   { key: "about", anchor: "about" },
@@ -50,9 +51,11 @@ export default function Header({ locale, t }: HeaderProps) {
   const navHref = (anchor: string) =>
     anchor === "links"
       ? `/${locale}/resources`
-      : onHome
-        ? `#${anchor}`
-        : `/${locale}/#${anchor}`;
+      : anchor === "news"
+        ? `/${locale}/news`
+        : onHome
+          ? `#${anchor}`
+          : `/${locale}/#${anchor}`;
 
   return (
     <header className="bg-paper">
