@@ -39,7 +39,7 @@ export default async function HomePage({
   const links = getLinks();
   const [coins, news] = await Promise.all([
     fetchWatchlistWithData(),
-    fetchEqnNews(8),
+    fetchEqnNews(3),
   ]);
 
   return (

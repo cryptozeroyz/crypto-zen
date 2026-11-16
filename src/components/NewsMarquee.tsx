@@ -21,7 +21,7 @@ export default function NewsMarquee({
     <Link
       href={href}
       className="group relative mt-8 block overflow-hidden py-1.5 [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
-      aria-label="链上快讯"
+      aria-label="方程式新闻"
     >
       <div className="marquee-track flex w-max items-center whitespace-nowrap text-[13px]">
         {row.map((item, i) => (
