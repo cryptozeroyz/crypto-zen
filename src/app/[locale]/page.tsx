@@ -38,10 +38,11 @@ export default async function HomePage({
 
   const posts = getAllPosts(locale);
   const links = getLinks();
-  const [coins, news] = await Promise.all([
+  const [wl, news] = await Promise.all([
     fetchWatchlistWithData(),
     fetchEqnNews(3),
   ]);
+  const coins = wl.coins;
 
   return (
     <>

@@ -40,6 +40,8 @@ export async function POST(req: Request, { params }: Ctx) {
     case "upload":
       return H.uploadPOST(req);
     case "watchlist":
+      if (b === "events") return H.watchlistEventPOST(req);
+      if (b === "tags") return H.tagsPOST(req);
       return H.watchlistPOST(req);
     case "links":
       return H.linksPOST(req);

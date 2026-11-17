@@ -14,7 +14,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { getWatchlist, fetchCoinData } from "@/lib/watchlist";
+import { fetchWatchlistWithData } from "@/lib/watchlist";
 
 export const revalidate = 60;
 
@@ -201,28 +201,125 @@ export async function GET(req: Request) {
     }
   }
 
-  /* ---------- 看板聚合数据：关注列表 + 行情 + 7D 迷你走势 ---------- */
+  /* ---------- 看板聚合数据：关注列表 + 行情 + 7D 走势 + Why 标签 ---------- */
   if (type === "watchlist") {
     try {
-      const coins = getWatchlist();
+      const { coins, tags } = await fetchWatchlistWithData();
       const enriched = await Promise.all(
         coins.map(async (c) => {
-          const data = await fetchCoinData(c.ca).catch(() => null);
           let spark: number[] | null = null;
-          if (data?.pairAddress) {
-            spark = await fetchGeckoSpark(data.chainId, data.pairAddress).catch(
+          if (c.data?.pairAddress) {
+            spark = await fetchGeckoSpark(c.data.chainId, c.data.pairAddress).catch(
               () => null
             );
           }
-          return { ...c, data, spark };
+          return { ...c, spark };
         })
       );
       return NextResponse.json(
-        { updatedAt: Date.now(), coins: enriched },
+        { updatedAt: Date.now(), coins: enriched, tags },
         { headers: { "Cache-Control": "s-maxage=120, stale-while-revalidate=60" } }
       );
     } catch {
-      return NextResponse.json({ coins: [] }, { status: 502 });
+      return NextResponse.json({ coins: [], tags: [] }, { status: 502 });
+    }
+  }
+
+  /* ---------- 成绩单统计：叙事胜率 / 分链准确度 / 7D·30D 持有期表现 ---------- */
+  if (type === "grade") {
+    try {
+      const { coins } = await fetchWatchlistWithData();
+      const withSince = coins
+        .map((c) => ({
+          c,
+          since: c.data?.priceUsd && c.followPrice
+            ? (c.data.priceUsd / c.followPrice - 1) * 100
+            : null,
+        }))
+        .filter((x): x is { c: (typeof coins)[number]; since: number } => x.since !== null);
+
+      /* 叙事胜率：按 why 标签分组（一个币的多个标签各计一次） */
+      const tagMap = new Map<string, number[]>();
+      for (const { c, since } of withSince) {
+        for (const w of c.why ?? []) {
+          if (!tagMap.has(w)) tagMap.set(w, []);
+          tagMap.get(w)!.push(since);
+        }
+      }
+      const narratives = [...tagMap.entries()].map(([id, arr]) => ({
+        id,
+        count: arr.length,
+        avg: arr.reduce((a, b) => a + b, 0) / arr.length,
+        winRate: (arr.filter((v) => v > 0).length / arr.length) * 100,
+      }));
+
+      /* 分链准确度 */
+      const chainMap = new Map<string, number[]>();
+      for (const { c, since } of withSince) {
+        const ch = c.chain || c.data?.chainId || "unknown";
+        if (!chainMap.has(ch)) chainMap.set(ch, []);
+        chainMap.get(ch)!.push(since);
+      }
+      const chains = [...chainMap.entries()].map(([id, arr]) => ({
+        id,
+        count: arr.length,
+        avg: arr.reduce((a, b) => a + b, 0) / arr.length,
+        winRate: (arr.filter((v) => v > 0).length / arr.length) * 100,
+      }));
+
+      /* 持有期表现：从日线 OHLCV 查关注日 +7/+30 的价格 */
+      const windows = { d7: [] as number[], d30: [] as number[] };
+      await Promise.all(
+        withSince.map(async ({ c, since }) => {
+          const pair = c.data?.pairAddress;
+          const chain = c.data?.chainId;
+          if (!pair || !chain || !c.addedAt) return;
+          const list = await fetchGeckoOhlcv(chain, pair, "ALL").catch(() => []);
+          if (list.length < 2) {
+            windows.d7.push(since);
+            return;
+          }
+          /* closes 为最近 90 天日线（时间正序）；关注日+N 的收盘索引： */
+          const closes = list;
+          const startTs = new Date(c.addedAt).getTime();
+          const step = 86_400_000; // day 聚合 ≈ 每日一根
+          for (const [key, days] of [["d7", 7], ["d30", 30]] as const) {
+            const i = closes.length - 1 - Math.floor((Date.now() - (startTs + days * step)) / step);
+            if (i >= 0 && i < closes.length && closes[i] > 0 && c.followPrice) {
+              windows[key].push((closes[i] / c.followPrice - 1) * 100);
+            }
+          }
+        })
+      );
+      const win = (arr: number[]) =>
+        arr.length
+          ? {
+              avg: arr.reduce((a, b) => a + b, 0) / arr.length,
+              winRate: (arr.filter((v) => v > 0).length / arr.length) * 100,
+              count: arr.length,
+            }
+          : null;
+
+      return NextResponse.json(
+        {
+          total: withSince.length,
+          winRate:
+            withSince.length > 0
+              ? (withSince.filter((x) => x.since > 0).length / withSince.length) * 100
+              : null,
+          avgSince:
+            withSince.length > 0
+              ? withSince.reduce((a, x) => a + x.since, 0) / withSince.length
+              : null,
+          narratives,
+          chains,
+          d7: win(windows.d7),
+          d30: win(windows.d30),
+        },
+        { headers: { "Cache-Control": "s-maxage=600, stale-while-revalidate=300" } }
+      );
+    } catch {
+      return NextResponse.json({ narratives: [], chains: [] }, { status: 502 });
     }
   }
 

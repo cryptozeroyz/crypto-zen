@@ -34,15 +34,15 @@ export default function HomeWatchlist({
         const up24 = (c.data?.change24h ?? 0) >= 0;
         return (
           <Link
-            key={c.ca}
+            key={c.address}
             href={`/${locale}/dashboard`}
             className="group rounded-2xl border border-line bg-card p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-lg"
           >
             <div className="flex items-center gap-2.5">
               <CoinAvatar
                 imageUrl={c.data?.imageUrl}
-                symbol={c.data?.symbol ?? c.ca.slice(0, 4)}
-                hue={avatarHue(c.ca)}
+                symbol={c.data?.symbol ?? c.address.slice(0, 4)}
+                hue={avatarHue(c.address)}
                 size={36}
               />
               <div className="min-w-0">

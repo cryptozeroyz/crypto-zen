@@ -1,64 +1,202 @@
 [
   {
-    "ca": "9k2nqjUrSh9p2ZBnWxNE3QRWYiLocrWZfoDm3Vdxpump",
+    "chain": "solana",
+    "address": "9k2nqjUrSh9p2ZBnWxNE3QRWYiLocrWZfoDm3Vdxpump",
+    "status": "watching",
+    "why": [],
     "comment": "持币即玩的gamefi叙事，CHAR铸1个英雄NFT，组队打怪掉souls，souls直接兑换奖池里的 CHAR。风险点就是dev发过很多代币成功率低，gamefi成功率低",
     "addedAt": "2026-11-17",
-    "holding": false,
     "followPrice": 0.0002531,
-    "followMcap": 248774
+    "followMcap": 248774,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-17",
+        "price": 0.0002531,
+        "note": "持币即玩的gamefi叙事，CHAR铸1个英雄NFT，组队打怪掉souls，souls直接兑换奖池里的 CHAR。风险点就是dev发过很多代币成功率低，gamefi成功率低",
+        "why": []
+      }
+    ],
+    "symbol": "CHAR",
+    "name": "Onchain Chars",
+    "dex": "pumpswap",
+    "pairAddress": "J5JQhQtLcLU24ZTbJ85oqgX2rSkv1BgS7Kteo8fLHtGU",
+    "pairLiquidity": 28371.47,
+    "pairVolume24h": 1762761.32
   },
   {
-    "ca": "FSkyjfqB26u6c2GSgpACrjbxp9yQAR8rutxprVNppump",
+    "chain": "solana",
+    "address": "FSkyjfqB26u6c2GSgpACrjbxp9yQAR8rutxprVNppump",
+    "status": "holding",
+    "why": [],
     "comment": "mihao 是否能带来cat 季不好说，但是 :3 的形象比较被大家所熟知，且在受到了一些从目前和巨鲸的支持，小仓位试探",
     "addedAt": "2026-11-13",
-    "holding": true,
     "followPrice": 0.0003679,
-    "followMcap": 351078
+    "followMcap": 351078,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-13",
+        "price": 0.0003679,
+        "note": "mihao 是否能带来cat 季不好说，但是 :3 的形象比较被大家所熟知，且在受到了一些从目前和巨鲸的支持，小仓位试探",
+        "why": []
+      }
+    ],
+    "symbol": ":3",
+    "name": ":3",
+    "dex": "pumpswap",
+    "pairAddress": "GxYbNxjGR9mEuVzXsGBi2Y78RGkwBMRok4RS9sMUb8hE",
+    "pairLiquidity": 54765.75,
+    "pairVolume24h": 210735.58
   },
   {
-    "ca": "0xb82535e74b03ffe4910efea1c759b6bbbf0a7777",
+    "chain": "bsc",
+    "address": "0xb82535e74b03ffe4910efea1c759b6bbbf0a7777",
+    "status": "watching",
+    "why": [],
     "comment": "何一推文，我穿皮衣，我不同意，引爆 Jacket，叠加黄仁勋热度，短时从70k上涨至2M",
     "addedAt": "2026-11-13",
-    "holding": false,
     "followPrice": 0.0007656,
-    "followMcap": 765617
+    "followMcap": 765617,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-13",
+        "price": 0.0007656,
+        "note": "何一推文，我穿皮衣，我不同意，引爆 Jacket，叠加黄仁勋热度，短时从70k上涨至2M",
+        "why": []
+      }
+    ],
+    "symbol": "Jacket",
+    "name": "Just a jacket",
+    "dex": "pancakeswap",
+    "pairAddress": "0x29dcd29F4Ec9f08485F87e7777BC463f2B1E1Ebf",
+    "pairLiquidity": 115068.35,
+    "pairVolume24h": 499895.99
   },
   {
-    "ca": "7SL2VnfYsChvog5oQY9Nmtqu1wceaMiQzWoqoLQpump",
+    "chain": "solana",
+    "address": "7SL2VnfYsChvog5oQY9Nmtqu1wceaMiQzWoqoLQpump",
+    "status": "holding",
+    "why": [],
     "comment": "视觉载体是一个经典的 meme 图像：一个笑容灿烂的白人男子，额头上写着“NIGGA”，下方写着“IT’S OVER”。这个图像在“normie Twitter”（主流 Twitter）上广泛传播，后来被引入加密货币领域。极端幽默吸引注意力，等待下一个事件的爆发",
     "addedAt": "2026-11-13",
-    "holding": true,
     "followPrice": 0.001383,
-    "followMcap": 1318170
+    "followMcap": 1318170,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-13",
+        "price": 0.001383,
+        "note": "视觉载体是一个经典的 meme 图像：一个笑容灿烂的白人男子，额头上写着“NIGGA”，下方写着“IT’S OVER”。这个图像在“normie Twitter”（主流 Twitter）上广泛传播，后来被引入加密货币领域。极端幽默吸引注意力，等待下一个事件的爆发",
+        "why": []
+      }
+    ],
+    "symbol": "NIO",
+    "name": "Nigga Its Over",
+    "dex": "pumpswap",
+    "pairAddress": "B4Wmjc6PvjCtU3qSVS3eTT9Mr4M5V5jBkRQctWANTc71",
+    "pairLiquidity": 133502.42,
+    "pairVolume24h": 307421.41
   },
   {
-    "ca": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
+    "chain": "solana",
+    "address": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
+    "status": "holding",
+    "why": [],
     "comment": "源自Solana官方系账号meme，与 mihao 配对，当前最好的mihao的beta",
     "addedAt": "2026-11-12",
-    "holding": true,
     "followPrice": 0.0001347,
-    "followMcap": 131194
+    "followMcap": 131194,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-12",
+        "price": 0.0001347,
+        "note": "源自Solana官方系账号meme，与 mihao 配对，当前最好的mihao的beta",
+        "why": []
+      }
+    ],
+    "symbol": "updog",
+    "name": "whatsup dog",
+    "dex": "pumpswap",
+    "pairAddress": "GeQmNaXBb86uLLQr3EAEwoukxVqSh4qTm3uXvb3G7Mne",
+    "pairLiquidity": 22051.72,
+    "pairVolume24h": 64587.34
   },
   {
-    "ca": "4CxjZyMNoF1p6eXHXHv1TWpS2X47CuUmLwtGe18spump",
+    "chain": "solana",
+    "address": "4CxjZyMNoF1p6eXHXHv1TWpS2X47CuUmLwtGe18spump",
+    "status": "holding",
+    "why": [],
     "comment": "PFP 项目已经形成大规模社区及 UGC 内容创作，大量 KOL 换头像支持。日成交量巨大。",
     "addedAt": "2026-11-12",
-    "holding": true,
     "followPrice": 0.01347,
-    "followMcap": 12679471
+    "followMcap": 12679471,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-12",
+        "price": 0.01347,
+        "note": "PFP 项目已经形成大规模社区及 UGC 内容创作，大量 KOL 换头像支持。日成交量巨大。",
+        "why": []
+      }
+    ],
+    "symbol": "MM",
+    "name": "Milk Money",
+    "dex": "meteora",
+    "pairAddress": "J3y4Lz32He2qvqtSb8LToEwq5YhSu5UfdJ2yDfTGpkXf",
+    "pairLiquidity": 483364.13,
+    "pairVolume24h": 13890.58
   },
   {
-    "ca": "0x6982508145454Ce325dDbE47a25d4ec3d2311933",
+    "chain": "ethereum",
+    "address": "0x6982508145454Ce325dDbE47a25d4ec3d2311933",
+    "status": "watching",
+    "why": [],
     "comment": "Meme 蓝筹的锚。筹码结构季度复盘中，慢速吸筹地址份额持续抬升，适合当作板块风向标长期跟踪。",
     "addedAt": "2026-11-12",
     "followPrice": 0.000003954,
-    "followMcap": 1636206360
+    "followMcap": 1636206360,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-12",
+        "price": 0.000003954,
+        "note": "Meme 蓝筹的锚。筹码结构季度复盘中，慢速吸筹地址份额持续抬升，适合当作板块风向标长期跟踪。",
+        "why": []
+      }
+    ],
+    "symbol": "PEPE",
+    "name": "Pepe",
+    "dex": "uniswap",
+    "pairAddress": "0xA43fe16908251ee70EF74718545e4FE6C5cCEc9f",
+    "pairLiquidity": 25196490.67,
+    "pairVolume24h": 1148776.79
   },
   {
-    "ca": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "chain": "solana",
+    "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
+    "status": "watching",
+    "why": [],
     "comment": "Solana 链上流动性的晴雨表。链上情绪研究的核心样本，重点看聪明钱在利好前后的进出节奏。",
     "addedAt": "2026-11-12",
     "followPrice": 0.000002383,
-    "followMcap": 211808149
+    "followMcap": 211808149,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-12",
+        "price": 0.000002383,
+        "note": "Solana 链上流动性的晴雨表。链上情绪研究的核心样本，重点看聪明钱在利好前后的进出节奏。",
+        "why": []
+      }
+    ],
+    "symbol": "Bonk",
+    "name": "Bonk",
+    "dex": "orca",
+    "pairAddress": "5zpyutJu9ee6jFymDGoK7F6S5Kczqtc9FomP3ueKuyA9",
+    "pairLiquidity": 235078.26,
+    "pairVolume24h": 186114.21
   }
 ]

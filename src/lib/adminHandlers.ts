@@ -321,20 +321,55 @@ export async function uploadPOST(req: Request) {
   }
 }
 
-/* ---------------- 关注列表 ---------------- */
+/* ---------------- 关注列表（投研成绩单） ---------------- */
+
+const WHY_TAGS_PATH = "content/why-tags.json";
 
 interface WatchCoinEntry {
-  ca: string;
+  chain?: string;
+  address: string; // 兼容读取：v1 数据可能只有 ca
+  ca?: string;
+  symbol?: string;
+  name?: string;
+  dex?: string;
+  pairAddress?: string;
+  pairLiquidity?: number;
+  pairVolume24h?: number;
+  status?: "watching" | "holding" | "exited";
+  why?: string[];
   comment: string;
   addedAt: string;
-  holding?: boolean;
-  /** 首次关注时记录（新增时自动抓取） */
+  holding?: boolean; // v1 遗留，读取时映射 status
   followPrice?: number;
   followMcap?: number;
-  /** 持仓数量 / 买入均价（后台维护） */
   holdAmount?: number;
   avgCost?: number;
+  events?: Array<{
+    type: string;
+    date: string;
+    price?: number;
+    note: string;
+    why?: string[];
+  }>;
 }
+
+type WatchStatusV = "watching" | "holding" | "exited";
+type EventTypeV =
+  | "follow"
+  | "open_position"
+  | "add"
+  | "reduce"
+  | "close_position"
+  | "unfollow";
+
+const EVENT_STATUS: Record<EventTypeV, WatchStatusV> = {
+  follow: "watching",
+  open_position: "holding",
+  add: "holding",
+  reduce: "holding",
+  close_position: "watching",
+  unfollow: "exited",
+};
 
 async function readWatchlist(): Promise<WatchCoinEntry[]> {
   const raw = await readTextFile(WATCHLIST_PATH);
@@ -351,13 +386,97 @@ async function writeWatchlist(list: WatchCoinEntry[]): Promise<void> {
   await saveTextFile(WATCHLIST_PATH, JSON.stringify(list, null, 2) + "\n");
 }
 
+async function readTags() {
+  const raw = await readTextFile(WHY_TAGS_PATH);
+  if (!raw) return [];
+  try {
+    const json = JSON.parse(raw);
+    return Array.isArray(json) ? json : [];
+  } catch {
+    return [];
+  }
+}
+
 function isValidCa(ca: string): boolean {
   return /^[A-Za-z0-9]{8,80}$/.test(ca);
 }
 
 export async function watchlistGET() {
   if (!isAuthed()) return unauthorized();
-  return NextResponse.json({ ok: true, coins: await readWatchlist() });
+  return NextResponse.json({ ok: true, coins: await readWatchlist(), tags: await readTags() });
+}
+
+/** 保存标签体系（整体覆盖） */
+export async function tagsPOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  try {
+    const body = await req.json();
+    const tags = Array.isArray(body.tags) ? body.tags : [];
+    const clean = tags
+      .filter((t: { id?: string }) => t && typeof t.id === "string" && /^[a-z0-9_]{2,20}$/.test(t.id))
+      .map((t: { id: string; zh?: string; en?: string }) => ({
+        id: t.id,
+        zh: String(t.zh ?? t.id),
+        en: String(t.en ?? t.zh ?? t.id),
+      }));
+    if (clean.length === 0) return badRequest("至少保留一个标签");
+    await saveTextFile(WHY_TAGS_PATH, JSON.stringify(clean, null, 2) + "\n");
+    return NextResponse.json({ ok: true });
+  } catch {
+    return badRequest("格式不正确");
+  }
+}
+
+/**
+ * 追加投研时间线事件：行为 + 理由（不记数量）。
+ * 自动携带当时价格（抓不到则留空），并按事件类型更新 status。
+ */
+export async function watchlistEventPOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  let ca = "";
+  let type = "";
+  let note = "";
+  let date = "";
+  try {
+    const body = await req.json();
+    ca = String(body.ca ?? "").trim();
+    type = String(body.type ?? "").trim();
+    note = String(body.note ?? "").trim().slice(0, 500);
+    date = /^\d{4}-\d{2}-\d{2}$/.test(String(body.date ?? ""))
+      ? String(body.date)
+      : new Date().toISOString().slice(0, 10);
+  } catch {
+    /* 下方统一校验 */
+  }
+  if (!isValidCa(ca)) return badRequest("合约地址格式不正确");
+  if (!(type in EVENT_STATUS)) return badRequest("未知事件类型");
+
+  const list = await readWatchlist();
+  const coin = list.find((c) => (c.address ?? c.ca ?? "").toLowerCase() === ca.toLowerCase());
+  if (!coin) return badRequest("该代币不在关注列表");
+
+  let price: number | undefined;
+  try {
+    const d = await fetchCoinData(coin.address ?? coin.ca!);
+    if (d?.priceUsd) price = d.priceUsd;
+  } catch {
+    /* 价格缺失不阻塞记录 */
+  }
+
+  coin.events = Array.isArray(coin.events) ? coin.events : [];
+  coin.events.push({ type, date, price, note });
+  coin.status = EVENT_STATUS[type as EventTypeV];
+  if (type === "unfollow" && note) coin.comment = coin.comment; // 不动原论点
+
+  try {
+    await writeWatchlist(list);
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, message: `保存失败：${e instanceof Error ? e.message : e}` },
+      { status: 500 }
+    );
+  }
+  return NextResponse.json({ ok: true });
 }
 
 export async function watchlistPOST(req: Request) {
@@ -366,14 +485,16 @@ export async function watchlistPOST(req: Request) {
   let ca = "";
   let comment = "";
   let holding = false;
+  let why: string[] = [];
   let holdAmount: number | undefined;
   let avgCost: number | undefined;
+  let pairAddress: string | null | undefined;
   try {
     const body = await req.json();
     ca = String(body.ca ?? "").trim();
     comment = String(body.comment ?? "").trim();
     holding = body.holding === true;
-    // 持仓字段：允许 undefined（不修改）/ null（清除）/ 正数
+    why = Array.isArray(body.why) ? body.why.map(String).slice(0, 6) : [];
     const parseNum = (v: unknown): number | undefined | null => {
       if (v === undefined) return undefined;
       if (v === null || v === "") return null;
@@ -384,6 +505,8 @@ export async function watchlistPOST(req: Request) {
     const cost = parseNum(body.avgCost);
     if (amt !== undefined) holdAmount = amt === null ? undefined : amt;
     if (cost !== undefined) avgCost = cost === null ? undefined : cost;
+    pairAddress =
+      body.pairAddress === undefined ? undefined : body.pairAddress === null ? null : String(body.pairAddress);
   } catch {
     /* 下方统一校验 */
   }
@@ -391,14 +514,26 @@ export async function watchlistPOST(req: Request) {
   if (!isValidCa(ca)) return badRequest("合约地址（CA）格式不正确");
 
   const list = await readWatchlist();
-  const existing = list.find((c) => c.ca.toLowerCase() === ca.toLowerCase());
+  const existing = list.find(
+    (c) => (c.address ?? c.ca ?? "").toLowerCase() === ca.toLowerCase()
+  );
   if (existing) {
-    // 已存在则更新评价、持仓状态与持仓明细（关注时价格/市值永远保留，不重置）
+    // 更新评价、标签、持仓明细、交易对覆盖（关注时价格/市值永远保留，不重置）
     existing.comment = comment;
+    existing.why = why;
     existing.holding = holding;
+    existing.status = holding ? "holding" : existing.status === "exited" ? "exited" : "watching";
     if (holdAmount !== undefined) existing.holdAmount = holdAmount;
     if (avgCost !== undefined) existing.avgCost = avgCost;
-    // 兜底：历史数据缺关注基准（如添加时网络抖动）时，在下次编辑自动补录
+    if (pairAddress !== undefined) existing.pairAddress = pairAddress ?? undefined;
+    // 同步更新首条 follow 事件的标签与论点
+    const evs = Array.isArray(existing.events) ? existing.events : [];
+    if (evs.length > 0 && evs[0].type === "follow") {
+      evs[0].why = why;
+      evs[0].note = comment;
+    }
+    existing.events = evs;
+    /* 兜底：历史数据缺关注基准时在下次编辑自动补录 */
     if (existing.followPrice === undefined) {
       try {
         const d = await fetchCoinData(ca);
@@ -412,19 +547,38 @@ export async function watchlistPOST(req: Request) {
     }
   } else {
     const entry: WatchCoinEntry = {
+      address: ca,
       ca,
+      status: holding ? "holding" : "watching",
+      why,
       comment,
       addedAt: new Date().toISOString().slice(0, 10),
       holding,
+      events: [
+        {
+          type: "follow",
+          date: new Date().toISOString().slice(0, 10),
+          note: comment,
+          why,
+        },
+      ],
     };
     if (holdAmount !== undefined) entry.holdAmount = holdAmount;
     if (avgCost !== undefined) entry.avgCost = avgCost;
-    // 关注瞬间自动记录价格/市值，作为「关注以来」的基准（失败不阻塞保存）
+    // 关注瞬间自动记录价格/市值 + 链/交易对信息，作为基准（失败不阻塞保存）
     try {
       const d = await fetchCoinData(ca);
       if (d) {
         entry.followPrice = d.priceUsd || undefined;
         entry.followMcap = d.marketCap ?? d.fdv;
+        entry.chain = d.chainId;
+        entry.symbol = d.symbol;
+        entry.name = d.name;
+        entry.dex = d.dexId;
+        entry.pairAddress = d.pairAddress;
+        entry.pairLiquidity = d.liquidity;
+        entry.pairVolume24h = d.volume24h;
+        entry.events![0].price = d.priceUsd || undefined;
       }
     } catch {
       /* 抓不到就留空，看板显示 — */
@@ -456,7 +610,7 @@ export async function watchlistDELETE(req: Request) {
   if (!ca) return badRequest("缺少 ca");
 
   const list = await readWatchlist();
-  const next = list.filter((c) => c.ca.toLowerCase() !== ca.toLowerCase());
+  const next = list.filter((c) => (c.address ?? c.ca ?? "").toLowerCase() !== ca.toLowerCase());
   if (next.length === list.length) {
     return NextResponse.json({ ok: false, message: "未找到该代币" }, { status: 404 });
   }

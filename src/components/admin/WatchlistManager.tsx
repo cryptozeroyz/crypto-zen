@@ -1,37 +1,88 @@
 "use client";
 
 /**
- * WatchlistManager.tsx —— 后台关注列表管理
- * 添加（CA + 评价 + 持仓明细）、行内编辑、删除；
- * 新增时服务端自动记录关注时价格/市值，列表展示实时抓取的代币数据。
+ * WatchlistManager.tsx —— 投研成绩单后台
+ * 添加/编辑代币（Why 标签 + 论点）、投研时间线（行为+理由，只追加）、
+ * Why 标签体系维护、删除。
  */
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/coin-format";
 
+interface WhyTag {
+  id: string;
+  zh: string;
+  en: string;
+}
+
+interface WatchEvent {
+  type: string;
+  date: string;
+  price?: number;
+  note: string;
+  why?: string[];
+}
+
 export interface WatchCoinRow {
   ca: string;
+  chain?: string;
+  symbol?: string;
+  name?: string;
+  dex?: string;
+  pairAddress?: string;
+  status?: string;
+  why?: string[];
   comment: string;
   addedAt: string;
   holding?: boolean;
   holdAmount?: number;
   avgCost?: number;
   followPrice?: number;
-  name?: string;
-  symbol?: string;
+  events?: WatchEvent[];
   priceUsd?: number;
   change24h?: number;
 }
 
-export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
+const EVENT_TYPES: Array<{ id: string; label: string; color: string }> = [
+  { id: "open_position", label: "开启持仓", color: "#059669" },
+  { id: "add", label: "加仓", color: "#059669" },
+  { id: "reduce", label: "减仓", color: "#d97706" },
+  { id: "close_position", label: "清仓", color: "#d97706" },
+  { id: "unfollow", label: "取消关注", color: "#7a8590" },
+];
+
+const EVENT_LABEL: Record<string, { label: string; color: string }> = {
+  follow: { label: "建立关注", color: "#2563eb" },
+  ...Object.fromEntries(EVENT_TYPES.map((t) => [t.id, { label: t.label, color: t.color }])),
+};
+
+const STATUS_LABEL: Record<string, { label: string; cls: string }> = {
+  watching: { label: "观望中", cls: "border-line text-muted" },
+  holding: { label: "持仓中", cls: "border-accent bg-accent/10 font-medium text-accent dark:text-accent-mint" },
+  exited: { label: "已收官", cls: "border-line bg-code text-muted" },
+};
+
+export default function WatchlistManager({
+  coins,
+  tags: initialTags,
+}: {
+  coins: WatchCoinRow[];
+  tags: WhyTag[];
+}) {
   const router = useRouter();
   const [ca, setCa] = useState("");
   const [comment, setComment] = useState("");
   const [holding, setHolding] = useState(false);
   const [holdAmount, setHoldAmount] = useState("");
   const [avgCost, setAvgCost] = useState("");
+  const [why, setWhy] = useState<string[]>([]);
+  const [tags, setTags] = useState<WhyTag[]>(initialTags);
+  const [newTag, setNewTag] = useState("");
   const [editing, setEditing] = useState(false);
+  const [timeline, setTimeline] = useState<string | null>(null);
+  const [evType, setEvType] = useState("add");
+  const [evNote, setEvNote] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -41,10 +92,11 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
     setHolding(false);
     setHoldAmount("");
     setAvgCost("");
+    setWhy([]);
     setEditing(false);
   };
 
-  const add = async (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setBusy(true);
@@ -56,7 +108,7 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
           ca: ca.trim(),
           comment: comment.trim(),
           holding,
-          // 空字符串 → null（清除持仓明细）；undefined 不携带
+          why,
           holdAmount: holdAmount.trim() === "" ? null : Number(holdAmount),
           avgCost: avgCost.trim() === "" ? null : Number(avgCost),
         }),
@@ -75,20 +127,47 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
     }
   };
 
-  /** 行内编辑：把该行填入表单（CA 锁定） */
   const editRow = (row: WatchCoinRow) => {
     setCa(row.ca);
     setComment(row.comment);
     setHolding(row.holding === true);
     setHoldAmount(row.holdAmount ? String(row.holdAmount) : "");
     setAvgCost(row.avgCost ? String(row.avgCost) : "");
+    setWhy(row.why ?? []);
     setEditing(true);
     setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const addEvent = async (rowCa: string) => {
+    if (!evNote.trim()) {
+      setError("请填写本次操作的理由");
+      return;
+    }
+    setError("");
+    setBusy(true);
+    try {
+      const res = await fetch("/api/admin/watchlist/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ca: rowCa, type: evType, note: evNote.trim() }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(data?.message ?? "记录失败");
+        return;
+      }
+      setEvNote("");
+      router.refresh();
+    } catch {
+      setError("网络错误");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const remove = async (target: string) => {
-    if (!window.confirm(`确定从关注列表移除 ${target.slice(0, 12)}… 吗？`)) return;
+    if (!window.confirm(`确定彻底删除 ${target.slice(0, 12)}… 吗？（建议用「取消关注」保留历史）`)) return;
     setError("");
     try {
       const res = await fetch("/api/admin/watchlist", {
@@ -96,52 +175,87 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ca: target }),
       });
-      const data = await res.json().catch(() => null);
       if (!res.ok) {
-        setError(data?.message ?? "删除失败");
+        setError((await res.json().catch(() => null))?.message ?? "删除失败");
         return;
       }
       if (editing && ca === target) reset();
+      if (timeline === target) setTimeline(null);
       router.refresh();
     } catch {
       setError("网络错误");
     }
   };
 
+  const saveTags = async () => {
+    setError("");
+    try {
+      const res = await fetch("/api/admin/watchlist/tags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tags }),
+      });
+      if (!res.ok) {
+        setError((await res.json().catch(() => null))?.message ?? "标签保存失败");
+        return;
+      }
+      router.refresh();
+    } catch {
+      setError("网络错误");
+    }
+  };
+
+  const tagLabel = (id: string) => tags.find((t) => t.id === id)?.zh ?? id;
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* 添加 / 编辑表单 */}
-      <form
-        onSubmit={add}
-        className="grid gap-4 rounded-xl border border-line bg-paper p-5 sm:grid-cols-2"
-      >
+      <form onSubmit={save} className="grid gap-4 rounded-xl border border-line bg-paper p-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="wl-ca" className="mb-1.5 block text-sm text-muted">
+          <label className="mb-1.5 block text-sm text-muted">
             合约地址（CA）{editing && <span className="text-xs">（编辑中，不可修改）</span>}
           </label>
           <input
-            id="wl-ca"
             required
             value={ca}
             onChange={(e) => setCa(e.target.value)}
             readOnly={editing}
             placeholder="0x…（以太坊）或 Solana 地址"
-            className={`w-full rounded-lg border border-line bg-card px-3.5 py-2.5 font-mono text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent ${
-              editing ? "opacity-60" : ""
-            }`}
+            className={`w-full rounded-lg border border-line bg-card px-3.5 py-2.5 font-mono text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent ${editing ? "opacity-60" : ""}`}
           />
         </div>
         <div>
-          <label htmlFor="wl-comment" className="mb-1.5 block text-sm text-muted">
-            一句话评价 / 关注原因
-          </label>
+          <label className="mb-1.5 block text-sm text-muted">当时的论点（会永久保留在时间线第一格）</label>
           <input
-            id="wl-comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="例如：蓝筹风向标，长期跟踪筹码结构"
+            placeholder="为什么关注它？"
             className="w-full rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
           />
+        </div>
+        <div className="sm:col-span-2">
+          <label className="mb-1.5 block text-sm text-muted">
+            Why I Followed（可多选，成绩单按此统计胜率）
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() =>
+                  setWhy((w) => (w.includes(t.id) ? w.filter((x) => x !== t.id) : [...w, t.id]))
+                }
+                aria-pressed={why.includes(t.id)}
+                className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
+                  why.includes(t.id)
+                    ? "border-accent bg-accent/10 font-medium text-accent dark:text-accent-mint"
+                    : "border-line text-muted hover:border-heading hover:text-heading"
+                }`}
+              >
+                {t.zh}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-4">
           <label className="flex items-center gap-2 text-sm text-muted">
@@ -168,7 +282,7 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
                 />
               </label>
               <label className="flex items-center gap-2 text-sm text-muted">
-                买入均价 $
+                成本 $
                 <input
                   type="number"
                   min="0"
@@ -197,116 +311,202 @@ export default function WatchlistManager({ coins }: { coins: WatchCoinRow[] }) {
             disabled={busy}
             className="rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-deep disabled:opacity-60"
           >
-            {busy ? "保存中…" : editing ? "保存修改" : "＋ 添加关注"}
+            {busy ? "保存中…" : editing ? "保存修改" : "＋ 建立关注"}
           </button>
         </div>
       </form>
 
       {error && (
-        <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-          {error}
-        </p>
+        <p role="alert" className="text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
 
-      {/* 列表 */}
-      <div className="overflow-x-auto rounded-2xl border border-line bg-card">
-        <table className="w-full min-w-[820px] text-left text-sm">
-          <thead>
-            <tr className="border-b border-line text-xs text-muted">
-              <th className="px-4 py-3 font-medium">代币</th>
-              <th className="px-4 py-3 font-medium">价格 / 24h</th>
-              <th className="px-4 py-3 font-medium">评价</th>
-              <th className="px-4 py-3 font-medium">持仓</th>
-              <th className="px-4 py-3 font-medium">合约地址</th>
-              <th className="px-4 py-3 text-right font-medium">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {coins.map((c) => {
-              const up = (c.change24h ?? 0) >= 0;
-              return (
-                <tr key={c.ca} className="border-b border-line last:border-0">
-                  <td className="px-4 py-3">
-                    <span className="font-medium text-heading">
-                      {c.name ?? "…"}
-                      {c.symbol && (
-                        <span className="ml-1.5 text-xs text-muted">{c.symbol}</span>
-                      )}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 tabular-nums">
-                    {c.priceUsd ? (
-                      <>
-                        {formatPrice(c.priceUsd)}{" "}
-                        <span
-                          className={
-                            up
-                              ? "text-emerald-600 dark:text-emerald-400"
-                              : "text-red-600 dark:text-red-400"
-                          }
-                        >
-                          {up ? "+" : ""}
-                          {(c.change24h ?? 0).toFixed(2)}%
-                        </span>
-                      </>
-                    ) : (
-                      <span className="text-muted">抓取失败</span>
-                    )}
-                    {c.followPrice ? (
-                      <div className="mt-0.5 text-[11px] text-muted">
-                        关注价 {formatPrice(c.followPrice)}
-                      </div>
-                    ) : null}
-                  </td>
-                  <td className="max-w-[240px] px-4 py-3 text-muted">
-                    <span className="line-clamp-2">{c.comment || "—"}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`inline-block rounded-full border px-2.5 py-1 text-xs ${
-                        c.holding
-                          ? "border-accent bg-accent/10 font-medium text-accent dark:text-accent-mint"
-                          : "border-line text-muted"
-                      }`}
+      {/* 代币列表 + 时间线 */}
+      <div className="space-y-3">
+        {coins.map((c) => {
+          const st = STATUS_LABEL[c.status ?? "watching"] ?? STATUS_LABEL.watching;
+          const open = timeline === c.ca;
+          const events = [...(c.events ?? [])].reverse();
+          return (
+            <div key={c.ca} className="overflow-hidden rounded-2xl border border-line bg-card">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
+                <span className="font-medium text-heading">
+                  {c.name ?? "…"}
+                  {c.symbol && <span className="ml-1.5 text-xs text-muted">${c.symbol}</span>}
+                  {c.chain && <span className="ml-1.5 text-[11px] text-muted">· {c.chain}</span>}
+                </span>
+                <span className="text-xs tabular-nums text-muted">
+                  {c.priceUsd ? (
+                    <>
+                      {formatPrice(c.priceUsd)}{" "}
+                      <span className={(c.change24h ?? 0) >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}>
+                        {(c.change24h ?? 0) >= 0 ? "+" : ""}
+                        {(c.change24h ?? 0).toFixed(1)}%
+                      </span>
+                    </>
+                  ) : (
+                    "抓取失败"
+                  )}
+                </span>
+                <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs ${st.cls}`}>
+                  {st.label}
+                </span>
+                {(c.why ?? []).length > 0 && (
+                  <span className="flex gap-1">
+                    {c.why!.map((w) => (
+                      <span key={w} className="rounded-full bg-code px-2 py-0.5 text-[11px] text-muted">
+                        {tagLabel(w)}
+                      </span>
+                    ))}
+                  </span>
+                )}
+                <span className="ml-auto flex gap-3 text-sm">
+                  <button type="button" onClick={() => editRow(c)} className="text-accent hover:underline dark:text-accent-mint">
+                    编辑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTimeline(open ? null : c.ca)}
+                    aria-expanded={open}
+                    className="text-muted hover:text-heading"
+                  >
+                    时间线 {open ? "▲" : "▼"}
+                  </button>
+                  <button type="button" onClick={() => void remove(c.ca)} className="text-red-600 hover:underline dark:text-red-400">
+                    删除
+                  </button>
+                </span>
+              </div>
+
+              {open && (
+                <div className="border-t border-line bg-paper px-4 py-4">
+                  {/* 已有事件 */}
+                  <div className="space-y-2">
+                    {events.map((ev, i) => {
+                      const meta = EVENT_LABEL[ev.type] ?? { label: ev.type, color: "#7a8590" };
+                      return (
+                        <div key={i} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm">
+                          <span className="font-semibold" style={{ color: meta.color }}>
+                            {meta.label}
+                          </span>
+                          <span className="text-xs tabular-nums text-muted">{ev.date}</span>
+                          {typeof ev.price === "number" && (
+                            <span className="font-mono text-xs text-heading">@{formatPrice(ev.price)}</span>
+                          )}
+                          <span className="w-full text-[13px] text-muted sm:w-auto sm:flex-1">{ev.note || "—"}</span>
+                          {(ev.why ?? []).length > 0 && (
+                            <span className="flex gap-1">
+                              {ev.why!.map((w) => (
+                                <span key={w} className="rounded-full bg-code px-2 py-px text-[10.5px] text-muted">
+                                  {tagLabel(w)}
+                                </span>
+                              ))}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {/* 追加事件 */}
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <select
+                      value={evType}
+                      onChange={(e) => setEvType(e.target.value)}
+                      className="rounded-lg border border-line bg-card px-2.5 py-2 text-sm text-heading outline-none focus:border-accent"
                     >
-                      {c.holding
-                        ? c.holdAmount && c.avgCost
-                          ? `持仓 ${formatPrice(c.avgCost)} × ${c.holdAmount.toExponential(1)}`
-                          : "持仓中"
-                        : "观望"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 font-mono text-xs text-muted">
-                    {c.ca.slice(0, 10)}…{c.ca.slice(-6)}
-                  </td>
-                  <td className="px-4 py-3 text-right">
+                      {EVENT_TYPES.map((t) => (
+                        <option key={t.id} value={t.id}>{t.label}</option>
+                      ))}
+                    </select>
+                    <input
+                      value={evNote}
+                      onChange={(e) => setEvNote(e.target.value)}
+                      placeholder="理由（必填，会永久保留）"
+                      className="min-w-[220px] flex-1 rounded-lg border border-line bg-card px-3 py-2 text-sm text-heading outline-none placeholder:text-muted focus:border-accent"
+                    />
                     <button
                       type="button"
-                      onClick={() => editRow(c)}
-                      className="mr-3 text-sm text-accent hover:underline dark:text-accent-mint"
+                      disabled={busy}
+                      onClick={() => void addEvent(c.ca)}
+                      className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-deep disabled:opacity-60"
                     >
-                      编辑
+                      记录
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => void remove(c.ca)}
-                      className="text-sm text-red-600 hover:underline dark:text-red-400"
-                    >
-                      移除
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-            {coins.length === 0 && (
-              <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-muted">
-                  关注列表为空，先在上方添加一个代币吧。
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+                  </div>
+                  <p className="mt-2 text-[11.5px] text-muted">
+                    时间线只追加不删除；记录时自动附带当时价格。「取消关注」会保留完整历史并标记为已收官。
+                  </p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {coins.length === 0 && (
+          <p className="rounded-2xl border border-dashed border-line px-4 py-10 text-center text-sm text-muted">
+            还没有关注记录，先在上方建立一个关注吧。
+          </p>
+        )}
+      </div>
+
+      {/* 标签体系维护 */}
+      <div className="rounded-xl border border-line bg-paper p-5">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm font-semibold text-heading">Why 标签体系</h2>
+          <button
+            type="button"
+            onClick={() => void saveTags()}
+            className="rounded-lg border border-line px-4 py-1.5 text-xs text-muted transition-colors hover:border-heading hover:text-heading"
+          >
+            保存标签
+          </button>
+        </div>
+        <p className="mt-1 text-xs text-muted">id 为小写下划线（保存后不可改，用于数据关联）；改名随时可改。</p>
+        <div className="mt-3 space-y-2">
+          {tags.map((t, i) => (
+            <div key={t.id} className="flex flex-wrap items-center gap-2">
+              <code className="w-32 rounded bg-code px-2 py-1 font-mono text-xs text-muted">{t.id}</code>
+              <input
+                value={t.zh}
+                onChange={(e) => setTags((ts) => ts.map((x, j) => (j === i ? { ...x, zh: e.target.value } : x)))}
+                className="w-36 rounded-lg border border-line bg-card px-2.5 py-1.5 text-sm text-heading outline-none focus:border-accent"
+              />
+              <input
+                value={t.en}
+                onChange={(e) => setTags((ts) => ts.map((x, j) => (j === i ? { ...x, en: e.target.value } : x)))}
+                className="w-36 rounded-lg border border-line bg-card px-2.5 py-1.5 text-sm text-heading outline-none focus:border-accent"
+              />
+              <button
+                type="button"
+                onClick={() => setTags((ts) => ts.filter((_, j) => j !== i))}
+                className="text-xs text-red-600 hover:underline dark:text-red-400"
+              >
+                删除
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 flex gap-2">
+          <input
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+            placeholder="新标签 id，如 onchain_data"
+            className="w-56 rounded-lg border border-line bg-card px-3 py-1.5 font-mono text-xs text-heading outline-none placeholder:text-muted focus:border-accent"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              const id = newTag.trim().toLowerCase();
+              if (/^[a-z0-9_]{2,20}$/.test(id) && !tags.some((t) => t.id === id)) {
+                setTags((ts) => [...ts, { id, zh: id, en: id }]);
+                setNewTag("");
+              } else {
+                setError("标签 id 需为 2-20 位小写字母/数字/下划线且不重复");
+              }
+            }}
+            className="rounded-lg border border-line px-4 py-1.5 text-xs text-muted transition-colors hover:border-heading hover:text-heading"
+          >
+            ＋ 添加标签
+          </button>
+        </div>
       </div>
     </div>
   );

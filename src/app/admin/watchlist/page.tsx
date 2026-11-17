@@ -9,7 +9,7 @@ import Container from "@/components/Container";
 import WatchlistManager from "@/components/admin/WatchlistManager";
 import { requireAdmin } from "@/lib/adminGuard";
 import { readTextFile, WATCHLIST_PATH } from "@/lib/storage";
-import { fetchCoinData, type WatchCoin } from "@/lib/watchlist";
+import { fetchCoinData, getWhyTags, type WatchCoin } from "@/lib/watchlist";
 
 export const metadata: Metadata = { title: "关注列表管理" };
 
@@ -19,7 +19,8 @@ export default async function AdminWatchlistPage() {
   requireAdmin();
 
   const raw = await readTextFile(WATCHLIST_PATH);
-  let coins: WatchCoin[] = [];
+  /* 原始条目（v1/v2 混合可能），字段在下方映射时兜底 */
+  let coins: Array<Record<string, unknown>> = [];
   try {
     const json = raw ? JSON.parse(raw) : [];
     if (Array.isArray(json)) coins = json;
@@ -28,18 +29,26 @@ export default async function AdminWatchlistPage() {
   }
 
   const rows = await Promise.all(
-    coins.map(async (c) => {
-      const d = await fetchCoinData(c.ca);
+    coins.map(async (raw) => {
+      const c = raw as Partial<WatchCoin> & { ca?: string; holding?: boolean };
+      const d = await fetchCoinData(c.address ?? c.ca ?? "", c);
+      const addr = c.address ?? c.ca ?? "";
       return {
-        ca: c.ca,
-        comment: c.comment,
-        addedAt: c.addedAt,
-        holding: c.holding === true,
+        ca: addr,
+        chain: c.chain ?? d?.chainId ?? "",
+        symbol: c.symbol ?? d?.symbol,
+        name: c.name ?? d?.name,
+        dex: c.dex ?? d?.dexId,
+        pairAddress: c.pairAddress ?? d?.pairAddress,
+        status: c.status ?? (c.holding ? "holding" : "watching"),
+        why: Array.isArray(c.why) ? c.why : [],
+        comment: String(c.comment ?? ""),
+        addedAt: String(c.addedAt ?? ""),
+        holding: c.holding ?? c.status === "holding",
         holdAmount: c.holdAmount,
         avgCost: c.avgCost,
         followPrice: c.followPrice,
-        name: d?.name,
-        symbol: d?.symbol,
+        events: Array.isArray(c.events) ? c.events : [],
         priceUsd: d?.priceUsd,
         change24h: d?.change24h,
       };
@@ -67,7 +76,7 @@ export default async function AdminWatchlistPage() {
       </div>
 
       <div className="mt-8">
-        <WatchlistManager coins={rows} />
+        <WatchlistManager coins={rows} tags={getWhyTags()} />
       </div>
     </Container>
   );
