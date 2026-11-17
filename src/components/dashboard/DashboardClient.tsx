@@ -544,12 +544,20 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                 <DrawerHolding coin={activeCoin} t={d} />
               )}
 
-              {activeCoin.comment && (
-                <section className="mt-6">
-                  <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">{d.myComment}</h3>
-                  <p className="rounded-2xl border border-line bg-card px-4 py-3.5 text-sm leading-relaxed text-heading">{activeCoin.comment}</p>
-                </section>
-              )}
+              {(() => {
+                const latest = activeCoin.events[activeCoin.events.length - 1];
+                const text = latest?.note || activeCoin.comment;
+                if (!text) return null;
+                const isInitial = !latest || latest.type === "follow";
+                return (
+                  <section className="mt-6">
+                    <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">
+                      {isInitial ? d.myComment : d.latestThesis}
+                    </h3>
+                    <p className="rounded-2xl border border-line bg-card px-4 py-3.5 text-sm leading-relaxed text-heading">{text}</p>
+                  </section>
+                );
+              })()}
 
               <section className="mt-6">
                 <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">{d.onchain}</h3>
