@@ -21,8 +21,8 @@
     "name": "Onchain Chars",
     "dex": "pumpswap",
     "pairAddress": "J5JQhQtLcLU24ZTbJ85oqgX2rSkv1BgS7Kteo8fLHtGU",
-    "pairLiquidity": 28371.47,
-    "pairVolume24h": 1762761.32
+    "pairLiquidity": 25760.64,
+    "pairVolume24h": 1775155.75
   },
   {
     "chain": "solana",
@@ -50,8 +50,8 @@
     "name": ":3",
     "dex": "pumpswap",
     "pairAddress": "GxYbNxjGR9mEuVzXsGBi2Y78RGkwBMRok4RS9sMUb8hE",
-    "pairLiquidity": 54765.75,
-    "pairVolume24h": 210735.58,
+    "pairLiquidity": 57439.01,
+    "pairVolume24h": 211861.55,
     "holding": false
   },
   {
@@ -82,8 +82,8 @@
     "name": "Just a jacket",
     "dex": "pancakeswap",
     "pairAddress": "0x29dcd29F4Ec9f08485F87e7777BC463f2B1E1Ebf",
-    "pairLiquidity": 115068.35,
-    "pairVolume24h": 499895.99
+    "pairLiquidity": 113642.69,
+    "pairVolume24h": 471732.13
   },
   {
     "chain": "solana",
@@ -113,8 +113,8 @@
     "name": "Nigga Its Over",
     "dex": "pumpswap",
     "pairAddress": "B4Wmjc6PvjCtU3qSVS3eTT9Mr4M5V5jBkRQctWANTc71",
-    "pairLiquidity": 133502.42,
-    "pairVolume24h": 307421.41,
+    "pairLiquidity": 136692.72,
+    "pairVolume24h": 291254.69,
     "holding": false
   },
   {
@@ -139,8 +139,8 @@
     "name": "whatsup dog",
     "dex": "pumpswap",
     "pairAddress": "GeQmNaXBb86uLLQr3EAEwoukxVqSh4qTm3uXvb3G7Mne",
-    "pairLiquidity": 22051.72,
-    "pairVolume24h": 64587.34
+    "pairLiquidity": 21022.76,
+    "pairVolume24h": 66182.1
   },
   {
     "chain": "solana",
@@ -160,11 +160,11 @@
         "why": []
       }
     ],
-    "symbol": "MM",
-    "name": "Milk Money",
-    "dex": "meteora",
-    "pairAddress": "J3y4Lz32He2qvqtSb8LToEwq5YhSu5UfdJ2yDfTGpkXf",
-    "pairLiquidity": 483364.13,
-    "pairVolume24h": 13890.58
+    "symbol": "mihao",
+    "name": "ni hao cat",
+    "dex": "pumpswap",
+    "pairAddress": "Ho1aSG6WGH1FfXdEHrK2f4Ggt1Hoxo9s5jcLMDqeyeBz",
+    "pairLiquidity": 367540.89,
+    "pairVolume24h": 2824301.59
   }
 ]

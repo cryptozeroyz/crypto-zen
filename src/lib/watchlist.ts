@@ -179,8 +179,17 @@ interface DexPair {
   liquidity?: { usd?: number };
   volume?: { h24?: number };
   priceChange?: { h24?: number };
-  baseToken?: { name?: string; symbol?: string };
+  baseToken?: { name?: string; symbol?: string; address?: string };
   info?: { imageUrl?: string };
+}
+
+/** 选池第一步：只保留「查询代币作为 baseToken」的交易对，
+ *  排除它作为 quote 币出现在别人池子里的干扰对（如 Milk Money/MM 池） */
+function ownPairs(pairs: DexPair[], ca: string): DexPair[] {
+  const own = pairs.filter(
+    (p) => p.baseToken?.address?.toLowerCase() === ca.toLowerCase()
+  );
+  return own.length > 0 ? own : pairs;
 }
 
 /** 选池：流动性优先，24H 成交量次之 */
@@ -226,6 +235,7 @@ export async function fetchCoinData(
     if (!res.ok) return null;
     const pairs = ((await res.json()) as { pairs?: DexPair[] }).pairs ?? [];
     if (pairs.length === 0) return null;
+    const candidates = ownPairs(pairs, ca);
     let pair: DexPair | null = null;
     if (stored?.pairAddress) {
       pair =
@@ -233,7 +243,7 @@ export async function fetchCoinData(
           (p) => p.pairAddress?.toLowerCase() === stored.pairAddress!.toLowerCase()
         ) ?? null;
     }
-    if (!pair) pair = pickBestPair(pairs);
+    if (!pair) pair = pickBestPair(candidates);
     if (!pair?.baseToken) return null;
     return pairToMarketData(pair, stored ?? {});
   } catch {
@@ -254,7 +264,7 @@ export async function fetchTokenPairs(
     );
     if (!res.ok) return [];
     const pairs = ((await res.json()) as { pairs?: DexPair[] }).pairs ?? [];
-    return [...pairs]
+    return [...ownPairs(pairs, ca)]
       .sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))
       .map((p) => ({
         pairAddress: p.pairAddress ?? "",
