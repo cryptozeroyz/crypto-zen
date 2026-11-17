@@ -29,6 +29,7 @@ import {
 } from "@/lib/storage";
 import { parseMarkdown, isValidSlug } from "@/lib/frontmatter";
 import { translateMarkdown } from "@/lib/translate";
+import { fetchCoinData } from "@/lib/watchlist";
 
 function isAuthed(): boolean {
   return verifySessionToken(cookies().get(COOKIE_NAME)?.value);
@@ -265,6 +266,12 @@ interface WatchCoinEntry {
   comment: string;
   addedAt: string;
   holding?: boolean;
+  /** 首次关注时记录（新增时自动抓取） */
+  followPrice?: number;
+  followMcap?: number;
+  /** 持仓数量 / 买入均价（后台维护） */
+  holdAmount?: number;
+  avgCost?: number;
 }
 
 async function readWatchlist(): Promise<WatchCoinEntry[]> {
@@ -297,11 +304,24 @@ export async function watchlistPOST(req: Request) {
   let ca = "";
   let comment = "";
   let holding = false;
+  let holdAmount: number | undefined;
+  let avgCost: number | undefined;
   try {
     const body = await req.json();
     ca = String(body.ca ?? "").trim();
     comment = String(body.comment ?? "").trim();
     holding = body.holding === true;
+    // 持仓字段：允许 undefined（不修改）/ null（清除）/ 正数
+    const parseNum = (v: unknown): number | undefined | null => {
+      if (v === undefined) return undefined;
+      if (v === null || v === "") return null;
+      const n = Number(v);
+      return Number.isFinite(n) && n >= 0 ? n : undefined;
+    };
+    const amt = parseNum(body.holdAmount);
+    const cost = parseNum(body.avgCost);
+    if (amt !== undefined) holdAmount = amt === null ? undefined : amt;
+    if (cost !== undefined) avgCost = cost === null ? undefined : cost;
   } catch {
     /* 下方统一校验 */
   }
@@ -311,16 +331,31 @@ export async function watchlistPOST(req: Request) {
   const list = await readWatchlist();
   const existing = list.find((c) => c.ca.toLowerCase() === ca.toLowerCase());
   if (existing) {
-    // 已存在则更新评价与持仓状态（upsert）
+    // 已存在则更新评价、持仓状态与持仓明细（关注时价格/市值永远保留，不重置）
     existing.comment = comment;
     existing.holding = holding;
+    if (holdAmount !== undefined) existing.holdAmount = holdAmount;
+    if (avgCost !== undefined) existing.avgCost = avgCost;
   } else {
-    list.unshift({
+    const entry: WatchCoinEntry = {
       ca,
       comment,
       addedAt: new Date().toISOString().slice(0, 10),
       holding,
-    });
+    };
+    if (holdAmount !== undefined) entry.holdAmount = holdAmount;
+    if (avgCost !== undefined) entry.avgCost = avgCost;
+    // 关注瞬间自动记录价格/市值，作为「关注以来」的基准（失败不阻塞保存）
+    try {
+      const d = await fetchCoinData(ca);
+      if (d) {
+        entry.followPrice = d.priceUsd || undefined;
+        entry.followMcap = d.marketCap ?? d.fdv;
+      }
+    } catch {
+      /* 抓不到就留空，看板显示 — */
+    }
+    list.unshift(entry);
   }
 
   try {

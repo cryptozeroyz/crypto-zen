@@ -52,9 +52,11 @@ export default function Header({ locale, t }: HeaderProps) {
       ? `/${locale}/resources`
       : anchor === "news"
         ? `/${locale}/news`
-        : onHome
-          ? `#${anchor}`
-          : `/${locale}/#${anchor}`;
+        : anchor === "watchlist"
+          ? `/${locale}/dashboard`
+          : onHome
+            ? `#${anchor}`
+            : `/${locale}/#${anchor}`;
 
   return (
     <header className="bg-paper">

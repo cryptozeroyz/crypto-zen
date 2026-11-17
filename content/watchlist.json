@@ -3,40 +3,54 @@
     "ca": "FSkyjfqB26u6c2GSgpACrjbxp9yQAR8rutxprVNppump",
     "comment": "mihao 是否能带来cat 季不好说，但是 :3 的形象比较被大家所熟知，且在受到了一些从目前和巨鲸的支持，小仓位试探",
     "addedAt": "2026-11-13",
-    "holding": true
+    "holding": true,
+    "followPrice": 0.0003679,
+    "followMcap": 351078
   },
   {
     "ca": "0xb82535e74b03ffe4910efea1c759b6bbbf0a7777",
     "comment": "何一推文，我穿皮衣，我不同意，引爆 Jacket，叠加黄仁勋热度，短时从70k上涨至2M",
     "addedAt": "2026-11-13",
-    "holding": false
+    "holding": false,
+    "followPrice": 0.0007656,
+    "followMcap": 765617
   },
   {
     "ca": "7SL2VnfYsChvog5oQY9Nmtqu1wceaMiQzWoqoLQpump",
     "comment": "视觉载体是一个经典的 meme 图像：一个笑容灿烂的白人男子，额头上写着“NIGGA”，下方写着“IT’S OVER”。这个图像在“normie Twitter”（主流 Twitter）上广泛传播，后来被引入加密货币领域。极端幽默吸引注意力，等待下一个事件的爆发",
     "addedAt": "2026-11-13",
-    "holding": true
+    "holding": true,
+    "followPrice": 0.001383,
+    "followMcap": 1318170
   },
   {
     "ca": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
     "comment": "源自Solana官方系账号meme，与 mihao 配对，当前最好的mihao的beta",
     "addedAt": "2026-11-12",
-    "holding": true
+    "holding": true,
+    "followPrice": 0.0001347,
+    "followMcap": 131194
   },
   {
     "ca": "4CxjZyMNoF1p6eXHXHv1TWpS2X47CuUmLwtGe18spump",
     "comment": "PFP 项目已经形成大规模社区及 UGC 内容创作，大量 KOL 换头像支持。日成交量巨大。",
     "addedAt": "2026-11-12",
-    "holding": true
+    "holding": true,
+    "followPrice": 0.01347,
+    "followMcap": 12679471
   },
   {
     "ca": "0x6982508145454Ce325dDbE47a25d4ec3d2311933",
     "comment": "Meme 蓝筹的锚。筹码结构季度复盘中，慢速吸筹地址份额持续抬升，适合当作板块风向标长期跟踪。",
-    "addedAt": "2026-11-12"
+    "addedAt": "2026-11-12",
+    "followPrice": 0.000003954,
+    "followMcap": 1636206360
   },
   {
     "ca": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
     "comment": "Solana 链上流动性的晴雨表。链上情绪研究的核心样本，重点看聪明钱在利好前后的进出节奏。",
-    "addedAt": "2026-11-12"
+    "addedAt": "2026-11-12",
+    "followPrice": 0.000002383,
+    "followMcap": 211808149
   }
 ]

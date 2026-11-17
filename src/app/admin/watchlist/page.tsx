@@ -34,6 +34,10 @@ export default async function AdminWatchlistPage() {
         ca: c.ca,
         comment: c.comment,
         addedAt: c.addedAt,
+        holding: c.holding === true,
+        holdAmount: c.holdAmount,
+        avgCost: c.avgCost,
+        followPrice: c.followPrice,
         name: d?.name,
         symbol: d?.symbol,
         priceUsd: d?.priceUsd,
@@ -50,7 +54,8 @@ export default async function AdminWatchlistPage() {
             关注列表管理
           </h1>
           <p className="mt-1 text-xs text-muted">
-            添加合约地址（CA）与一句话评价，前台 watchlist 页面会自动抓取头像与行情。
+            添加合约地址（CA）与评价；新增时代币自动记录关注时价格/市值，前台 /dashboard
+            看板实时展示行情、关注以来涨跌幅与持仓盈亏。
           </p>
         </div>
         <Link

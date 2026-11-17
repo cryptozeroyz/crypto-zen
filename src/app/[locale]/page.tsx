@@ -12,7 +12,7 @@ import SectionHead from "@/components/SectionHead";
 import NewsMarquee from "@/components/NewsMarquee";
 import NewsList from "@/components/NewsList";
 import SocialLinks from "@/components/SocialLinks";
-import WatchlistSection from "@/components/WatchlistSection";
+import HomeWatchlist from "@/components/dashboard/HomeWatchlist";
 import ArticlesSection from "@/components/ArticlesSection";
 import ContinueReading from "@/components/ContinueReading";
 import RandomPostButton from "@/components/RandomPostButton";
@@ -118,16 +118,13 @@ export default async function HomePage({
         </Container>
       </section>
 
-      {/* ============ 关注列表 ============ */}
+      {/* ============ 关注列表（精简 Top4，完整看板见 /dashboard） ============ */}
       {coins.length > 0 && (
         <section id="watchlist" className="scroll-mt-24">
           <Container className="py-7 sm:py-8">
             <SectionHead title={t.home.sections.watchlist} />
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-              {t.watchlist.intro}
-            </p>
             <div className="mt-5">
-              <WatchlistSection coins={coins} locale={locale} t={t} />
+              <HomeWatchlist coins={coins} locale={locale} t={t} />
             </div>
           </Container>
         </section>

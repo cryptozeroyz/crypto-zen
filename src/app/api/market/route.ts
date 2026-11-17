@@ -14,8 +14,49 @@
  */
 
 import { NextResponse } from "next/server";
+import { getWatchlist, fetchCoinData } from "@/lib/watchlist";
 
 export const revalidate = 60;
+
+/** DexScreener chainId → GeckTerminal network 名（K 线用） */
+const GECKO_NET: Record<string, string> = {
+  solana: "solana",
+  ethereum: "eth",
+  bsc: "bsc",
+  base: "base",
+  arbitrum: "arbitrum",
+  polygon: "polygon_pos",
+  avalanche: "avax",
+  blast: "blast",
+};
+
+/** GeckTerminal OHLCV → 收盘价数组（时间正序）。免费无密钥，覆盖新 Meme。 */
+async function fetchGeckoOhlcv(
+  chainId: string,
+  pair: string,
+  range: string
+): Promise<number[]> {
+  const net = GECKO_NET[chainId];
+  if (!net) return [];
+  const conf: Record<string, [string, number, number]> = {
+    "24H": ["hour", 1, 24],
+    "7D": ["hour", 4, 42],
+    "30D": ["day", 1, 30],
+    "ALL": ["day", 1, 90],
+  };
+  const [tf, agg, limit] = conf[range] ?? conf["7D"];
+  const res = await fetch(
+    `https://api.geckoterminal.com/api/v2/networks/${net}/pools/${pair}/ohlcv/${tf}?aggregate=${agg}&limit=${limit}`,
+    { next: { revalidate: 1800 }, headers: { Accept: "application/json" } }
+  );
+  if (!res.ok) return [];
+  const json = await res.json();
+  const list = json?.data?.attributes?.ohlcv_list;
+  if (!Array.isArray(list)) return [];
+  return list.map((c: number[]) => Number(c[4])).reverse(); // c = 收盘价，转为时间正序
+}
+const fetchGeckoSpark = (chainId: string, pair: string) =>
+  fetchGeckoOhlcv(chainId, pair, "7D");
 
 const TICKER_IDS = "bitcoin,ethereum,solana";
 
@@ -59,6 +100,49 @@ export async function GET(req: Request) {
       });
     } catch {
       return NextResponse.json(null, { status: 502 });
+    }
+  }
+
+  /* ---------- 看板聚合数据：关注列表 + 行情 + 7D 迷你走势 ---------- */
+  if (type === "watchlist") {
+    try {
+      const coins = getWatchlist();
+      const enriched = await Promise.all(
+        coins.map(async (c) => {
+          const data = await fetchCoinData(c.ca).catch(() => null);
+          let spark: number[] | null = null;
+          if (data?.pairAddress) {
+            spark = await fetchGeckoSpark(data.chainId, data.pairAddress).catch(
+              () => null
+            );
+          }
+          return { ...c, data, spark };
+        })
+      );
+      return NextResponse.json(
+        { updatedAt: Date.now(), coins: enriched },
+        { headers: { "Cache-Control": "s-maxage=120, stale-while-revalidate=60" } }
+      );
+    } catch {
+      return NextResponse.json({ coins: [] }, { status: 502 });
+    }
+  }
+
+  /* ---------- K 线历史（GeckTerminal OHLCV， DexScreener 无此接口） ---------- */
+  if (type === "ohlcv") {
+    const chain = searchParams.get("chain") ?? "";
+    const pair = searchParams.get("pair") ?? "";
+    const range = searchParams.get("range") ?? "7D";
+    if (!/^[a-z0-9]{2,20}$/.test(chain) || !/^[0-9a-zA-Z]{20,80}$/.test(pair))
+      return NextResponse.json({ error: "bad params" }, { status: 400 });
+    try {
+      const closes = await fetchGeckoOhlcv(chain, pair, range);
+      return NextResponse.json(
+        { closes },
+        { headers: { "Cache-Control": "s-maxage=1800, stale-while-revalidate=900" } }
+      );
+    } catch {
+      return NextResponse.json({ closes: [] }, { status: 502 });
     }
   }
 

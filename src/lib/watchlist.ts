@@ -15,8 +15,16 @@ export interface WatchCoin {
   ca: string;
   comment: string;
   addedAt: string;
-  /** 是否持仓（后台控制，卡片显示徽章） */
+  /** 是否持仓（后台控制，看板显示徽章） */
   holding?: boolean;
+  /** 首次关注时的价格（USD），关注瞬间由服务端记录 */
+  followPrice?: number;
+  /** 首次关注时的市值（FDV） */
+  followMcap?: number;
+  /** 持仓数量（仅持仓代币，后台维护） */
+  holdAmount?: number;
+  /** 买入均价 USD（后台维护） */
+  avgCost?: number;
 }
 
 export interface CoinMarketData {
@@ -26,8 +34,11 @@ export interface CoinMarketData {
   priceUsd: number;
   change24h: number;
   fdv?: number;
+  marketCap?: number;
   chainId: string;
   dexId: string;
+  /** 交易对地址（GeckTerminal K 线用） */
+  pairAddress: string;
   url: string;
 }
 
@@ -48,6 +59,10 @@ export function getWatchlist(): WatchCoin[] {
         comment: String(c.comment ?? ""),
         addedAt: String(c.addedAt ?? ""),
         holding: c.holding === true,
+        followPrice: typeof c.followPrice === "number" ? c.followPrice : undefined,
+        followMcap: typeof c.followMcap === "number" ? c.followMcap : undefined,
+        holdAmount: typeof c.holdAmount === "number" ? c.holdAmount : undefined,
+        avgCost: typeof c.avgCost === "number" ? c.avgCost : undefined,
       }));
   } catch {
     return [];
@@ -59,6 +74,8 @@ interface DexPair {
   dexId: string;
   url?: string;
   fdv?: number;
+  marketCap?: number;
+  pairAddress?: string;
   priceUsd?: string;
   priceChange?: { h24?: number };
   baseToken?: { name?: string; symbol?: string };
@@ -83,8 +100,10 @@ export async function fetchCoinData(ca: string): Promise<CoinMarketData | null> 
       priceUsd: Number(pair.priceUsd ?? 0),
       change24h: Number(pair.priceChange?.h24 ?? 0),
       fdv: pair.fdv,
+      marketCap: pair.marketCap ?? pair.fdv,
       chainId: pair.chainId,
       dexId: pair.dexId,
+      pairAddress: pair.pairAddress ?? "",
       url:
         pair.url ?? `https://dexscreener.com/${pair.chainId}/${pair.dexId}`,
     };
