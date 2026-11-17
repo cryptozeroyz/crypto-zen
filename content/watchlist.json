@@ -120,7 +120,7 @@
   {
     "chain": "solana",
     "address": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
-    "status": "holding",
+    "status": "exited",
     "why": [],
     "comment": "源自Solana官方系账号meme，与 mihao 配对，当前最好的mihao的beta",
     "addedAt": "2026-11-12",
@@ -133,6 +133,12 @@
         "price": 0.0001347,
         "note": "源自Solana官方系账号meme，与 mihao 配对，当前最好的mihao的beta",
         "why": []
+      },
+      {
+        "type": "unfollow",
+        "date": "2026-11-17",
+        "price": 0.00009705,
+        "note": "没有因为mihao的爆发带来增长，叙事只能长期持有龙一，β标的只能做短期操作"
       }
     ],
     "symbol": "updog",
