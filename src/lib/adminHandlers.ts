@@ -7,6 +7,7 @@
  */
 
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 import { cookies } from "next/headers";
 import {
   verifySessionToken,
@@ -14,7 +15,14 @@ import {
   getAdminPassword,
   createSessionToken,
   SESSION_MS,
+  assertSecretConfigured,
 } from "@/lib/auth";
+import {
+  clientIp,
+  loginAllowed,
+  recordLoginFail,
+  clearLoginFails,
+} from "@/lib/loginRateLimit";
 import {
   listRawPosts,
   saveRawPost,
@@ -46,6 +54,17 @@ function badRequest(message: string) {
 /* ---------------- 登录 / 退出 ---------------- */
 
 export async function loginPOST(req: Request) {
+  /* 1. 登录限流：同 IP 10 分钟内失败 5 次锁定 10 分钟 */
+  const ip = clientIp(req);
+  const gate = loginAllowed(ip);
+  if (!gate.ok) {
+    return NextResponse.json(
+      { ok: false, message: `尝试次数过多，请 ${Math.ceil(gate.retryAfterSec / 60)} 分钟后再试` },
+      { status: 429, headers: { "Retry-After": String(gate.retryAfterSec) } }
+    );
+  }
+
+  /* 2. 读取密码 */
   let password = "";
   try {
     const body = await req.json();
@@ -54,13 +73,44 @@ export async function loginPOST(req: Request) {
     /* 按密码错误处理 */
   }
 
-  if (!password || password !== getAdminPassword()) {
-    return NextResponse.json({ ok: false, message: "密码不正确" }, { status: 401 });
+  /* 3. 环境变量自检（生产环境缺失 ADMIN_PASSWORD/SECRET 时 fail-closed） */
+  let expected: string;
+  try {
+    expected = getAdminPassword();
+    assertSecretConfigured();
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, message: e instanceof Error ? e.message : "认证配置错误" },
+      { status: 500 }
+    );
   }
 
+  /* 4. 恒定时间比较，防时序侧信道 */
+  const a = Buffer.from(String(password));
+  const b = Buffer.from(expected);
+  const match =
+    a.length === b.length && crypto.timingSafeEqual(a, b);
+  if (!password || !match) {
+    const locked = recordLoginFail(ip);
+    return NextResponse.json(
+      {
+        ok: false,
+        message: locked > 0 ? `尝试次数过多，已锁定 10 分钟` : "密码不正确",
+      },
+      { status: 401, headers: locked > 0 ? { "Retry-After": String(locked) } : undefined }
+    );
+  }
+
+  clearLoginFails(ip);
+
+  /* 5. 写会话 Cookie：HTTPS 下加 Secure（Caddy/Vercel 都会传 X-Forwarded-Proto） */
+  const isHttps =
+    req.headers.get("x-forwarded-proto") === "https" ||
+    new URL(req.url).protocol === "https:";
   cookies().set(COOKIE_NAME, createSessionToken(), {
     httpOnly: true,
     sameSite: "lax",
+    secure: isHttps,
     path: "/",
     maxAge: Math.floor(SESSION_MS / 1000),
   });
@@ -68,8 +118,20 @@ export async function loginPOST(req: Request) {
   return NextResponse.json({ ok: true });
 }
 
-export async function logoutPOST() {
-  cookies().delete(COOKIE_NAME);
+export async function logoutPOST(req: Request) {
+  /* 退出也需是已登录状态（防CSRF构造请求清cookie的语义混乱；无会话直接 401） */
+  if (!isAuthed()) return unauthorized();
+  /* Secure 属性与登录时一致，确保浏览器能精确删除 */
+  const isHttps =
+    req.headers.get("x-forwarded-proto") === "https" ||
+    new URL(req.url).protocol === "https:";
+  cookies().set(COOKIE_NAME, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: isHttps,
+    path: "/",
+    maxAge: 0,
+  });
   return NextResponse.json({ ok: true });
 }
 

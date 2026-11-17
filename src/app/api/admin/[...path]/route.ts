@@ -34,7 +34,7 @@ export async function POST(req: Request, { params }: Ctx) {
     case "login":
       return H.loginPOST(req);
     case "logout":
-      return H.logoutPOST();
+      return H.logoutPOST(req);
     case "translate":
       return H.translatePOST(req);
     case "upload":
