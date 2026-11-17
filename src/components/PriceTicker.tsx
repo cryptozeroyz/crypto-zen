@@ -35,7 +35,14 @@ function formatPrice(p: number): string {
   return p.toFixed(2);
 }
 
-export default function PriceTicker({ ariaLabel }: { ariaLabel: string }) {
+export default function PriceTicker({
+  ariaLabel,
+  always = false,
+}: {
+  ariaLabel: string;
+  /** 默认仅桌面显示（hidden lg:flex）；菜单内传 true 强制渲染 */
+  always?: boolean;
+}) {
   const [markets, setMarkets] = useState<CoinMarket[] | null>(null);
 
   useEffect(() => {
@@ -66,7 +73,9 @@ export default function PriceTicker({ ariaLabel }: { ariaLabel: string }) {
   return (
     <div
       aria-label={ariaLabel}
-      className="hidden items-center gap-4 font-mono text-xs lg:flex"
+      className={`items-center gap-4 font-mono text-xs ${
+        always ? "flex" : "hidden lg:flex"
+      }`}
     >
       {COINS.map(({ id, sym, logo }) => {
         const item = markets.find((m) => m.id === id);

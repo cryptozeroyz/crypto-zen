@@ -28,6 +28,7 @@ const zh = {
     about: "关于",
     homeAria: "Crypto Zen 的首页",
     switchLang: "切换语言",
+    menu: "菜单",
   },
   news: {
     title: "方程式新闻",
@@ -267,6 +268,7 @@ const en: typeof zh = {
     about: "About",
     homeAria: "Crypto Zen home",
     switchLang: "Switch language",
+    menu: "Menu",
   },
   news: {
     title: "EquationNews",
