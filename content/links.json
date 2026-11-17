@@ -1,5 +1,15 @@
 [
   {
+    "title": "agent use cases",
+    "url": "https://agentusecases.ai/",
+    "type": "tool",
+    "comment": "可以查看当前用户在用ai做哪些有意思的工具，给自己的AI Vibecoing 寻找灵感",
+    "tags": [
+      "AI"
+    ],
+    "addedAt": "2026-11-17"
+  },
+  {
     "title": "方程式新闻",
     "url": "https://eqn.news/api#catalog",
     "type": "tool",
