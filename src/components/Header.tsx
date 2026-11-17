@@ -255,7 +255,7 @@ export default function Header({ locale, t }: HeaderProps) {
           </nav>
           <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-4">
             {langSwitch}
-            <span className="min-w-0 overflow-hidden">
+            <span className="min-w-0 overflow-hidden [&>div]:gap-2.5 [&>div]:text-[10.5px]">
               <PriceTicker ariaLabel={t.ticker.aria} always />
             </span>
           </div>
