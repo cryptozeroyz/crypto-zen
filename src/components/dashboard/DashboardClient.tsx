@@ -13,6 +13,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import type { CoinMarketData, WatchCoin } from "@/lib/watchlist";
 import { avatarHue, formatMcap, formatPrice } from "@/lib/coin-format";
+import CoinAvatar from "@/components/CoinAvatar";
 
 export interface DashboardCoin extends WatchCoin {
   data: CoinMarketData | null;
@@ -24,12 +25,6 @@ const upCls = (v: number) =>
   v >= 0
     ? "text-emerald-600 dark:text-emerald-400"
     : "text-red-600 dark:text-red-400";
-
-/** 由 CA 生成稳定渐变头像底色 */
-function avatarBg(ca: string): string {
-  const h = avatarHue(ca);
-  return `linear-gradient(135deg,hsl(${h} 70% 55%),hsl(${(h + 40) % 360} 70% 45%))`;
-}
 
 /* ---------------- 迷你走势图 ---------------- */
 function Sparkline({ pts, up }: { pts: number[] | null; up: boolean }) {
@@ -224,13 +219,12 @@ export default function DashboardClient({
     >
       {item && (
         <>
-          <span
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-bold text-white"
-            style={{ background: avatarBg(item.c.ca) }}
-            aria-hidden="true"
-          >
-            {(item.c.data?.symbol ?? "?").slice(0, 1)}
-          </span>
+          <CoinAvatar
+            imageUrl={item.c.data?.imageUrl}
+            symbol={item.c.data?.symbol ?? item.c.ca.slice(0, 4)}
+            hue={avatarHue(item.c.ca)}
+            size={40}
+          />
           <div className="min-w-0">
             <div className="text-[11px] font-semibold tracking-wider text-muted">
               {tag}
@@ -373,13 +367,12 @@ export default function DashboardClient({
                     >
                       <td className="px-3 py-3.5">
                         <div className="flex items-center gap-2.5">
-                          <span
-                            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                            style={{ background: avatarBg(c.ca) }}
-                            aria-hidden="true"
-                          >
-                            {(c.data?.symbol ?? "?").slice(0, 1)}
-                          </span>
+                          <CoinAvatar
+                            imageUrl={c.data?.imageUrl}
+                            symbol={c.data?.symbol ?? c.ca.slice(0, 4)}
+                            hue={avatarHue(c.ca)}
+                            size={36}
+                          />
                           <span>
                             <span className="block font-semibold text-heading">
                               {c.data?.name ?? "…"}
@@ -584,13 +577,12 @@ function DrawerHead({
 }) {
   return (
     <div className="flex items-center gap-3.5 border-b border-line px-5 py-4">
-      <span
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-lg font-bold text-white"
-        style={{ background: avatarBg(coin.ca) }}
-        aria-hidden="true"
-      >
-        {(coin.data?.symbol ?? "?").slice(0, 1)}
-      </span>
+      <CoinAvatar
+        imageUrl={coin.data?.imageUrl}
+        symbol={coin.data?.symbol ?? coin.ca.slice(0, 4)}
+        hue={avatarHue(coin.ca)}
+        size={48}
+      />
       <div className="min-w-0">
         <div className="truncate text-lg font-bold text-heading">
           {coin.data?.name ?? "…"}
