@@ -17,6 +17,7 @@ import ArticlesSection from "@/components/ArticlesSection";
 import ContinueReading from "@/components/ContinueReading";
 import RandomPostButton from "@/components/RandomPostButton";
 import NowPlaying from "@/components/NowPlaying";
+import PriceTicker from "@/components/PriceTicker";
 import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
@@ -88,6 +89,11 @@ export default async function HomePage({
                 now: t.nowPlaying.now,
               }}
             />
+
+            {/* 实时行情胶囊芯片（BTC/ETH/SOL，导航改版后从顶栏迁至 Hero） */}
+            <div className="mt-5">
+              <PriceTicker ariaLabel={t.ticker.aria} variant="chips" />
+            </div>
 
             <div className="mt-7 flex flex-wrap items-center gap-6">
               <a

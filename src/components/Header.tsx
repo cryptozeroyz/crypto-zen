@@ -1,11 +1,13 @@
 "use client";
 
 /**
- * Header.tsx —— 顶部导航
+ * Header.tsx —— 顶部导航（2026-11 改版：方案 C · 内容优先）
  *
- * 桌面端（lg+）：好运签入口 + 锚点导航 + 语言切换 + 主题切换，全部平铺。
- * 移动端（<lg）：汉堡按钮展开下拉菜单——导航链接大号可点，语言/主题/行情
- * 收进菜单底部；路由跳转自动收起，支持 Esc 与点击遮罩关闭。
+ * 桌面端（lg+）：纯导航单行 —— logo + 好运签(文字链) + 锚点导航 + 语言 + 主题；
+ * 行情已迁至首页 Hero 胶囊芯片（PriceTicker variant="chips"）。
+ * 移动端（<lg）：汉堡展开下拉菜单；底部仅语言切换（行情同样只在 Hero 可见）。
+ *
+ * 当前页高亮：看板/文章/方程式新闻/推荐 按路径前缀匹配。
  */
 
 import { useEffect, useState } from "react";
@@ -16,7 +18,6 @@ import { siteConfig } from "@/lib/siteConfig";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import Container from "@/components/Container";
 import ThemeToggle from "@/components/ThemeToggle";
-import PriceTicker from "@/components/PriceTicker";
 
 /** 单页导航：锚点 id 与文案 key（links → /resources，news → /news，watchlist → /dashboard） */
 const NAV_ITEMS = [
@@ -84,6 +85,15 @@ export default function Header({ locale, t }: HeaderProps) {
             ? `#${anchor}`
             : `/${locale}/#${anchor}`;
 
+  /** 当前页高亮：独立页按路径前缀匹配；首页锚点不高亮 */
+  const isActive = (anchor: string): boolean => {
+    if (anchor === "watchlist") return pathname.startsWith(`/${locale}/dashboard`);
+    if (anchor === "news") return pathname.startsWith(`/${locale}/news`);
+    if (anchor === "links") return pathname.startsWith(`/${locale}/resources`);
+    if (anchor === "articles") return pathname.startsWith(`/${locale}/writing`);
+    return false;
+  };
+
   /** 语言切换（桌面端平铺 + 移动端菜单内各渲染一份） */
   const langSwitch = (
     <div
@@ -118,8 +128,13 @@ export default function Header({ locale, t }: HeaderProps) {
     </div>
   );
 
+  const linkCls = (active: boolean) =>
+    `transition-colors duration-200 hover:text-heading ${
+      active ? "font-semibold text-heading" : "text-muted"
+    }`;
+
   return (
-    <header className="relative z-50 bg-paper">
+    <header className="relative z-50 border-b border-line bg-paper">
       <Container className="flex h-16 items-center justify-between gap-3">
         {/* Logo：个人头像 + 站点名 */}
         <Link
@@ -140,51 +155,40 @@ export default function Header({ locale, t }: HeaderProps) {
           </span>
         </Link>
 
-        {/* 桌面端右侧 */}
-        <div className="hidden items-center gap-3 lg:flex">
-          <PriceTicker ariaLabel={t.ticker.aria} />
-
-          {/* Daily Alpha · 每日好运签 */}
-          <Link
-            href={`/${locale}/alpha`}
-            className="flex items-center gap-1.5 rounded-full border border-accent/30 bg-card px-3 py-1.5 text-[13px] font-medium text-heading transition-all duration-200 hover:border-accent/60 hover:shadow-[0_0_14px_rgba(37,99,235,0.2)]"
-          >
-            <span aria-hidden="true">🎐</span>
-            {t.fortune.button}
-          </Link>
-
-          {langSwitch}
-
+        {/* 桌面端：纯导航单行 */}
+        <div className="hidden items-center gap-6 lg:flex">
           <nav aria-label="Main navigation">
-            <ul className="flex items-center gap-4 text-sm">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.key}>
-                  <Link
-                    href={navHref(item.anchor)}
-                    className={`underline-offset-4 transition-colors duration-200 hover:text-heading hover:underline ${
-                      onHome ? "font-medium text-heading" : "text-muted"
-                    }`}
-                  >
-                    {t.nav[item.key]}
-                  </Link>
-                </li>
-              ))}
+            <ul className="flex items-center gap-6 text-sm">
+              <li>
+                <Link
+                  href={`/${locale}/alpha`}
+                  className="font-medium text-accent transition-colors duration-200 hover:text-accent-deep dark:hover:text-accent-mint"
+                >
+                  🎐 {t.fortune.button}
+                </Link>
+              </li>
+              {NAV_ITEMS.map((item) => {
+                const active = isActive(item.anchor);
+                return (
+                  <li key={item.key}>
+                    <Link
+                      href={navHref(item.anchor)}
+                      aria-current={active ? "page" : undefined}
+                      className={linkCls(active)}
+                    >
+                      {t.nav[item.key]}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
-
+          {langSwitch}
           <ThemeToggle labels={t.theme} />
         </div>
 
-        {/* 移动端右侧：好运签 + 主题 + 汉堡 */}
+        {/* 移动端：主题 + 汉堡 */}
         <div className="flex items-center gap-1.5 lg:hidden">
-          <Link
-            href={`/${locale}/alpha`}
-            aria-label={t.fortune.button}
-            className="flex items-center gap-1 rounded-full border border-accent/30 bg-card px-2.5 py-1.5 text-[13px] font-medium text-heading"
-          >
-            <span aria-hidden="true">🎐</span>
-            <span className="hidden min-[400px]:inline">{t.fortune.button}</span>
-          </Link>
           <ThemeToggle labels={t.theme} />
           <button
             type="button"
@@ -226,38 +230,50 @@ export default function Header({ locale, t }: HeaderProps) {
 
       {/* 移动端下拉菜单 */}
       <div
-        className={`absolute inset-x-0 top-16 z-50 origin-top border-b border-line bg-paper shadow-xl transition-all duration-200 lg:hidden ${
+        className={`absolute inset-x-0 top-16 z-50 border-b border-line bg-paper shadow-xl transition-all duration-200 lg:hidden ${
           open
-            ? "visible scale-y-100 opacity-100"
+            ? "visible translate-y-0 opacity-100"
             : "invisible -translate-y-2 opacity-0"
         }`}
       >
         <Container className="py-3">
           <nav aria-label="Main navigation">
             <ul className="divide-y divide-line/60">
-              {NAV_ITEMS.map((item, i) => (
-                <li key={item.key}>
-                  <Link
-                    href={navHref(item.anchor)}
-                    className="flex items-center justify-between px-2 py-3.5 text-[15px] font-medium text-heading transition-colors active:text-accent"
-                  >
-                    {t.nav[item.key]}
-                    <span
-                      aria-hidden="true"
-                      className="text-xs text-muted/60"
+              <li>
+                <Link
+                  href={`/${locale}/alpha`}
+                  className="flex items-center justify-between px-2 py-3.5 text-[15px] font-medium text-accent dark:text-accent-mint"
+                >
+                  🎐 {t.fortune.button}
+                  <span aria-hidden="true" className="text-xs text-muted/60">00</span>
+                </Link>
+              </li>
+              {NAV_ITEMS.map((item, i) => {
+                const active = isActive(item.anchor);
+                return (
+                  <li key={item.key}>
+                    <Link
+                      href={navHref(item.anchor)}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex items-center justify-between px-2 py-3.5 text-[15px] ${
+                        active ? "font-semibold text-heading" : "font-medium text-heading"
+                      } transition-colors active:text-accent`}
                     >
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </Link>
-                </li>
-              ))}
+                      {t.nav[item.key]}
+                      <span
+                        aria-hidden="true"
+                        className={`text-xs ${active ? "text-accent" : "text-muted/60"}`}
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
-          <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-4">
+          <div className="mt-3 border-t border-line pt-4">
             {langSwitch}
-            <span className="min-w-0 overflow-hidden [&>div]:gap-2.5 [&>div]:text-[10.5px]">
-              <PriceTicker ariaLabel={t.ticker.aria} always />
-            </span>
           </div>
         </Container>
       </div>
