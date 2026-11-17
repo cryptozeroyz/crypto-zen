@@ -10,7 +10,7 @@ export const siteConfig = {
   title: "Crypto Zen",
 
   /** 部署后的站点地址（用于 canonical / OG / sitemap） */
-  url: "https://crypto-zen.vercel.app",
+  url: "https://cryptozen.fun",
 
   /** 社交与联系方式（仅保留 X 和 Telegram） */
   social: {
