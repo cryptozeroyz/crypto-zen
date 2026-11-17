@@ -1,9 +1,8 @@
 /**
- * coin-images.ts —— Hero 漂浮币的静态 logo 地址
+ * coin-images.ts —— Hero 漂浮币与行情条的静态 logo
  *
- * 直接引用 CoinGecko 静态 CDN（coin-images.coingecko.com 是纯文件服务，
- * 没有 API 速率限制，运行时零请求）。图片地址通过 search API 一次性查证，
- * 若某天 404 可重新查询替换。
+ * 图片已自托管在 public/images/coins/（构建进站点，随仓库分发），
+ * 不再依赖 CoinGecko CDN——国内无代理访客也能正常显示。
  */
 
 export interface HeroLogo {
@@ -13,11 +12,11 @@ export interface HeroLogo {
 }
 
 export const HERO_LOGOS: HeroLogo[] = [
-  { id: "bitcoin", image: "https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png", sym: "BTC" },
-  { id: "ethereum", image: "https://coin-images.coingecko.com/coins/images/279/large/ethereum.png", sym: "ETH" },
-  { id: "solana", image: "https://coin-images.coingecko.com/coins/images/4128/large/solana.png", sym: "SOL" },
-  { id: "pepe", image: "https://coin-images.coingecko.com/coins/images/29850/large/pepe-token.jpeg", sym: "PEPE" },
-  { id: "bonk", image: "https://coin-images.coingecko.com/coins/images/28600/large/bonk.jpg", sym: "BONK" },
-  { id: "dogwifcoin", image: "https://coin-images.coingecko.com/coins/images/33566/large/dogwifhat.jpg", sym: "WIF" },
-  { id: "dogecoin", image: "https://coin-images.coingecko.com/coins/images/5/large/dogecoin.png", sym: "DOGE" },
+  { id: "bitcoin", image: "/images/coins/btc.png", sym: "BTC" },
+  { id: "ethereum", image: "/images/coins/eth.png", sym: "ETH" },
+  { id: "solana", image: "/images/coins/sol.png", sym: "SOL" },
+  { id: "pepe", image: "/images/coins/pepe.jpg", sym: "PEPE" },
+  { id: "bonk", image: "/images/coins/bonk.jpg", sym: "BONK" },
+  { id: "dogwifcoin", image: "/images/coins/wif.jpg", sym: "WIF" },
+  { id: "dogecoin", image: "/images/coins/doge.png", sym: "DOGE" },
 ];

@@ -2,7 +2,8 @@
 
 /**
  * CoinAvatar.tsx —— 代币头像
- * 优先展示 DexScreener 的头像（可能是 IPFS，存在加载失败的情况），
+ * DexScreener 的头像常托管在 IPFS/CDN，国内直连失败，
+ * 这里统一走本站 /api/market?type=img 代理（首尔服务器中转 + 7 天缓存）。
  * 加载失败时降级为「符号首字母 + CA 生成的稳定底色」。
  */
 
@@ -19,6 +20,12 @@ export default function CoinAvatar({ imageUrl, symbol, hue, size = 48 }: CoinAva
   const [failed, setFailed] = useState(false);
 
   const letter = (symbol || "?").slice(0, 1).toUpperCase();
+  // 第三方图片经本站代理；本站自身的图片直接用原始路径
+  const proxied = imageUrl
+    ? imageUrl.startsWith("/")
+      ? imageUrl
+      : `/api/market?type=img&url=${encodeURIComponent(imageUrl)}`
+    : undefined;
 
   return (
     <span
@@ -33,10 +40,10 @@ export default function CoinAvatar({ imageUrl, symbol, hue, size = 48 }: CoinAva
       }}
       aria-hidden="true"
     >
-      {!failed && imageUrl ? (
+      {!failed && proxied ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={imageUrl}
+          src={proxied}
           alt=""
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
