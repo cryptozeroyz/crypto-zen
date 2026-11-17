@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Header 导航 redesign · 3 方案原型</title>
+<style>
+:root{
+  --bg:#f7f8fa; --card:#ffffff; --text:#3b4654; --heading:#192536;
+  --muted:#7a8590; --line:rgba(25,37,54,.1);
+  --accent:#2563eb; --deep:#1d4ed8; --mint:#38bdf8;
+  --up:#059669; --down:#dc2626;
+  --shadow:0 10px 30px -12px rgba(25,37,54,.15);
+  --code:#eef1f4;
+}
+html.dark{
+  --bg:#141719; --card:#1d2125; --text:#dde2e7; --heading:#eef1f4;
+  --muted:#96a0a9; --line:rgba(255,255,255,.1); --code:#20252a;
+  --up:#34d399; --down:#f87171;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.up{color:var(--up)} .down{color:var(--down)}
+button{font:inherit;cursor:pointer;background:none;border:0;color:inherit}
+a{text-decoration:none;color:inherit;cursor:pointer}
+.tbtn{color:var(--muted);padding:4px;border-radius:6px;transition:.2s}
+.tbtn:hover{color:var(--heading)}
+.tick{display:flex;align-items:center;gap:5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}
+.tick img,.tick .c32{width:15px;height:15px;border-radius:50%}
+.c32{display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:8.5px;font-weight:700}
+
+.page-head{padding:36px 0 8px}
+.page-head h1{font-size:28px;font-weight:700;color:var(--heading);letter-spacing:-.02em}
+.page-head p{color:var(--muted);margin-top:6px;font-size:13.5px}
+
+.opt{margin-top:36px}
+.opt-meta{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.opt-meta .tag{font-size:11px;font-weight:700;letter-spacing:.1em;background:var(--accent);color:#fff;border-radius:6px;padding:3px 9px}
+.opt-meta h2{font-size:18px;font-weight:700;color:var(--heading)}
+.opt-meta .desc{font-size:12.5px;color:var(--muted)}
+.opt-meta .pros{margin-left:auto;font-size:11.5px;color:var(--muted);text-align:right;max-width:340px}
+
+/* ============ 方案 A：经典双层 ============ */
+.a-strip{border-bottom:1px solid var(--line);background:var(--code)}
+.a-strip .wrap{height:32px;display:flex;align-items:center;gap:22px;font-size:11px;color:var(--muted)}
+.a-strip .tick{color:var(--text);font-size:11px}
+.a-bar{border-bottom:1px solid var(--line);background:var(--bg)}
+.a-bar .wrap{height:58px;display:flex;align-items:center;gap:28px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--heading);font-size:15px}
+.brand .logo{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--mint));display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0}
+.a-nav{display:flex;gap:22px;font-size:13.5px;margin-left:auto}
+.a-nav a{color:var(--muted);transition:.2s;padding:6px 2px;border-bottom:2px solid transparent}
+.a-nav a:hover{color:var(--heading)}
+.a-nav a.on{color:var(--accent);font-weight:600;border-bottom-color:var(--accent)}
+.a-nav .alpha{color:var(--accent);font-weight:500}
+.a-tools{display:flex;align-items:center;gap:10px}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;padding:2px;font-size:11.5px;background:var(--card)}
+.lang b{padding:3px 10px;border-radius:999px;font-weight:500;color:var(--muted)}
+.lang b.on{background:var(--accent);color:#fff}
+
+/* ============ 方案 B：悬浮胶囊岛 ============ */
+.b-strip{background:var(--code);border-bottom:1px solid var(--line)}
+.b-strip .wrap{height:30px;display:flex;align-items:center;justify-content:center;gap:26px;font-size:11px}
+.b-bar .wrap{height:74px;display:flex;align-items:center;gap:16px}
+.b-island{margin:0 auto;display:flex;align-items:center;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px;box-shadow:var(--shadow)}
+.b-island a{padding:7px 15px;border-radius:999px;font-size:13px;color:var(--muted);transition:.18s;white-space:nowrap}
+.b-island a:hover{color:var(--heading);background:var(--code)}
+.b-island a.on{background:var(--accent);color:#fff;font-weight:500}
+.b-island a.alpha{color:var(--accent)}
+.b-island a.alpha.on{color:#fff}
+.b-tools{display:flex;align-items:center;gap:8px}
+
+/* ============ 方案 C：内容优先（行情进 Hero） ============ */
+.c-bar{border-bottom:1px solid var(--line)}
+.c-bar .wrap{height:60px;display:flex;align-items:center;gap:26px}
+.c-nav{display:flex;gap:20px;font-size:13.5px;margin-left:auto}
+.c-nav a{color:var(--muted);transition:.2s}
+.c-nav a:hover{color:var(--heading)}
+.c-nav a.on{color:var(--heading);font-weight:600}
+.hero-sim{border-bottom:1px solid var(--line);padding:34px 0 30px;background-image:radial-gradient(circle,rgba(37,99,235,.12) 1.2px,transparent 1.2px);background-size:22px 22px}
+.hero-sim h1{font-size:clamp(26px,4vw,40px);font-weight:700;color:var(--heading);line-height:1.2;letter-spacing:-.02em}
+.hero-sim h1 .hl{color:var(--accent)}
+.hero-sim .now{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13.5px;margin-top:16px}
+.c-chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.c-chip{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 13px 6px 7px;font-family:ui-monospace,monospace;font-size:12px;transition:.2s}
+.c-chip:hover{border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+
+.proto-badge{position:fixed;left:14px;bottom:14px;background:var(--heading);color:var(--bg);font-size:11px;padding:5px 12px;border-radius:999px;opacity:.75;letter-spacing:.05em;z-index:50}
+.toggle{position:fixed;right:14px;bottom:14px;z-index:50;font-size:12px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="page-head wrap">
+  <h1>Header 导航 · 三个方向</h1>
+  <p>同一套内容，三种信息架构。差异主要在「行情条放哪」和「好运签放哪」。悬停可感受交互态。</p>
+</div>
+
+<!-- ================= 方案 A ================= -->
+<section class="opt wrap">
+  <div class="opt-meta">
+    <span class="tag">方案 A</span>
+    <h2>经典双层</h2>
+    <span class="desc">行情独立一层，导航独占一层，信息分层最清晰</span>
+    <span class="pros">✓ 最稳妥不易翻车 ✗ 两层略占垂直空间</span>
+  </div>
+  <div class="a-strip">
+    <div class="wrap">
+      <span class="tick"><span class="c32" style="background:#f7931a">₿</span>$64,988 <b class="up">+1.3%</b></span>
+      <span class="tick"><span class="c32" style="background:#627eea">Ξ</span>$1,820 <b class="up">+1.1%</b></span>
+      <span class="tick"><span class="c32" style="background:#9945ff">◎</span>$74.0 <b class="up">+4.3%</b></span>
+      <span style="margin-left:auto;font-size:10.5px;opacity:.7">每 60 秒自动刷新</span>
+    </div>
+  </div>
+  <div class="a-bar">
+    <div class="wrap">
+      <a class="brand"><span class="logo">CZ</span>Crypto Zen</a>
+      <nav class="a-nav">
+        <a class="alpha">🎐 好运签</a>
+        <a class="on">看板</a>
+        <a>文章</a>
+        <a>方程式新闻</a>
+        <a>推荐</a>
+        <a>收藏</a>
+        <a>关于</a>
+      </nav>
+      <div class="a-tools">
+        <div class="lang"><b class="on">中</b><b>EN</b></div>
+        <button class="tbtn">☾</button>
+      </div>
+    </div>
+  </div>
+  <div style="padding:26px 0;color:var(--muted);font-size:13px;background:var(--bg)">
+    &nbsp;&nbsp;&nbsp;&nbsp;↓ 下方直接接 Hero，行情不再挤导航
+  </div>
+</section>
+
+<!-- ================= 方案 B ================= -->
+<section class="opt wrap">
+  <div class="opt-meta">
+    <span class="tag">方案 B</span>
+    <h2>悬浮胶囊岛</h2>
+    <span class="desc">导航收进居中胶囊，最有辨识度（Raycast/Linear 风）</span>
+    <span class="pros">✓ 设计感最强 ✗ 胶囊内项多时偏挤，窄屏需收起部分</span>
+  </div>
+  <div class="b-strip">
+    <div class="wrap">
+      <span class="tick"><span class="c32" style="background:#f7931a">₿</span>$64,988 <b class="up">+1.3%</b></span>
+      <span class="tick"><span class="c32" style="background:#627eea">Ξ</span>$1,820 <b class="up">+1.1%</b></span>
+      <span class="tick"><span class="c32" style="background:#9945ff">◎</span>$74.0 <b class="up">+4.3%</b></span>
+    </div>
+  </div>
+  <div class="b-bar">
+    <div class="wrap">
+      <a class="brand"><span class="logo">CZ</span>Crypto Zen</a>
+      <nav class="b-island">
+        <a class="alpha">🎐 好运签</a>
+        <a class="on">看板</a>
+        <a>文章</a>
+        <a>方程式新闻</a>
+        <a>推荐</a>
+        <a>收藏</a>
+        <a>关于</a>
+      </nav>
+      <div class="b-tools">
+        <div class="lang"><b class="on">中</b><b>EN</b></div>
+        <button class="tbtn">☾</button>
+      </div>
+    </div>
+  </div>
+  <div style="padding:26px 0;color:var(--muted);font-size:13px;background:var(--bg)">
+    &nbsp;&nbsp;&nbsp;&nbsp;↓ 胶囊选中态如上（看板 为当前页），好运签为品牌蓝文字项
+  </div>
+</section>
+
+<!-- ================= 方案 C ================= -->
+<section class="opt wrap">
+  <div class="opt-meta">
+    <span class="tag">方案 C</span>
+    <h2>内容优先 · 行情进 Hero</h2>
+    <span class="desc">导航只留导航；行情变成 Hero 区的三枚胶囊芯片</span>
+    <span class="pros">✓ 导航最干净、行情离内容最近 ✗ 离开首页就看不到行情</span>
+  </div>
+  <div class="c-bar">
+    <div class="wrap">
+      <a class="brand"><span class="logo">CZ</span>Crypto Zen</a>
+      <nav class="c-nav">
+        <a style="color:var(--accent)">🎐 好运签</a>
+        <a class="on">看板</a>
+        <a>文章</a>
+        <a>方程式新闻</a>
+        <a>推荐</a>
+        <a>收藏</a>
+        <a>关于</a>
+      </nav>
+      <div class="lang"><b class="on">中</b><b>EN</b></div>
+      <button class="tbtn">☾</button>
+    </div>
+  </div>
+  <div class="hero-sim">
+    <div class="wrap">
+      <h1>在 Meme 世界的喧嚣里，<br /><span class="hl">做真正严肃的研究。</span></h1>
+      <p class="now">💬 现在在 正在学习 Vibecoing，制作个人网站</p>
+      <div class="c-chips">
+        <span class="c-chip"><span class="c32" style="background:#f7931a">₿</span>BTC $64,988 <b class="up">+1.3%</b></span>
+        <span class="c-chip"><span class="c32" style="background:#627eea">Ξ</span>ETH $1,820 <b class="up">+1.1%</b></span>
+        <span class="c-chip"><span class="c32" style="background:#9945ff">◎</span>SOL $74.0 <b class="up">+4.3%</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="proto-badge">PROTOTYPE · 静态示意</div>
+<button class="toggle" onclick="document.documentElement.classList.toggle('dark');this.textContent=document.documentElement.classList.contains('dark')?'☀️ 浅色':'🌙 暗色'">🌙 暗色</button>
+</body>
+</html>
