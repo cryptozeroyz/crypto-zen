@@ -162,31 +162,6 @@
     "pairVolume24h": 13890.58
   },
   {
-    "chain": "ethereum",
-    "address": "0x6982508145454Ce325dDbE47a25d4ec3d2311933",
-    "status": "watching",
-    "why": [],
-    "comment": "Meme 蓝筹的锚。筹码结构季度复盘中，慢速吸筹地址份额持续抬升，适合当作板块风向标长期跟踪。",
-    "addedAt": "2026-11-12",
-    "followPrice": 0.000003954,
-    "followMcap": 1636206360,
-    "events": [
-      {
-        "type": "follow",
-        "date": "2026-11-12",
-        "price": 0.000003954,
-        "note": "Meme 蓝筹的锚。筹码结构季度复盘中，慢速吸筹地址份额持续抬升，适合当作板块风向标长期跟踪。",
-        "why": []
-      }
-    ],
-    "symbol": "PEPE",
-    "name": "Pepe",
-    "dex": "uniswap",
-    "pairAddress": "0xA43fe16908251ee70EF74718545e4FE6C5cCEc9f",
-    "pairLiquidity": 25196490.67,
-    "pairVolume24h": 1148776.79
-  },
-  {
     "chain": "solana",
     "address": "DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263",
     "status": "watching",
