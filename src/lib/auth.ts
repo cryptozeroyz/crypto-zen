@@ -13,7 +13,10 @@
 import crypto from "crypto";
 
 const COOKIE_NAME = "cz_admin";
-const SESSION_MS = 7 * 24 * 60 * 60 * 1000;
+/* 会话有效期 24 小时：无状态 HMAC 会话无法单独撤销，
+   缩短有效期是控制被盗 cookie 暴露窗口的主要手段。
+   紧急吊销全部会话：更换 ADMIN_SECRET，所有已签发的 cookie 立即失效。 */
+const SESSION_MS = 24 * 60 * 60 * 1000;
 
 /**
  * 后台登录密码。生产环境必须显式配置 ADMIN_PASSWORD（≥8 位），
