@@ -1,36 +1,5 @@
 [
   {
-    "address": "MoR1whCWjcLiUqAan4GHLRcn8wK4Jktk2DyDryNmeta",
-    "ca": "MoR1whCWjcLiUqAan4GHLRcn8wK4Jktk2DyDryNmeta",
-    "status": "watching",
-    "why": [
-      "thesis"
-    ],
-    "comment": "Mori Finance 是 Solana 上首个备兑看涨期权协议，创始人 Pavan Katepalli 前 Consensys 架构师，MetaDAO 筹款 25万美金（248人参与，打款770万，超募30.8倍）",
-    "addedAt": "2026-11-17",
-    "holding": false,
-    "events": [
-      {
-        "type": "follow",
-        "date": "2026-11-17",
-        "note": "Mori Finance 是 Solana 上首个备兑看涨期权协议，创始人 Pavan Katepalli 前 Consensys 架构师，MetaDAO 筹款 25万美金（248人参与，打款770万，超募30.8倍）",
-        "why": [
-          "thesis"
-        ],
-        "price": 0.07028
-      }
-    ],
-    "followPrice": 0.07028,
-    "followMcap": 1813333,
-    "chain": "solana",
-    "symbol": "MORI",
-    "name": "Mori Finance",
-    "dex": "metadao",
-    "pairAddress": "HByWtFDYwGw45A69cg4jwZFt78kmnD9q4kvKACUSdwB8",
-    "pairLiquidity": 167671.41,
-    "pairVolume24h": 74152.87
-  },
-  {
     "chain": "solana",
     "address": "9k2nqjUrSh9p2ZBnWxNE3QRWYiLocrWZfoDm3Vdxpump",
     "status": "watching",
