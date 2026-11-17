@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Crypto Zen · My Crypto Dashboard 原型</title>
+<style>
+/* ============ 设计令牌（与线上一致的蓝色主题） ============ */
+:root{
+  --bg:#f7f8fa; --card:#ffffff; --text:#3b4654; --heading:#192536;
+  --muted:#7a8590; --line:rgba(25,37,54,.1); --code:#eef1f4;
+  --accent:#2563eb; --deep:#1d4ed8; --mint:#38bdf8;
+  --up:#059669; --down:#dc2626;
+  --upbg:rgba(5,150,105,.08); --downbg:rgba(220,38,38,.08);
+  --shadow:0 10px 30px -12px rgba(25,37,54,.15);
+}
+html.dark{
+  --bg:#141719; --card:#1d2125; --text:#dde2e7; --heading:#eef1f4;
+  --muted:#96a0a9; --line:rgba(255,255,255,.1); --code:#20252a;
+  --up:#34d399; --down:#f87171;
+  --upbg:rgba(52,211,153,.1); --downbg:rgba(248,113,113,.1);
+  --shadow:0 10px 30px -12px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;background:none;border:0;color:inherit}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.chip-up{color:var(--up)} .chip-down{color:var(--down)}
+
+/* ============ 顶栏 ============ */
+header{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line)}
+.hbar{display:flex;align-items:center;justify-content:space-between;height:58px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--heading);font-size:15px}
+.brand .logo{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--mint));display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff}
+nav{display:flex;gap:20px;font-size:13.5px}
+nav a{color:var(--muted);transition:.2s}
+nav a.on{color:var(--heading);font-weight:600}
+nav a:hover{color:var(--heading)}
+.tbtn{color:var(--muted);padding:4px 8px;border-radius:8px;border:1px solid var(--line);font-size:12.5px;transition:.2s}
+.tbtn:hover{color:var(--heading)}
+
+/* ============ 页头 ============ */
+.phead{padding:36px 0 8px}
+.phead .eyebrow{font-size:12px;letter-spacing:.14em;color:var(--accent);font-weight:600;text-transform:uppercase}
+html.dark .phead .eyebrow{color:var(--mint)}
+.phead h1{font-size:clamp(26px,3.6vw,36px);font-weight:700;letter-spacing:-.02em;color:var(--heading);margin-top:6px}
+.phead p{color:var(--muted);margin-top:6px;font-size:14px;max-width:640px}
+
+/* ============ 总览统计 ============ */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;transition:.2s}
+.stat:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.stat .l{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.stat .n{font-size:26px;font-weight:700;color:var(--heading);margin-top:6px;letter-spacing:-.01em}
+.stat .n small{font-size:14px;font-weight:600;margin-left:2px}
+.stat .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* ============ Best / Worst ============ */
+.perf{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.pcard{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:16px}
+.pcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--up)}
+.pcard.loser::before{background:var(--down)}
+.pcard .tag{font-size:11px;letter-spacing:.1em;color:var(--muted);font-weight:600}
+.pcard .who{display:flex;align-items:center;gap:10px;margin-top:6px;font-weight:700;color:var(--heading);font-size:15px}
+.pcard .pct{margin-left:auto;text-align:right}
+.pcard .pct .v{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.pcard .pct .d{font-size:11.5px;color:var(--muted)}
+@media(max-width:700px){.perf{grid-template-columns:1fr}}
+
+/* ============ 代币表格 ============ */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;margin-top:14px;overflow:hidden}
+.tabs{display:flex;gap:4px;padding:14px 18px 0;border-bottom:1px solid var(--line);align-items:center;flex-wrap:wrap}
+.tab{padding:9px 14px;font-size:13.5px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:.15s}
+.tab:hover{color:var(--heading)}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+html.dark .tab.on{color:var(--mint);border-bottom-color:var(--mint)}
+.tab .cnt{font-size:11px;background:var(--code);border-radius:999px;padding:1px 7px;margin-left:5px;color:var(--muted)}
+.tabs .hint{margin-left:auto;font-size:11.5px;color:var(--muted)}
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:880px}
+thead th{font-size:11.5px;color:var(--muted);font-weight:500;text-align:right;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap;user-select:none}
+thead th.l{text-align:left}
+thead th.sortable{cursor:pointer}
+thead th.sortable:hover{color:var(--heading)}
+thead th .arrow{font-size:9px;margin-left:2px}
+tbody td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap;vertical-align:middle}
+tbody td.l{text-align:left}
+tbody tr{cursor:pointer;transition:background .15s}
+tbody tr:hover{background:color-mix(in srgb,var(--accent) 4%,transparent)}
+tbody tr:last-child td{border-bottom:0}
+.tk{display:flex;align-items:center;gap:10px}
+.tk .ava{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
+.tk .nm{font-weight:600;color:var(--heading);font-size:14px;line-height:1.3}
+.tk .meta{font-size:11.5px;color:var(--muted)}
+.badge{display:inline-block;font-size:11px;font-weight:600;border-radius:999px;padding:3px 10px}
+.badge.hold{background:var(--accent);color:#fff}
+.badge.watch{border:1px solid var(--line);color:var(--muted)}
+.since{font-weight:700;font-size:14px}
+.since small{display:block;font-size:10.5px;color:var(--muted);font-weight:400}
+.pill24{font-size:12.5px;font-weight:600;background:var(--upbg);color:var(--up);border-radius:8px;padding:3px 8px;display:inline-block}
+.pill24.dn{background:var(--downbg);color:var(--down)}
+.spark{display:inline-block;vertical-align:middle}
+.empty{padding:48px;text-align:center;color:var(--muted)}
+
+/* ============ 详情抽屉 ============ */
+.mask{position:fixed;inset:0;background:rgba(10,15,25,.45);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:.25s;z-index:80}
+.mask.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--bg);border-left:1px solid var(--line);transform:translateX(102%);transition:transform .3s cubic-bezier(.2,.7,.3,1);z-index:90;display:flex;flex-direction:column;box-shadow:-20px 0 60px -30px rgba(0,0,0,.35)}
+.drawer.open{transform:none}
+.dhead{display:flex;align-items:center;gap:14px;padding:20px 22px;border-bottom:1px solid var(--line)}
+.dhead .ava{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:19px;color:#fff;flex-shrink:0}
+.dhead .t{font-size:18px;font-weight:700;color:var(--heading);line-height:1.25}
+.dhead .m{font-size:12px;color:var(--muted)}
+.dhead .price{margin-left:auto;text-align:right}
+.dhead .price .p{font-size:20px;font-weight:700;color:var(--heading)}
+.dhead .x{margin-left:10px;color:var(--muted);font-size:18px;padding:6px;border-radius:8px}
+.dhead .x:hover{background:var(--line);color:var(--heading)}
+.dbody{flex:1;overflow-y:auto;padding:18px 22px 26px}
+.rngs{display:flex;gap:4px;background:var(--code);border-radius:10px;padding:3px;width:max-content;margin:0 auto 10px}
+.rngs button{font-size:12px;padding:4px 12px;border-radius:8px;color:var(--muted);font-weight:500}
+.rngs button.on{background:var(--card);color:var(--heading);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.chart-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.chart-card canvas{width:100%;height:190px;display:block}
+.dsec{margin-top:18px}
+.dsec h3{font-size:12px;letter-spacing:.1em;color:var(--muted);font-weight:600;text-transform:uppercase;margin-bottom:10px}
+.kv{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.kv .row{display:flex;justify-content:space-between;align-items:center;padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.kv .row:last-child{border-bottom:0}
+.kv .k{color:var(--muted)}
+.kv .v{font-weight:600;color:var(--heading)}
+.pnlbar{height:6px;border-radius:99px;background:var(--code);overflow:hidden;margin-top:6px}
+.pnlbar i{display:block;height:100%;border-radius:99px}
+.note{font-size:11.5px;color:var(--muted);margin-top:18px;line-height:1.7;border-top:1px dashed var(--line);padding-top:14px}
+.ca{word-break:break-all;font-size:11.5px;color:var(--muted)}
+
+footer{border-top:1px solid var(--line);margin-top:56px;padding:26px 0 40px;color:var(--muted);font-size:12.5px}
+.proto-badge{position:fixed;left:14px;bottom:14px;background:var(--heading);color:var(--bg);font-size:11px;padding:5px 12px;border-radius:999px;opacity:.75;z-index:60;letter-spacing:.05em}
+
+/* 移动端：表格转卡片 */
+@media(max-width:760px){
+  .twrap{overflow-x:visible}
+  table,tbody,tr,td{display:block;width:100%;min-width:0}
+  thead{display:none}
+  tbody tr{border:1px solid var(--line);border-radius:14px;margin:12px;background:var(--card)}
+  tbody td{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dashed var(--line);text-align:right;padding:10px 14px}
+  tbody td::before{content:attr(data-th);font-size:11.5px;color:var(--muted)}
+  tbody td.l{justify-content:flex-start}
+  tbody td.l::before{display:none}
+  tbody td.hideM{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hbar">
+    <a class="brand" href="#"><span class="logo">CZ</span>Crypto Zen</a>
+    <nav>
+      <a href="#">关注</a><a href="#">文章</a><a href="#">推荐</a><a href="#">关于</a>
+    </nav>
+    <button class="tbtn" id="themeBtn">🌙 暗色</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 页头 -->
+  <div class="phead">
+    <div class="eyebrow">My Crypto Dashboard</div>
+    <h1>我的代币看板</h1>
+    <p>我不再只是收藏 Meme，而是记录每一次关注的判断 —— 关注价、现价、关注以来涨跌幅，以及真实持仓的盈亏。</p>
+  </div>
+
+  <!-- 总览 -->
+  <section class="stats" id="stats"></section>
+
+  <!-- Best / Worst -->
+  <section class="perf" id="perf"></section>
+
+  <!-- 代币列表 -->
+  <section class="panel">
+    <div class="tabs" id="tabs"></div>
+    <div class="twrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="l">代币</th>
+            <th class="l">状态</th>
+            <th class="sortable" data-k="mcap">市值<span class="arrow"></span></th>
+            <th>关注价格</th>
+            <th>当前价格</th>
+            <th class="sortable" data-k="since">关注以来<span class="arrow"></span></th>
+            <th class="sortable" data-k="c24">24H<span class="arrow"></span></th>
+            <th class="l">7D 走势</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none">该分类下暂无代币</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Crypto Zen · 原型 v1 · 页面数据均为模拟，仅用于评审布局与交互</p>
+  </footer>
+</main>
+
+<!-- 详情抽屉 -->
+<div class="mask" id="mask"></div>
+<aside class="drawer" id="drawer" aria-hidden="true"></aside>
+<div class="proto-badge">PROTOTYPE · 模拟数据</div>
+<script>
+/* ================= 模拟数据 ================= */
+/* 字段对应未来真实数据结构：
+   status: holding=持仓 / watch=观察
+   followPrice/followMcap: 关注瞬间记录（真实实现由服务端写入 watchlist.json）
+   holding: { amount, avgCost } 仅持仓代币有 */
+const COINS = [
+  { id:"shiro",   name:"Shiro Neko", ticker:"SHIRO", chain:"ETHEREUM", status:"watch",
+    mcap:8.4e6,  price:0.0000084,  followPrice:0.0000032, c24:-3.2,
+    followDate:"2026-10-28", followMcap:3.2e6, highPct:186.5, ca:"0xshiro…demo" },
+  { id:"cat3",    name:":3",         ticker:":3",    chain:"SOLANA",   status:"holding",
+    mcap:388e3,  price:0.0038,     followPrice:0.0029,    c24:8.5,
+    followDate:"2026-11-03", followMcap:296e3, highPct:61.2,
+    holding:{ amount:2.1e6, avgCost:0.0029 }, ca:"F5kyj…demo" },
+  { id:"jacket",  name:"Just a jacket", ticker:"Jacket", chain:"BSC",  status:"holding",
+    mcap:806e3,  price:0.00075,    followPrice:0.0013,    c24:-2.1,
+    followDate:"2026-10-30", followMcap:1.4e6, highPct:22.4,
+    holding:{ amount:9.5e6, avgCost:0.0011 }, ca:"0xb82…demo" },
+  { id:"nio",     name:"Niga Its Over", ticker:"NIO", chain:"SOLANA", status:"watch",
+    mcap:1.5e6,  price:0.0015,     followPrice:0.00086,   c24:4.4,
+    followDate:"2026-11-05", followMcap:860e3, highPct:96.0, ca:"75L2v…demo" },
+  { id:"dog",     name:"whatsup dog", ticker:"updog",  chain:"SOLANA", status:"watch",
+    mcap:311e3,  price:0.00031,    followPrice:0.00022,   c24:1.8,
+    followDate:"2026-11-06", followMcap:221e3, highPct:47.8, ca:"77HqX…demo" },
+  { id:"miaocat", name:"ni hao cat",  ticker:"mihao",  chain:"SOLANA", status:"watch",
+    mcap:13.5e6, price:0.0135,     followPrice:0.0118,    c24:6.2,
+    followDate:"2026-11-08", followMcap:11.8e6, highPct:18.9, ca:"4CxjZ…demo" },
+  { id:"pepe",    name:"Pepe",        ticker:"PEPE",   chain:"ETHEREUM", status:"holding",
+    mcap:1.63e9, price:6.8e-6,     followPrice:5.9e-6,    c24:-4.8,
+    followDate:"2026-11-02", followMcap:1.41e9, highPct:27.6,
+    holding:{ amount:1.2e9, avgCost:6.1e-6 }, ca:"0x698…demo" },
+  { id:"bonk",    name:"Bonk",        ticker:"BONK",   chain:"SOLANA", status:"holding",
+    mcap:212.4e6,price:2.1e-5,     followPrice:1.93e-5,   c24:3.2,
+    followDate:"2026-11-04", followMcap:195e6, highPct:12.8,
+    holding:{ amount:4.8e8, avgCost:2.0e-5 }, ca:"DezXA…demo" },
+  { id:"wif",     name:"dogwifhat",   ticker:"WIF",    chain:"SOLANA", status:"watch",
+    mcap:236.5e6,price:0.2365,     followPrice:0.268,     c24:-6.4,
+    followDate:"2026-11-01", followMcap:268e6, highPct:9.2, ca:"EKpMD…demo" },
+  { id:"fart",    name:"Fartcoin",    ticker:"FART",   chain:"SOLANA", status:"watch",
+    mcap:44e6,   price:0.044,      followPrice:0.031,     c24:-11.2,
+    followDate:"2026-11-10", followMcap:31e6, highPct:52.7, ca:"9BBkP…demo" },
+];
+
+/* 由关注以来涨幅排序辅助 */
+COINS.forEach(c => { c.since = (c.price / c.followPrice - 1) * 100; });
+
+/* ================= 工具 ================= */
+const $ = s => document.querySelector(s);
+const fmtM = v => v >= 1e9 ? "$" + (v/1e9).toFixed(2) + "B"
+             : v >= 1e6 ? "$" + (v/1e6).toFixed(1) + "M"
+             : v >= 1e3 ? "$" + (v/1e3).toFixed(0) + "K" : "$" + v.toFixed(0);
+const fmtP = p => p >= 1 ? "$" + p.toFixed(p >= 100 ? 0 : 2)
+             : p >= 0.01 ? "$" + p.toFixed(4)
+             : "$" + p.toExponential(2);
+const fmtPct = v => (v >= 0 ? "+" : "") + v.toFixed(1) + "%";
+const cls = v => v >= 0 ? "chip-up" : "chip-down";
+function hueOf(str){ let h = 0; for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; }
+function avatarBg(name){
+  const h = hueOf(name);
+  return `linear-gradient(135deg,hsl(${h} 70% 55%),hsl(${(h+40)%360} 70% 45%))`;
+}
+/* 可复现的伪随机（保证原型每次刷新图形一致） */
+function rng(seed){ let s = seed; return () => (s = (s * 9301 + 49297) % 233280) / 233280; }
+/* 生成 n 个点的随机游走（7D 走势） */
+function walk(seed, n, drift){
+  const r = rng(seed); const pts = []; let v = 50;
+  for (let i = 0; i < n; i++){ v += (r() - 0.5 + drift) * 14; v = Math.max(5, Math.min(95, v)); pts.push(v); }
+  return pts;
+}
+/* SVG 迷你走势图 */
+function sparkSVG(pts, up){
+  const w = 96, h = 30, min = Math.min(...pts), max = Math.max(...pts), span = (max - min) || 1;
+  const d = pts.map((p, i) => `${(i/(pts.length-1)*w).toFixed(1)},${(h - 3 - (p - min)/span*(h-6)).toFixed(1)}`).join(" ");
+  const col = up ? "var(--up)" : "var(--down)";
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none">
+    <polyline points="${d}" stroke="${col}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/* ================= 主题 ================= */
+const themeBtn = $("#themeBtn");
+function applyTheme(dark){
+  document.documentElement.classList.toggle("dark", dark);
+  themeBtn.textContent = dark ? "☀️ 浅色" : "🌙 暗色";
+}
+applyTheme(localStorage.getItem("cz-theme") === "dark" || matchMedia("(prefers-color-scheme: dark)").matches);
+themeBtn.onclick = () => {
+  const dark = !document.documentElement.classList.contains("dark");
+  applyTheme(dark); localStorage.setItem("cz-theme", dark ? "dark" : "light");
+};
+
+/* ================= 总览统计 ================= */
+function renderStats(){
+  const hold = COINS.filter(c => c.status === "holding");
+  const watch = COINS.filter(c => c.status === "watch");
+  let cost = 0, val = 0;
+  hold.forEach(c => { cost += c.holding.amount * c.holding.avgCost; val += c.holding.amount * c.price; });
+  const holdPnl = (val / cost - 1) * 100;
+  const watchAvg = COINS.reduce((a, c) => a + c.since, 0) / COINS.length;
+  const items = [
+    { l:"持仓代币", n:hold.length, unit:"个", sub:"当前真实持有" },
+    { l:"观察代币", n:watch.length, unit:"个", sub:"关注未建仓" },
+    { l:"持仓总盈亏", n:fmtPct(holdPnl), sub:"按买入均价计算", cls:cls(holdPnl) },
+    { l:"关注组合表现", n:fmtPct(watchAvg), sub:"全部关注自关注以来均值", cls:cls(watchAvg) },
+  ];
+  $("#stats").innerHTML = items.map(i => `
+    <div class="stat">
+      <div class="l">${i.l}</div>
+      <div class="n ${i.cls || ""}">${i.n}<small>${i.unit || ""}</small></div>
+      <div class="sub">${i.sub}</div>
+    </div>`).join("");
+}
+
+/* ================= Best / Worst ================= */
+function renderPerf(){
+  const sorted = [...COINS].sort((a, b) => b.since - a.since);
+  const best = sorted[0], worst = sorted[sorted.length - 1];
+  const card = (c, tag, vcls, label) => `
+    <div class="pcard ${vcls === "chip-down" ? "loser" : ""}">
+      <span class="ava" style="width:38px;height:38px;border-radius:50%;background:${avatarBg(c.name)};display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700">${c.ticker.slice(0,1)}</span>
+      <div>
+        <div class="tag">${tag}</div>
+        <div class="who">${c.name} <span style="color:var(--muted);font-weight:400;font-size:12px">$${c.ticker}</span></div>
+      </div>
+      <div class="pct">
+        <div class="v ${vcls}">${fmtPct(c.since)}</div>
+        <div class="d">${label}</div>
+      </div>
+    </div>`;
+  $("#perf").innerHTML =
+    card(best, "TOP GAINER · 关注以来涨幅最高", "chip-up", "since " + best.followDate) +
+    card(worst, "TOP LOSER · 关注以来跌幅最大", "chip-down", "since " + worst.followDate);
+}
+
+/* ================= 代币表格 ================= */
+let curTab = "all", sortK = "mcap", sortDir = -1;
+function renderTabs(){
+  const cnt = { all: COINS.length, hold: COINS.filter(c => c.status === "holding").length, watch: COINS.filter(c => c.status === "watch").length };
+  const defs = [ ["all","全部"], ["hold","持仓"], ["watch","观察"] ];
+  $("#tabs").innerHTML = defs.map(([k, label]) =>
+    `<button class="tab ${curTab === k ? "on" : ""}" data-tab="${k}">${label}<span class="cnt">${cnt[k]}</span></button>`
+  ).join("") + `<span class="hint">点击表头可排序 · 点击行查看详情</span>`;
+  $("#tabs").querySelectorAll(".tab").forEach(b => b.onclick = () => { curTab = b.dataset.tab; renderTabs(); renderRows(); });
+}
+function arrowOf(k){ return sortK === k ? (sortDir < 0 ? "▼" : "▲") : ""; }
+function renderRows(){
+  let list = COINS.filter(c => curTab === "all" || (curTab === "hold" ? c.status === "holding" : c.status === "watch"));
+  list = [...list].sort((a, b) => (a[sortK] - b[sortK]) * sortDir);
+  $("#empty").style.display = list.length ? "none" : "block";
+  $("#rows").innerHTML = list.map((c, i) => {
+    const spark = sparkSVG(walk(hueOf(c.id), 28, c.since / 500), c.since >= 0);
+    return `<tr data-id="${c.id}">
+      <td class="l"><div class="tk">
+        <span class="ava" style="background:${avatarBg(c.name)}">${c.ticker.slice(0,1)}</span>
+        <span><div class="nm">${c.name}</div><div class="meta">${c.ticker} · ${c.chain}</div></span>
+      </div></td>
+      <td class="l" data-th="状态"><span class="badge ${c.status === "holding" ? "hold" : "watch"}">${c.status === "holding" ? "持仓" : "观察"}</span></td>
+      <td class="num" data-th="市值">${fmtM(c.mcap)}</td>
+      <td class="num hideM" data-th="关注价格">${fmtP(c.followPrice)}</td>
+      <td class="num" data-th="当前价格">${fmtP(c.price)}</td>
+      <td class="num" data-th="关注以来"><span class="since ${cls(c.since)}">${fmtPct(c.since)}<small>关注以来</small></span></td>
+      <td class="num" data-th="24H"><span class="pill24 ${c.c24 < 0 ? "dn" : ""}">${fmtPct(c.c24)}</span></td>
+      <td class="l hideM" data-th="7D 走势">${spark}</td>
+    </tr>`;
+  }).join("");
+  document.querySelectorAll("thead th.sortable").forEach(th => {
+    th.querySelector(".arrow").textContent = arrowOf(th.dataset.k);
+    th.onclick = () => {
+      if (sortK === th.dataset.k) sortDir *= -1; else { sortK = th.dataset.k; sortDir = -1; }
+      renderRows();
+    };
+  });
+  $("#rows").querySelectorAll("tr").forEach(tr => tr.onclick = () => openDrawer(tr.dataset.id));
+}
+
+/* ================= 详情抽屉 ================= */
+const drawer = $("#drawer"), mask = $("#mask");
+let rngCurrent = "7D";
+function openDrawer(id){
+  const c = COINS.find(x => x.id === id);
+  const chg = (c.price / c.followPrice - 1) * 100;
+  const dd = ((Date.now() - new Date(c.followDate)) / 864e5).toFixed(0);
+  const holdingBlock = c.holding ? (() => {
+    const cost = c.holding.amount * c.holding.avgCost;
+    const val = c.holding.amount * c.price;
+    const pnl = (val / cost - 1) * 100;
+    return `<div class="dsec"><h3>持仓信息</h3><div class="kv">
+      <div class="row"><span class="k">持仓数量</span><span class="v num">${c.holding.amount.toExponential(2)}</span></div>
+      <div class="row"><span class="k">买入均价</span><span class="v num">${fmtP(c.holding.avgCost)}</span></div>
+      <div class="row"><span class="k">投入成本</span><span class="v num">${fmtM(cost)}</span></div>
+      <div class="row"><span class="k">当前价值</span><span class="v num">${fmtM(val)}</span></div>
+      <div class="row"><span class="k">未实现盈亏</span><span class="v ${cls(pnl)}">${fmtPct(pnl)}（${fmtM(Math.abs(val - cost))}）</span></div>
+      <div style="padding:0 16px 12px"><div class="pnlbar"><i style="width:${Math.min(100, Math.abs(pnl))}%;background:${pnl >= 0 ? "var(--up)" : "var(--down)"}"></i></div></div>
+    </div></div>`;
+  })() : "";
+
+  drawer.innerHTML = `
+    <div class="dhead">
+      <span class="ava" style="background:${avatarBg(c.name)}">${c.ticker.slice(0,1)}</span>
+      <div>
+        <div class="t">${c.name}</div>
+        <div class="m">$${c.ticker} · ${c.chain}</div>
+      </div>
+      <div class="price">
+        <div class="p num">${fmtP(c.price)}</div>
+        <div class="m ${cls(c.c24)}">${fmtPct(c.c24)} 24H</div>
+      </div>
+      <button class="x" id="dclose" aria-label="关闭">✕</button>
+    </div>
+    <div class="dbody">
+      <div class="chart-card">
+        <div class="rngs" id="rngs">
+          ${["24H","7D","30D","ALL"].map(r => `<button class="${r === rngCurrent ? "on" : ""}" data-r="${r}">${r}</button>`).join("")}
+        </div>
+        <canvas id="chart"></canvas>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px">
+          <span id="cmin"></span><span id="cmax"></span>
+        </div>
+      </div>
+
+      <div class="dsec"><h3>关注记录</h3><div class="kv">
+        <div class="row"><span class="k">首次关注</span><span class="v">${c.followDate}（${dd} 天前）</span></div>
+        <div class="row"><span class="k">关注时价格</span><span class="v num">${fmtP(c.followPrice)}</span></div>
+        <div class="row"><span class="k">关注时市值</span><span class="v num">${fmtM(c.followMcap)}</span></div>
+        <div class="row"><span class="k">当前市值</span><span class="v num">${fmtM(c.mcap)}</span></div>
+        <div class="row"><span class="k">关注以来</span><span class="v ${cls(chg)}">${fmtPct(chg)}</span></div>
+        <div class="row"><span class="k">历史最高涨幅</span><span class="v chip-up">+${c.highPct.toFixed(1)}%</span></div>
+        <div class="row"><span class="k">距关注以来高点</span><span class="v ${c.since >= c.highPct ? "chip-up" : "chip-down"}">${c.since >= c.highPct ? "创新高中" : "-" + (100 - c.since / c.highPct * 100).toFixed(0) + "%"}</span></div>
+      </div></div>
+
+      ${holdingBlock}
+
+      <div class="dsec"><h3>链上信息</h3><div class="kv">
+        <div class="row"><span class="k">合约地址</span><span class="v ca">${c.ca}</span></div>
+        <div class="row"><span class="k">K 线</span><span class="v"><a href="#" style="color:var(--accent)">DexScreener ↗</a></span></div>
+      </div></div>
+
+      <p class="note">原型示意：真实实现中，关注价格/市值在点击关注瞬间由服务端记录，不会因取消关注而重置；持仓数据由后台维护。</p>
+    </div>`;
+  drawer.classList.add("open"); mask.classList.add("open");
+  drawer.setAttribute("aria-hidden", "false");
+  $("#dclose").onclick = closeDrawer;
+  $("#rngs").querySelectorAll("button").forEach(b => b.onclick = () => {
+    rngCurrent = b.dataset.r;
+    $("#rngs").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    drawChart(c);
+  });
+  drawChart(c);
+}
+function closeDrawer(){
+  drawer.classList.remove("open"); mask.classList.remove("open");
+  drawer.setAttribute("aria-hidden", "true");
+}
+mask.onclick = closeDrawer;
+addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+
+/* 主图：canvas 折线 + 渐变面积 + 十字光标 */
+function drawChart(c){
+  const cv = $("#chart"); if (!cv) return;
+  const dpr = devicePixelRatio || 1;
+  const W = cv.clientWidth, H = cv.clientHeight;
+  cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
+  const conf = { "24H":{ n:48, vol:6 }, "7D":{ n:56, vol:10 }, "30D":{ n:60, vol:16 }, "ALL":{ n:80, vol:26 } }[rngCurrent];
+  const pts = walk(hueOf(c.id) + conf.n, conf.n, c.since / 400);
+  const min = Math.min(...pts), max = Math.max(...pts), span = (max - min) || 1;
+  const px = i => 8 + i / (pts.length - 1) * (W - 16);
+  const py = v => H - 14 - (v - min) / span * (H - 30);
+  const up = pts[pts.length - 1] >= pts[0];
+  const col = up ? "#059669" : "#dc2626";
+  const cs = getComputedStyle(document.documentElement);
+  ctx.clearRect(0, 0, W, H);
+  /* 网格 */
+  ctx.strokeStyle = cs.getPropertyValue("--line"); ctx.lineWidth = 1;
+  for (let g = 0; g < 4; g++){ const y = 10 + g * (H - 26) / 3; ctx.beginPath(); ctx.moveTo(8, y); ctx.lineTo(W - 8, y); ctx.stroke(); }
+  /* 面积 */
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, up ? "rgba(5,150,105,.22)" : "rgba(220,38,38,.22)");
+  grad.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.beginPath(); ctx.moveTo(px(0), py(pts[0]));
+  pts.forEach((p, i) => ctx.lineTo(px(i), py(p)));
+  ctx.lineTo(px(pts.length - 1), H - 4); ctx.lineTo(px(0), H - 4); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+  /* 线 */
+  ctx.beginPath(); ctx.moveTo(px(0), py(pts[0]));
+  pts.forEach((p, i) => ctx.lineTo(px(i), py(p)));
+  ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.stroke();
+  /* 末点 */
+  const lx = px(pts.length - 1), ly = py(pts[pts.length - 1]);
+  ctx.beginPath(); ctx.arc(lx, ly, 3.4, 0, 7); ctx.fillStyle = col; ctx.fill();
+  ctx.beginPath(); ctx.arc(lx, ly, 7, 0, 7); ctx.fillStyle = up ? "rgba(5,150,105,.2)" : "rgba(220,38,38,.2)"; ctx.fill();
+  /* 最值标签 */
+  $("#cmin").textContent = "低 " + fmtP(c.price * (1 - span / pts[0] / 8));
+  $("#cmax").textContent = "高 " + fmtP(c.price * (1 + span / pts[0] / 8));
+  /* 十字光标：先画底图，再叠加虚线 + 圆点 */
+  function paint(hoverI){
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = cs.getPropertyValue("--line"); ctx.lineWidth = 1;
+    for (let g = 0; g < 4; g++){ const y = 10 + g * (H - 26) / 3; ctx.beginPath(); ctx.moveTo(8, y); ctx.lineTo(W - 8, y); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(px(0), py(pts[0]));
+    pts.forEach((p, i) => ctx.lineTo(px(i), py(p)));
+    ctx.lineTo(px(pts.length - 1), H - 4); ctx.lineTo(px(0), H - 4); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(px(0), py(pts[0]));
+    pts.forEach((p, i) => ctx.lineTo(px(i), py(p)));
+    ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.stroke();
+    const li = hoverI ?? pts.length - 1;
+    ctx.beginPath(); ctx.arc(px(li), py(pts[li]), 3.4, 0, 7); ctx.fillStyle = col; ctx.fill();
+    ctx.beginPath(); ctx.arc(px(li), py(pts[li]), 7, 0, 7);
+    ctx.fillStyle = up ? "rgba(5,150,105,.2)" : "rgba(220,38,38,.2)"; ctx.fill();
+    if (hoverI != null){
+      ctx.strokeStyle = "rgba(128,128,128,.5)"; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(px(hoverI), 8); ctx.lineTo(px(hoverI), H - 8); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+  paint(null);
+  cv.onmousemove = e => {
+    const r = cv.getBoundingClientRect();
+    const i = Math.round((e.clientX - r.left - 8) / (W - 16) * (pts.length - 1));
+    paint(Math.max(0, Math.min(pts.length - 1, i)));
+  };
+  cv.onmouseleave = () => paint(null);
+}
+
+/* ================= 启动 ================= */
+renderStats(); renderPerf(); renderTabs(); renderRows();
+</script>
+</body>
+</html>
