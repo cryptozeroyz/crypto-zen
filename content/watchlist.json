@@ -57,7 +57,7 @@
   {
     "chain": "bsc",
     "address": "0xb82535e74b03ffe4910efea1c759b6bbbf0a7777",
-    "status": "watching",
+    "status": "exited",
     "why": [],
     "comment": "何一推文，我穿皮衣，我不同意，引爆 Jacket，叠加黄仁勋热度，短时从70k上涨至2M",
     "addedAt": "2026-11-13",
@@ -70,6 +70,12 @@
         "price": 0.0007656,
         "note": "何一推文，我穿皮衣，我不同意，引爆 Jacket，叠加黄仁勋热度，短时从70k上涨至2M",
         "why": []
+      },
+      {
+        "type": "unfollow",
+        "date": "2026-11-17",
+        "price": 0.0007385,
+        "note": "主要又何一推文驱动，而非黄仁勋驱动上涨，动力已经不足，没有把叙事与黄结合到一起，不看好后续"
       }
     ],
     "symbol": "Jacket",
