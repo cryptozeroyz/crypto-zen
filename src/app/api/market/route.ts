@@ -58,6 +58,104 @@ async function fetchGeckoOhlcv(
 const fetchGeckoSpark = (chainId: string, pair: string) =>
   fetchGeckoOhlcv(chainId, pair, "7D");
 
+/* ---------------- 方程式新闻 MCP 客户端 ----------------
+ * api.eqn.news 的 JSON REST 被 Cloudflare 拦，但 /public/mcp 对服务器开放。
+ * MCP 是 JSON-RPC over HTTP：initialize → notifications/initialized → tools/call。
+ * 每次请求新建会话（无状态、简单可靠）；路由层有 60s 响应缓存兜底。
+ */
+
+const EQN_MCP_URL = "https://api.eqn.news/public/mcp";
+
+export interface EqnMcpItem {
+  no: number;
+  time: string;
+  channels: string[];
+  source: string;
+  zh: string;
+  en: string;
+  coins: string[];
+  url: string;
+  source_url?: string;
+}
+
+async function eqnListNews(opts: {
+  channel: string;
+  coin?: string | null;
+  query?: string | null;
+  limit?: number;
+}): Promise<{ items: EqnMcpItem[] }> {
+  let sid: string | null = null;
+  async function rpc(method: string, params: unknown, id: number) {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      Accept: "application/json, text/event-stream",
+    };
+    if (sid) headers["Mcp-Session-Id"] = sid;
+    const res = await fetch(EQN_MCP_URL, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ jsonrpc: "2.0", id, method, params }),
+    });
+    if (!sid) sid = res.headers.get("mcp-session-id");
+    const text = await res.text();
+    const line = text.split("\n").find((l) => l.startsWith("data: "));
+    return JSON.parse(line ? line.slice(6) : text);
+  }
+  await rpc(
+    "initialize",
+    {
+      protocolVersion: "2025-03-26",
+      capabilities: {},
+      clientInfo: { name: "cryptozen", version: "1" },
+    },
+    1
+  );
+  try {
+    await rpc("notifications/initialized", {}, 2); // 202 无响应体，容错
+  } catch {
+    /* 忽略 */
+  }
+  const r = await rpc(
+    "tools/call",
+    {
+      name: "list_news",
+      arguments: {
+        channel: opts.channel,
+        coin: opts.coin ?? null,
+        query: opts.query ?? null,
+        limit: Math.min(Math.max(opts.limit ?? 30, 1), 50),
+      },
+    },
+    3
+  );
+  const txt = r?.result?.content?.[0]?.text;
+  if (!txt) return { items: [] };
+  try {
+    return JSON.parse(txt) as { items: EqnMcpItem[] };
+  } catch {
+    return { items: [] };
+  }
+}
+
+/** 15 个频道 key 白名单（与 MCP schema 的 enum 一致） */
+const EQN_CHANNELS = new Set([
+  "all",
+  "main",
+  "tradfi",
+  "binance",
+  "korea",
+  "pricechange",
+  "oi",
+  "major",
+  "tier2",
+  "tier3",
+  "alpha",
+  "cz",
+  "earn",
+  "hl",
+  "tfmoves",
+]);
+
 const TICKER_IDS = "bitcoin,ethereum,solana";
 
 const TICKER_URL =
@@ -186,6 +284,26 @@ export async function GET(req: Request) {
       });
     } catch {
       return NextResponse.json({ error: "fetch failed" }, { status: 502 });
+    }
+  }
+
+  /* ---------- 方程式新闻（MCP 代理，15 频道 + 关键词/币种搜索） ---------- */
+  if (type === "eqn") {
+    const channel = searchParams.get("channel") ?? "all";
+    if (!EQN_CHANNELS.has(channel))
+      return NextResponse.json({ error: "bad channel" }, { status: 400 });
+    const coinRaw = searchParams.get("coin");
+    const coin = coinRaw && /^[A-Za-z0-9]{2,12}$/.test(coinRaw) ? coinRaw.toUpperCase() : null;
+    const qRaw = searchParams.get("q");
+    const query = qRaw && qRaw.trim().length >= 1 ? qRaw.trim().slice(0, 40) : null;
+    const limit = Number(searchParams.get("limit") ?? 30);
+    try {
+      const data = await eqnListNews({ channel, coin, query, limit });
+      return NextResponse.json(data, {
+        headers: { "Cache-Control": "s-maxage=60, stale-while-revalidate=30" },
+      });
+    } catch {
+      return NextResponse.json({ items: [] }, { status: 502 });
     }
   }
 

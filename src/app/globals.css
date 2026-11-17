@@ -93,7 +93,7 @@
   }
 }
 
-/* 送花浮标：轻柔上下漂浮（幅度比 Hero 币小）+ 点击涟漪 */
+/* 送花浮标：轻柔上下漂浮（幅度比 Hero 币小） */
 @keyframes float-y-soft {
   0%,
   100% {
@@ -390,4 +390,13 @@ body {
 
 .mdfs-16 .vditor-reset {
   font-size: 16.5px !important;
+}
+
+/* 隐藏横向滚动条的滚动容器（频道标签栏） */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
