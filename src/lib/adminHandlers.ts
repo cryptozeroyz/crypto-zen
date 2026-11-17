@@ -336,6 +336,18 @@ export async function watchlistPOST(req: Request) {
     existing.holding = holding;
     if (holdAmount !== undefined) existing.holdAmount = holdAmount;
     if (avgCost !== undefined) existing.avgCost = avgCost;
+    // 兜底：历史数据缺关注基准（如添加时网络抖动）时，在下次编辑自动补录
+    if (existing.followPrice === undefined) {
+      try {
+        const d = await fetchCoinData(ca);
+        if (d) {
+          existing.followPrice = d.priceUsd || undefined;
+          existing.followMcap = d.marketCap ?? d.fdv;
+        }
+      } catch {
+        /* 仍抓不到就下次再说 */
+      }
+    }
   } else {
     const entry: WatchCoinEntry = {
       ca,
