@@ -27,8 +27,10 @@
   {
     "chain": "solana",
     "address": "FSkyjfqB26u6c2GSgpACrjbxp9yQAR8rutxprVNppump",
-    "status": "holding",
-    "why": [],
+    "status": "watching",
+    "why": [
+      "animals"
+    ],
     "comment": "mihao 是否能带来cat 季不好说，但是 :3 的形象比较被大家所熟知，且在受到了一些从目前和巨鲸的支持，小仓位试探",
     "addedAt": "2026-11-13",
     "followPrice": 0.0003679,
@@ -39,7 +41,9 @@
         "date": "2026-11-13",
         "price": 0.0003679,
         "note": "mihao 是否能带来cat 季不好说，但是 :3 的形象比较被大家所熟知，且在受到了一些从目前和巨鲸的支持，小仓位试探",
-        "why": []
+        "why": [
+          "animals"
+        ]
       }
     ],
     "symbol": ":3",
@@ -47,7 +51,8 @@
     "dex": "pumpswap",
     "pairAddress": "GxYbNxjGR9mEuVzXsGBi2Y78RGkwBMRok4RS9sMUb8hE",
     "pairLiquidity": 54765.75,
-    "pairVolume24h": 210735.58
+    "pairVolume24h": 210735.58,
+    "holding": false
   },
   {
     "chain": "bsc",
