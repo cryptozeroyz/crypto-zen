@@ -3,7 +3,9 @@
     "ca": "9k2nqjUrSh9p2ZBnWxNE3QRWYiLocrWZfoDm3Vdxpump",
     "comment": "持币即玩的gamefi叙事，CHAR铸1个英雄NFT，组队打怪掉souls，souls直接兑换奖池里的 CHAR。风险点就是dev发过很多代币成功率低，gamefi成功率低",
     "addedAt": "2026-11-17",
-    "holding": false
+    "holding": false,
+    "followPrice": 0.0002531,
+    "followMcap": 248774
   },
   {
     "ca": "FSkyjfqB26u6c2GSgpACrjbxp9yQAR8rutxprVNppump",
