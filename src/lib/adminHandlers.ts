@@ -266,14 +266,38 @@ export async function translatePOST(req: Request) {
 
 /* ---------------- 图片上传 ---------------- */
 
+/**
+ * 允许的上传类型（SVG 已移除：可内嵌脚本，经 /uploads/ 同源访问构成存储型 XSS）
+ */
 const ALLOWED_UPLOAD: Record<string, string> = {
   "image/png": ".png",
   "image/jpeg": ".jpg",
   "image/webp": ".webp",
   "image/gif": ".gif",
-  "image/svg+xml": ".svg",
 };
 const MAX_UPLOAD = 5 * 1024 * 1024;
+
+/** 魔数校验：不信任客户端声明的 MIME，验证文件头真实签名 */
+function sniffImage(buf: Buffer, ext: string): boolean {
+  if (buf.length < 12) return false;
+  switch (ext) {
+    case ".png":
+      return (
+        buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47
+      );
+    case ".jpg":
+      return buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+    case ".webp":
+      return (
+        buf.toString("ascii", 0, 4) === "RIFF" &&
+        buf.toString("ascii", 8, 12) === "WEBP"
+      );
+    case ".gif":
+      return buf.toString("ascii", 0, 4) === "GIF8";
+    default:
+      return false;
+  }
+}
 
 export async function uploadPOST(req: Request) {
   if (!isAuthed()) return unauthorized();
@@ -287,8 +311,9 @@ export async function uploadPOST(req: Request) {
       // base64 上传（Word 导入内嵌图片等场景）
       const body = await req.json();
       const dataBase64 = String(body.dataBase64 ?? "");
-      const mime = String(body.contentType ?? "image/png");
-      ext = ALLOWED_UPLOAD[mime] ?? ".png";
+      const mime = String(body.contentType ?? "");
+      ext = ALLOWED_UPLOAD[mime] ?? "";
+      if (!ext) return badRequest("仅支持 PNG / JPG / WebP / GIF 图片");
       buffer = Buffer.from(dataBase64, "base64");
     } else {
       // multipart 表单上传（编辑器/封面的文件选择）
@@ -296,7 +321,7 @@ export async function uploadPOST(req: Request) {
       const f = form.get("file");
       if (!(f instanceof File)) throw new Error("缺少文件");
       ext = ALLOWED_UPLOAD[f.type] ?? "";
-      if (!ext) return badRequest("仅支持 PNG / JPG / WebP / GIF / SVG 图片");
+      if (!ext) return badRequest("仅支持 PNG / JPG / WebP / GIF 图片");
       buffer = Buffer.from(await f.arrayBuffer());
     }
   } catch {
@@ -305,6 +330,9 @@ export async function uploadPOST(req: Request) {
 
   if (!buffer || buffer.length === 0) return badRequest("文件内容为空");
   if (buffer.length > MAX_UPLOAD) return badRequest("图片不能超过 5MB");
+  /* 魔数校验：声明的 MIME 可被伪造，必须验证真实文件头 */
+  if (!sniffImage(buffer, ext))
+    return badRequest("文件内容与声明的图片类型不符");
 
   const filename = `${Date.now().toString(36)}-${Math.random()
     .toString(36)
