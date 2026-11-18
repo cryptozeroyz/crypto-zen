@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About Crypto Zen · 原型</title>
+<style>
+:root{
+  --bg:#f7f8fa; --card:#ffffff; --text:#3b4654; --heading:#192536;
+  --muted:#7a8590; --line:rgba(25,37,54,.1); --code:#eef1f4;
+  --accent:#2563eb; --mint:#38bdf8; --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","Noto Serif SC",serif;
+  --shadow:0 10px 30px -12px rgba(25,37,54,.15);
+}
+html.dark{
+  --bg:#141719; --card:#1d2125; --text:#dde2e7; --heading:#eef1f4;
+  --muted:#96a0a9; --line:rgba(255,255,255,.1); --code:#20252a; --shadow:0 10px 30px -12px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:ui-sans-serif,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.8;-webkit-font-smoothing:antialiased}
+.wrap{max-width:860px;margin:0 auto;padding:0 24px}
+.serif{font-family:var(--serif)}
+.eyebrow{font-size:12px;letter-spacing:.18em;font-weight:600;color:var(--accent);text-transform:uppercase}
+html.dark .eyebrow{color:var(--mint)}
+
+/* 01 HERO */
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 80% 20%,rgba(37,99,235,.08),transparent);pointer-events:none}
+.hero h1{font-family:var(--serif);font-size:clamp(52px,9vw,96px);font-weight:700;letter-spacing:-.03em;line-height:1.05;color:var(--heading);margin-top:18px}
+.hero .roles{font-family:var(--serif);font-size:clamp(18px,2.6vw,26px);font-style:italic;color:var(--accent);margin-top:14px}
+html.dark .hero .roles{color:var(--mint)}
+.hero .zh-line{font-size:16px;color:var(--muted);margin-top:14px}
+.hero .bio{max-width:560px;margin-top:28px;color:var(--text);font-size:15px}
+.hero .scroll{position:absolute;bottom:28px;left:24px;font-size:11px;letter-spacing:.2em;color:var(--muted)}
+
+/* 02 BACKGROUND */
+.sec{padding:84px 0;border-bottom:1px solid var(--line)}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:40px}
+.sec-num{font-family:var(--serif);font-size:14px;color:var(--muted)}
+.sec-title{font-family:var(--serif);font-size:clamp(26px,4vw,36px);font-weight:700;letter-spacing:-.02em;color:var(--heading)}
+.bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.bcard{border:1px solid var(--line);border-radius:18px;padding:28px 24px;background:var(--card);transition:.25s}
+.bcard:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:var(--shadow)}
+.bcard .en{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--heading)}
+.bcard .zh{font-size:13px;color:var(--accent);font-weight:600;margin-top:4px}
+html.dark .bcard .zh{color:var(--mint)}
+.bcard p{font-size:13.5px;color:var(--muted);margin-top:12px;line-height:1.75}
+@media(max-width:700px){.bgrid{grid-template-columns:1fr}}
+
+/* 03 WHAT I WRITE */
+.wgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wcard{display:flex;gap:16px;border:1px solid var(--line);border-radius:18px;padding:22px;background:var(--card);transition:.25s}
+.wcard:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow)}
+.wcard .ico{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--mint));display:flex;align-items:center;justify-content:center;font-size:19px;color:#fff;flex-shrink:0}
+.wcard h3{font-family:var(--serif);font-size:17px;color:var(--heading)}
+.wcard p{font-size:13px;color:var(--muted);margin-top:4px}
+@media(max-width:700px){.wgrid{grid-template-columns:1fr}}
+.wfoot{margin-top:22px;font-size:13.5px;color:var(--muted);border-left:2px solid var(--accent);padding-left:14px}
+
+/* 04 PHILOSOPHY */
+.philo{text-align:center;padding:110px 0}
+.philo .big{font-family:var(--serif);font-size:clamp(30px,5.5vw,52px);font-weight:700;letter-spacing:-.02em;color:var(--heading);line-height:1.25}
+.philo .zh{font-size:15px;color:var(--muted);margin-top:14px}
+.philo .quote{margin:44px auto 0;max-width:520px;font-family:var(--serif);font-style:italic;font-size:17px;color:var(--text);border-top:1px solid var(--line);padding-top:28px}
+
+/* 05 DISCLAIMER */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rule{display:flex;gap:10px;align-items:baseline;font-size:14px;color:var(--text);border:1px solid var(--line);border-radius:14px;padding:14px 18px;background:var(--card)}
+.rule b{color:var(--heading)}
+.rule span.x{color:var(--accent);font-weight:700}
+@media(max-width:640px){.rules{grid-template-columns:1fr}}
+.signoff{margin-top:60px;text-align:center}
+.signoff .motto{font-family:var(--serif);font-size:clamp(20px,3vw,28px);font-weight:700;color:var(--heading)}
+.signoff .who{margin-top:10px;font-size:13px;color:var(--muted);font-style:italic}
+.disc{font-size:11.5px;color:var(--muted);margin-top:44px;border-top:1px solid var(--line);padding-top:20px;line-height:1.7}
+.socials{display:flex;justify-content:center;gap:22px;margin-top:28px;font-size:13px}
+.socials a{color:var(--muted);transition:.2s}
+.socials a:hover{color:var(--accent)}
+
+.toggle{position:fixed;right:16px;bottom:16px;z-index:50;font-size:12px;border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;color:var(--muted)}
+.badge{position:fixed;left:16px;bottom:16px;background:var(--heading);color:var(--bg);font-size:11px;padding:5px 12px;border-radius:999px;opacity:.75;z-index:50}
+</style>
+</head>
+<body>
+
+<!-- 01 HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">CRYPTO ZEN · PERSONAL BRAND</div>
+    <h1>Crypto Zen.</h1>
+    <div class="roles serif">An Operator. A Trader. An Observer.</div>
+    <p class="zh-line">一个建设过产品、参与过市场，也持续观察 Crypto 世界的人。</p>
+    <p class="bio">我参与过不同类型的 Web3 产品建设——钱包、稳定币、公链生态、DID、NFT 和 Memecoin 交易平台。做过产品运营、用户增长、社区建设、商业化，也经历过从 0 到 1 的创业过程。我习惯站在产品和市场两个角度看待 Crypto。</p>
+  </div>
+  <div class="wrap"><span class="scroll">SCROLL ↓</span></div>
+</header>
+
+<!-- 02 BACKGROUND -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num serif">01</span><h2 class="sec-title">Background</h2></div>
+    <div class="bgrid">
+      <div class="bcard"><div class="en serif">Builder</div><div class="zh">产品建设</div><p>关注一个产品如何诞生、如何获得用户、如何在激烈竞争中找到真正的价值。</p></div>
+      <div class="bcard"><div class="en serif">Operator</div><div class="zh">运营增长</div><p>从 0 到 1 搭建运营与增长体系，理解用户、社区与商业化的真实逻辑。</p></div>
+      <div class="bcard"><div class="en serif">Trader</div><div class="zh">市场参与</div><p>关注资金流向、叙事变化与 Meme 文化。赚过钱，也交过不少学费。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 WHAT I WRITE -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num serif">02</span><h2 class="sec-title">What I Write About</h2></div>
+    <div class="wgrid">
+      <div class="wcard"><span class="ico">📈</span><div><h3 class="serif">Market Insights</h3><p>市场行情、资金流向、周期与情绪观察</p></div></div>
+      <div class="wcard"><span class="ico">🐸</span><div><h3 class="serif">Meme Culture</h3><p>Memecoin、互联网文化、叙事与社区</p></div></div>
+      <div class="wcard"><span class="ico">📓</span><div><h3 class="serif">Trading Journal</h3><p>交易思考、策略、复盘与值得记住的错误</p></div></div>
+      <div class="wcard"><span class="ico">🧭</span><div><h3 class="serif">Product &amp; Growth</h3><p>Web3 产品、运营增长与商业模式</p></div></div>
+    </div>
+    <p class="wfoot">有时也会写一些不那么严肃的想法和段子——毕竟 Crypto 已经够疯狂了。如果你不能笑着面对这个市场，你迟早会被它气死。</p>
+  </div>
+</section>
+
+<!-- 04 PHILOSOPHY -->
+<section class="philo">
+  <div class="wrap">
+    <div class="eyebrow">PHILOSOPHY</div>
+    <p class="big serif" style="margin-top:18px">Stay curious.<br/>Stay skeptical.</p>
+    <p class="zh">保持好奇，保持怀疑。相信数据，但不迷信数据；尊重叙事，但不盲从叙事。</p>
+    <p class="quote">"在一个信息过载、情绪容易被放大的市场里，独立思考或许比追逐每一个热点更重要。我希望多年以后回头看，这里留下的不只有行情观点，还有一个普通 Crypto 参与者对这个行业的真实记录。"</p>
+  </div>
+</section>
+
+<!-- 05 DISCLAIMER + SIGNOFF -->
+<section class="sec" style="border-bottom:0">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-num serif">03</span><h2 class="sec-title">No Financial Advice</h2></div>
+    <div class="rules">
+      <div class="rule"><span class="x">✕</span><span><b>No Token Launches</b> — 不发币，不为任何代币背书</span></div>
+      <div class="rule"><span class="x">✕</span><span><b>No Paid Signals</b> — 不提供付费带单或收益承诺</span></div>
+      <div class="rule"><span class="x">✕</span><span><b>No Sponsored Shilling</b> — 不接受付费软文和商业喊单</span></div>
+      <div class="rule"><span style="color:var(--accent);font-weight:700">✓</span><span><b>Independent Opinions</b> — 所有内容仅代表个人观点</span></div>
+    </div>
+    <div class="signoff">
+      <p class="motto serif">Stay curious. Stay skeptical. Stay in the game.</p>
+      <p class="who">— Crypto Zen</p>
+      <div class="socials">
+        <a href="#">𝕏 @0CryptoZero</a><a href="#">Telegram</a><a href="https://cryptozen.fun">cryptozen.fun</a>
+      </div>
+    </div>
+    <p class="disc">Disclaimer: All content on this website is for informational and educational purposes only. Nothing here constitutes financial or investment advice, a recommendation to buy or sell any asset, or a promise of returns. Cryptocurrency markets involve substantial risks. Always do your own research and take responsibility for your own decisions.</p>
+  </div>
+</section>
+
+<div class="badge">PROTOTYPE · ABOUT v2</div>
+<button class="toggle" onclick="document.documentElement.classList.toggle('dark');this.textContent=document.documentElement.classList.contains('dark')?'☀️':'🌙'">🌙</button>
+</body>
+</html>
