@@ -1,5 +1,36 @@
 [
   {
+    "address": "EadD2LMp6EbH9PrbXUFWcrZKMhoKVrZN1gpwRhH5pump",
+    "ca": "EadD2LMp6EbH9PrbXUFWcrZKMhoKVrZN1gpwRhH5pump",
+    "status": "watching",
+    "why": [
+      "event"
+    ],
+    "comment": "纯名字驱动的早期情绪标，没有复杂故事，全靠传播和热度",
+    "addedAt": "2026-11-18",
+    "holding": false,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-18",
+        "note": "纯名字驱动的早期情绪标，没有复杂故事，全靠传播和热度",
+        "why": [
+          "event"
+        ],
+        "price": 0.0003627
+      }
+    ],
+    "followPrice": 0.0003627,
+    "followMcap": 352482,
+    "chain": "solana",
+    "symbol": "ANT",
+    "name": "All Natural Tits",
+    "dex": "pumpswap",
+    "pairAddress": "CtbK3gTAFki1BfKQRbEa35MQ5TShnLC3G5DTBPMnWU7R",
+    "pairLiquidity": 55236.86,
+    "pairVolume24h": 980548.1
+  },
+  {
     "address": "MoR1whCWjcLiUqAan4GHLRcn8wK4Jktk2DyDryNmeta",
     "ca": "MoR1whCWjcLiUqAan4GHLRcn8wK4Jktk2DyDryNmeta",
     "status": "watching",
