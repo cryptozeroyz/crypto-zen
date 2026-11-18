@@ -881,25 +881,49 @@ export async function aiReportPOST(req: Request) {
   } catch { /* 校验 */ }
   if (!isValidCa(ca)) return badRequest("CA 格式不正确");
 
-  const list = await readWatchlist();
-  const coin = list.find((c) => (c.address ?? c.ca ?? "").toLowerCase() === ca.toLowerCase());
   const data = await fetchCoinData(ca).catch(() => null);
   if (!data) return badRequest("抓不到该代币的行情数据，无法生成研报");
 
   const spark = await fetchGeckoSpark(data.chainId, data.pairAddress).catch(() => null);
   const chg7d = spark && spark.length >= 2 ? ((spark[spark.length - 1] / spark[0] - 1) * 100).toFixed(1) : "—";
   const date = new Date().toISOString().slice(0, 10);
-  const preamble = `> ⚠️ 本文由 AI 基于公开链上数据自动生成（${date}），仅供快速了解，非投资建议；关键结论请自行 DYOR。\n\n`;
-  const tagNames = Array.isArray(coin?.why) && coin.why.length > 0 ? coin.why.join(", ") : "（未填写）";
-  const thesis = coin?.comment || "（未填写）";
+  const models: string[] = [];
 
-  /* 未配置 Key → 模板速览兜底（诚实标注，不冒称 AI） */
-  if (!process.env.DEEPSEEK_API_KEY) {
-    const tpl = `> 📋 模板速览（未配置 AI Key，由规则引擎基于公开数据生成）。\n\n## ${data.name}（$${data.symbol}）快速速览\n\n- 链 / 交易对：${data.chainId} · ${data.dexId}\n- 价格：$${data.priceUsd}｜24H：${data.change24h}%\n- 市值：${data.marketCap ?? data.fdv ?? "—"}｜流动性：$${data.liquidity ?? "—"}\n- 24H 成交量：$${data.volume24h ?? "—"}\n- 近 7 日走势：${chg7d}%\n- 我的关注理由：${tagNames}｜论点：${thesis}\n\n### 待验证清单\n- [ ] 合约权限（黑名单/增发/暂停交易）\n- [ ] Dev 钱包历史（是否发过多个币）\n- [ ] 前 10 持仓集中度与聪明钱动向\n- [ ] 池子年龄与流动性撤出风险\n`;
-    return NextResponse.json({ ok: true, markdown: preamble.replace("AI 基于公开链上数据自动生成", "模板基于公开链上数据自动生成") + tpl, ai: false });
+  const dataBlock = `代币：${data.name}（$${data.symbol}）\n链/交易对：${data.chainId} / ${data.dexId}\n价格：$${data.priceUsd}｜24H涨跌：${data.change24h}%｜近7日：${chg7d}%\n市值：${data.marketCap ?? data.fdv ?? "未知"}｜流动性：${data.liquidity ?? "未知"}｜24H成交量：${data.volume24h ?? "未知"}\nDexScreener：${data.url}`;
+
+  /* 阶段一：Grok 采集 X 叙事素材（未配置则跳过） */
+  let narrative = "";
+  if (process.env.GROK_API_KEY) {
+    try {
+      const gres = await fetch("https://api.xai.com/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.GROK_API_KEY}` },
+        body: JSON.stringify({
+          model: process.env.GROK_MODEL || "grok-3",
+          temperature: 0.4,
+          messages: [{ role: "user", content: `搜索 X（Twitter）上关于 ${data.name}（$${data.symbol}，${data.chainId} 链，合约 ${ca}）的讨论。输出中文要点清单（不要成文）：1) 主流叙事/梗是什么 2) 哪些 KOL 在讨论（给账号名）3) 社区情绪（狂热/质疑/撕裂）4) 主要争议点与质疑 5) 相关事件时间线。若讨论极少，直说"讨论极少"。` }],
+        }),
+        signal: AbortSignal.timeout(60_000),
+      });
+      if (gres.ok) {
+        const gj = await gres.json();
+        narrative = gj?.choices?.[0]?.message?.content ?? "";
+        if (narrative) models.push("grok");
+      }
+    } catch { /* Grok 失败则仅用链上数据 */ }
   }
 
-  const prompt = `你是加密 Meme 币研究员。基于以下公开数据为代币写一份简洁的中文快速研报，严格用六段结构，每段 2-4 句，不要编造数据之外的事实，社交与叙事只做"待验证"级别的推断：\n\n代币：${data.name}（$${data.symbol}）\n链/交易对：${data.chainId} / ${data.dexId}\n价格：$${data.priceUsd}｜24H涨跌：${data.change24h}%｜近7日：${chg7d}%\n市值：${data.marketCap ?? data.fdv ?? "未知"}｜流动性：$${data.liquidity ?? "未知"}｜24H成交量：$${data.volume24h ?? "未知"}\n官网/社交：${data.url}\n我关注的理由标签：${tagNames}\n我的初始论点：${thesis}\n\n结构：\n## 一句话概览\n## 数据快照\n## 叙事与社区线索（标注"待验证"）\n## 风险清单\n## 待验证事项（DYOR 检查项）\n## 与我的关注理由对照\n`;
+  const preamble = narrative
+    ? `> ⚠️ 本文由 Grok（X 实时数据）+ DeepSeek 双模型基于公开信息自动生成（${date}），叙事部分来自社区讨论、未经证实；非投资建议，请自行 DYOR。\n\n`
+    : `> ⚠️ 本文由 AI 基于公开链上数据自动生成（${date}），仅供快速了解，非投资建议；关键结论请自行 DYOR。\n\n`;
+
+  /* 未配置 DeepSeek Key → 模板兜底 */
+  if (!process.env.DEEPSEEK_API_KEY) {
+    const tpl = `> 📋 模板速览（未配置 AI Key，由规则引擎基于公开数据生成）。\n\n## ${data.name}（$${data.symbol}）快速速览\n\n${dataBlock.replace(/\n/g, "\n- ")}\n\n### 待验证清单\n- [ ] 合约权限（黑名单/增发/暂停交易）\n- [ ] Dev 钱包历史\n- [ ] 前 10 持仓集中度\n- [ ] 池子年龄与流动性撤出风险\n`;
+    return NextResponse.json({ ok: true, markdown: preamble.replace(/AI 基于公开链上数据自动生成|Grok（X 实时数据）\+ DeepSeek 双模型基于公开信息自动生成/, "模板基于公开数据自动生成") + tpl, ai: false, models: [] });
+  }
+
+  const prompt = `你是加密 Meme 币研究员。请基于以下材料写一份客观、独立的中文代币研报——不引用任何个人投资者的观点或持仓理由，只陈述代币本身的事实与可验证信息。严格用六段结构，每段 2-4 句；链上数据是事实依据，社区叙事必须标注"（社区叙事，待验证）"，禁止编造材料之外的内容。\n\n【链上数据快照】\n${dataBlock}\n${narrative ? `\n【X 社区叙事素材】\n${narrative}\n` : ""}\n结构：\n## 一句话概览\n## 数据快照（链上事实）\n## 叙事与社区动态${narrative ? "（区分事实与社区说法）" : "（待验证）"}\n## 风险清单\n## 待验证事项（DYOR 检查项）\n## 总结`;
 
   try {
     const res = await fetch("https://api.deepseek.com/chat/completions", {
@@ -912,7 +936,8 @@ export async function aiReportPOST(req: Request) {
     const json = await res.json();
     const content = json?.choices?.[0]?.message?.content;
     if (!content) throw new Error("AI 返回为空");
-    return NextResponse.json({ ok: true, markdown: preamble + content, ai: true });
+    models.push("deepseek");
+    return NextResponse.json({ ok: true, markdown: preamble + content, ai: true, models });
   } catch (e) {
     return NextResponse.json({ ok: false, message: `AI 生成失败：${e instanceof Error ? e.message : e}` }, { status: 502 });
   }
