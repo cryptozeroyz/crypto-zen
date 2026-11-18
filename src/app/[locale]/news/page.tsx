@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Container from "@/components/Container";
 import NewsBoard from "@/components/NewsBoard";
+import NewsList from "@/components/NewsList";
 import { getDictionary, isLocale, locales, type Locale } from "@/lib/i18n";
 
 export function generateStaticParams() {
@@ -30,7 +31,9 @@ export function generateMetadata({
   };
 }
 
-export default function NewsPage({
+export const revalidate = 120;
+
+export default async function NewsPage({
   params,
 }: {
   params: { locale: string };
@@ -38,6 +41,8 @@ export default function NewsPage({
   if (!isLocale(params.locale)) notFound();
   const locale: Locale = params.locale;
   const t = getDictionary(locale);
+  const { fetchEqnNews } = await import("@/lib/eqn");
+  const mainItems = await fetchEqnNews(40);
 
   return (
     <Container size="content" className="py-8 sm:py-10">
@@ -48,6 +53,10 @@ export default function NewsPage({
       <p className="mt-3 text-sm text-muted">{t.news.intro}</p>
 
       <div className="mt-6">
+      <div className="mt-6 rounded-2xl border border-line bg-card p-3">
+        <NewsList items={mainItems} locale={locale} t={t} />
+        <p className="mt-2 text-right text-[11px] text-muted">以上为综合频道直出内容 · 全部 15 频道与搜索见下方</p>
+      </div>
         <NewsBoard locale={locale} t={t} />
       </div>
 
