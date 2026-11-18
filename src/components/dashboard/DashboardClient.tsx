@@ -124,6 +124,12 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
     return () => clearInterval(timer);
   }, [load]);
 
+  /* 深链：/dashboard?coin=<address> 直接打开对应代币的投研抽屉 */
+  useEffect(() => {
+    const coin = new URLSearchParams(window.location.search).get("coin");
+    if (coin) setActive(coin);
+  }, []);
+
   useEffect(() => {
     fetch("/api/market?type=grade")
       .then((r) => r.json())
