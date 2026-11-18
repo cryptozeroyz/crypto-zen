@@ -22,6 +22,7 @@ const zh = {
   nav: {
     articles: "文章",
     watchlist: "看板",
+    journal: "日志",
     news: "方程式新闻",
     links: "推荐",
     bookmarks: "收藏",
@@ -298,6 +299,7 @@ const en: typeof zh = {
   nav: {
     articles: "Articles",
     watchlist: "Dashboard",
+    journal: "Journal",
     news: "News",
     links: "Resources",
     bookmarks: "Saved",

@@ -7,6 +7,7 @@
  */
 
 import { useState } from "react";
+import { buildMarkdown } from "@/lib/frontmatter";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/coin-format";
 
@@ -248,7 +249,25 @@ export default function WatchlistManager({
     try {
       const res = await fetch("/api/admin/journal", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ date: new Date().toISOString().slice(0, 10), tokens: [row.symbol ?? row.ca], tags: ["快速研报", "AI"], title: `26a1 AI 快速研报：${row.symbol ?? row.name ?? ""}`.trim(), body: aiMd }) });
       if (!res.ok) { setError((await res.json().catch(() => null))?.message ?? "保存失败"); return; }
-      setAiMd(""); router.refresh();
+      setAiMd("");
+      /* 同步生成文章草稿（统一标注 AI，默认草稿态，后台审核后发布） */
+      try {
+        const slug = `ai-report-${(row.symbol || "token").toLowerCase().replace(/[^a-z0-9]/g, "-")}-${Date.now().toString(36)}`;
+        const md = buildMarkdown({
+          title: `AI 快速研报：${row.name || row.symbol || ""}`,
+          date: new Date().toISOString().slice(0, 10),
+          updated: "",
+          category: "research",
+          excerpt: `AI 双模型自动生成的 ${row.symbol || ""} 客观研报，含社区氛围评分与 DYOR 检查项。`,
+          tags: ["AI", "快速研报", row.symbol || ""],
+          tokens: row.symbol ? [row.symbol] : [],
+          cover: "",
+          dexScreener: "",
+          draft: true,
+        }, aiMd);
+        await fetch("/api/admin/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slug, markdown: md }) });
+      } catch { /* 文章同步失败不阻塞 */ }
+      router.refresh();
     } catch { setError("网络错误"); }
   };
 
