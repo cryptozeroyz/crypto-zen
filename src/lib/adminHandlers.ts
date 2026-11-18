@@ -900,6 +900,7 @@ export async function aiReportPOST(req: Request) {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.GROK_API_KEY}` },
         body: JSON.stringify({
           model: process.env.GROK_MODEL || "grok-3",
+          max_tokens: 2000,
           temperature: 0.4,
           messages: [{ role: "user", content: `搜索 X（Twitter）上关于 ${data.name}（$${data.symbol}，${data.chainId} 链，合约 ${ca}）的讨论。输出中文要点清单（不要成文）：1) 主流叙事/梗是什么 2) 哪些 KOL 在讨论（给账号名）3) 社区情绪（狂热/质疑/撕裂）4) 主要争议点与质疑 5) 相关事件时间线。若讨论极少，直说"讨论极少"。` }],
         }),
