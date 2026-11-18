@@ -90,6 +90,7 @@ export default function DailyAlphaClient({
 
   const pick = () => {
     const f = drawFortune();
+    (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("抽签");
     try {
       window.localStorage.setItem(TODAY_KEY, JSON.stringify({ d: todayKey, id: f.id }));
       const history = readJson<Stored[]>(HISTORY_KEY, []);

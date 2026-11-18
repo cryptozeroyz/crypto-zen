@@ -200,6 +200,7 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
   const copyCa = async (ca: string) => {
     try {
       await navigator.clipboard.writeText(ca);
+      (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("复制CA");
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
     } catch { /* 静默 */ }
@@ -452,7 +453,7 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                   const up24 = (c.data?.change24h ?? 0) >= 0;
                   const st = statusMeta(c);
                   return (
-                    <tr key={c.address} onClick={() => { setActive(c.address); setRange("7D"); }} className="cursor-pointer border-b border-line transition-colors last:border-0 hover:bg-accent/5">
+                    <tr key={c.address} onClick={() => { setActive(c.address); setRange("7D"); (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("查看代币"); }} className="cursor-pointer border-b border-line transition-colors last:border-0 hover:bg-accent/5">
                       <td className="px-3 py-3.5">
                         <div className="flex items-center gap-2.5">
                           <CoinAvatar imageUrl={c.data?.imageUrl} symbol={c.data?.symbol ?? c.address.slice(0, 4)} hue={avatarHue(c.address)} size={36} />
@@ -567,6 +568,7 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                           <span className="absolute -left-5 top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-accent-mint text-[8px] font-bold text-white" aria-hidden="true">文</span>
                           <a
                             href={`/${locale}/writing/${item.post.slug}`}
+                            onClick={() => (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("打开研报")}
                             className="block rounded-xl border border-accent/30 bg-accent/5 px-3.5 py-2.5 transition-colors hover:border-accent/60"
                           >
                             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">

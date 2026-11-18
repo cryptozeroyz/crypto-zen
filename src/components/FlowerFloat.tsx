@@ -159,6 +159,7 @@ export default function FlowerFloat({ sendLabel, receivedLabel }: FlowerFloatPro
 
   /* 点击：本地 +1、烟花、飘花，攒够 3 朵即上报 */
   const onClick = () => {
+    (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("送花");
     pendingRef.current += 1;
     setPending(pendingRef.current);
     setBurst((b) => b + 1);

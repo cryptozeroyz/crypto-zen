@@ -34,6 +34,14 @@ export default function RootLayout({
           跳到主要内容
         </a>
 
+        {/* 自托管 Umami 统计（无 Cookie，仅统计 cryptozen.fun；面板 stats.cryptozen.fun） */}
+        <script
+          defer
+          src="https://stats.cryptozen.fun/script.js"
+          data-website-id="a42f1344-2402-45cf-9fa6-fdf06070b1c9"
+          data-domains="cryptozen.fun"
+        />
+
         {children}
       </body>
     </html>
