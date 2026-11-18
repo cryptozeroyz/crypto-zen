@@ -1,52 +1,37 @@
 /**
- * [locale]/about/page.tsx —— 关于页
- * 自我介绍文案在多语言字典（i18n.ts）中维护。
+ * [locale]/about —— Crypto Zen 品牌定位页（Operator · Trader · Observer）
  */
 
 import type { Metadata } from "next";
-import Image from "next/image";
-import Container from "@/components/Container";
-import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
+import { notFound } from "next/navigation";
+import AboutClient from "@/components/AboutClient";
+import { getDictionary, isLocale, locales, type Locale } from "@/lib/i18n";
 
-interface AboutPageProps {
-  params: { locale: string };
+export function generateStaticParams() {
+  return locales.map((locale) => ({ locale }));
 }
 
-export function generateMetadata({ params }: AboutPageProps): Metadata {
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Metadata {
   const locale: Locale = isLocale(params.locale) ? params.locale : "zh";
-  const t = getDictionary(locale);
+  const desc =
+    locale === "zh"
+      ? "Crypto Zen：一个建设过产品、参与过市场，也持续观察 Crypto 世界的人。Stay curious. Stay skeptical."
+      : "Crypto Zen: an operator, a trader, an observer of the crypto world. Stay curious. Stay skeptical.";
   return {
-    title: t.about.title,
-    description: t.meta.description,
-    alternates: { canonical: `/${locale}/about` },
+    title: locale === "zh" ? "关于" : "About",
+    description: desc,
+    alternates: {
+      canonical: `/${locale}/about`,
+      languages: { zh: "/zh/about", en: "/en/about" },
+    },
   };
 }
 
-export default function AboutPage({ params }: AboutPageProps) {
-  const locale: Locale = isLocale(params.locale) ? params.locale : "zh";
-  const t = getDictionary(locale);
-
-  return (
-    <Container size="content" className="py-12 sm:py-16">
-      <div className="flex items-center gap-4">
-        <Image
-          src="/avatar.png"
-          alt="Crypto Zen avatar"
-          width={64}
-          height={64}
-          priority
-          className="rounded-2xl border border-line"
-        />
-        <h1 className="text-3xl font-bold tracking-tight text-heading sm:text-4xl">
-          {t.about.title}
-        </h1>
-      </div>
-
-      <div className="prose mt-8">
-        {t.about.paragraphs.map((p) => (
-          <p key={p.slice(0, 24)}>{p}</p>
-        ))}
-      </div>
-    </Container>
-  );
+export default function AboutPage({ params }: { params: { locale: string } }) {
+  if (!isLocale(params.locale)) notFound();
+  return <AboutClient locale={params.locale} />;
 }
