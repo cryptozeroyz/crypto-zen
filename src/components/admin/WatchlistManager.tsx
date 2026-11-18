@@ -230,6 +230,28 @@ export default function WatchlistManager({
     }
   };
 
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiMd, setAiMd] = useState("");
+
+  const genAi = async (row: WatchCoinRow) => {
+    setAiBusy(true); setAiMd(""); setError("");
+    try {
+      const res = await fetch("/api/admin/ai-report", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ca: row.ca }) });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) { setError(data?.message ?? "生成失败"); return; }
+      setAiMd(data.markdown);
+    } catch { setError("网络错误"); } finally { setAiBusy(false); }
+  };
+
+  const saveAi = async (row: WatchCoinRow) => {
+    setError("");
+    try {
+      const res = await fetch("/api/admin/journal", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ date: new Date().toISOString().slice(0, 10), tokens: [row.symbol ?? row.ca], tags: ["快速研报", "AI"], title: `26a1 AI 快速研报：${row.symbol ?? row.name ?? ""}`.trim(), body: aiMd }) });
+      if (!res.ok) { setError((await res.json().catch(() => null))?.message ?? "保存失败"); return; }
+      setAiMd(""); router.refresh();
+    } catch { setError("网络错误"); }
+  };
+
   const tagLabel = (id: string) => tags.find((t) => t.id === id)?.zh ?? id;
 
   return (
@@ -503,6 +525,15 @@ export default function WatchlistManager({
                     </button>
                   </div>
                   <p className="mt-2 text-[11.5px] text-muted">
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <button type="button" disabled={aiBusy} onClick={() => void genAi(c)} className="rounded-lg border border-accent/40 px-3 py-1.5 text-xs font-medium text-accent transition-colors hover:bg-accent/10 disabled:opacity-50 dark:text-accent-mint">
+                      {aiBusy ? "生成中（约 30 秒）…" : "⚡ AI 快速研报"}
+                    </button>
+                    {aiMd && (
+                      <button type="button" onClick={() => void saveAi(c)} className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-deep">存入研究日志</button>
+                    )}
+                  </div>
+                  {aiMd && <textarea readOnly value={aiMd} rows={8} className="mt-2 w-full resize-y rounded-lg border border-line bg-card px-3 py-2 font-mono text-xs text-heading outline-none" />}
                     时间线只追加不删除；记录时自动附带当时价格。「取消关注」会保留完整历史并标记为已收官。
                   </p>
                 </div>

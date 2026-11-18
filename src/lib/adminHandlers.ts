@@ -38,6 +38,7 @@ import {
 import { parseMarkdown, isValidSlug } from "@/lib/frontmatter";
 import { translateMarkdown } from "@/lib/translate";
 import { fetchCoinData } from "@/lib/watchlist";
+import { fetchGeckoSpark } from "@/lib/gecko";
 
 function isAuthed(): boolean {
   return verifySessionToken(cookies().get(COOKIE_NAME)?.value);
@@ -868,4 +869,51 @@ export async function journalDELETE(req: Request) {
     return NextResponse.json({ ok: false, message: "未找到该记录" }, { status: 404 });
   await saveTextFile(JOURNAL_PATH, JSON.stringify(next, null, 2) + "\n");
   return NextResponse.json({ ok: true });
+}
+
+/* ---------------- AI 快速研报 ---------------- */
+
+export async function aiReportPOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  let ca = "";
+  try {
+    ca = String((await req.json()).ca ?? "").trim();
+  } catch { /* 校验 */ }
+  if (!isValidCa(ca)) return badRequest("CA 格式不正确");
+
+  const list = await readWatchlist();
+  const coin = list.find((c) => (c.address ?? c.ca ?? "").toLowerCase() === ca.toLowerCase());
+  const data = await fetchCoinData(ca).catch(() => null);
+  if (!data) return badRequest("抓不到该代币的行情数据，无法生成研报");
+
+  const spark = await fetchGeckoSpark(data.chainId, data.pairAddress).catch(() => null);
+  const chg7d = spark && spark.length >= 2 ? ((spark[spark.length - 1] / spark[0] - 1) * 100).toFixed(1) : "—";
+  const date = new Date().toISOString().slice(0, 10);
+  const preamble = `> ⚠️ 本文由 AI 基于公开链上数据自动生成（${date}），仅供快速了解，非投资建议；关键结论请自行 DYOR。\n\n`;
+  const tagNames = Array.isArray(coin?.why) && coin.why.length > 0 ? coin.why.join(", ") : "（未填写）";
+  const thesis = coin?.comment || "（未填写）";
+
+  /* 未配置 Key → 模板速览兜底（诚实标注，不冒称 AI） */
+  if (!process.env.DEEPSEEK_API_KEY) {
+    const tpl = `> 📋 模板速览（未配置 AI Key，由规则引擎基于公开数据生成）。\n\n## ${data.name}（$${data.symbol}）快速速览\n\n- 链 / 交易对：${data.chainId} · ${data.dexId}\n- 价格：$${data.priceUsd}｜24H：${data.change24h}%\n- 市值：${data.marketCap ?? data.fdv ?? "—"}｜流动性：$${data.liquidity ?? "—"}\n- 24H 成交量：$${data.volume24h ?? "—"}\n- 近 7 日走势：${chg7d}%\n- 我的关注理由：${tagNames}｜论点：${thesis}\n\n### 待验证清单\n- [ ] 合约权限（黑名单/增发/暂停交易）\n- [ ] Dev 钱包历史（是否发过多个币）\n- [ ] 前 10 持仓集中度与聪明钱动向\n- [ ] 池子年龄与流动性撤出风险\n`;
+    return NextResponse.json({ ok: true, markdown: preamble.replace("AI 基于公开链上数据自动生成", "模板基于公开链上数据自动生成") + tpl, ai: false });
+  }
+
+  const prompt = `你是加密 Meme 币研究员。基于以下公开数据为代币写一份简洁的中文快速研报，严格用六段结构，每段 2-4 句，不要编造数据之外的事实，社交与叙事只做"待验证"级别的推断：\n\n代币：${data.name}（$${data.symbol}）\n链/交易对：${data.chainId} / ${data.dexId}\n价格：$${data.priceUsd}｜24H涨跌：${data.change24h}%｜近7日：${chg7d}%\n市值：${data.marketCap ?? data.fdv ?? "未知"}｜流动性：$${data.liquidity ?? "未知"}｜24H成交量：$${data.volume24h ?? "未知"}\n官网/社交：${data.url}\n我关注的理由标签：${tagNames}\n我的初始论点：${thesis}\n\n结构：\n## 一句话概览\n## 数据快照\n## 叙事与社区线索（标注"待验证"）\n## 风险清单\n## 待验证事项（DYOR 检查项）\n## 与我的关注理由对照\n`;
+
+  try {
+    const res = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}` },
+      body: JSON.stringify({ model: "deepseek-chat", temperature: 0.3, messages: [{ role: "user", content: prompt }] }),
+      signal: AbortSignal.timeout(60_000),
+    });
+    if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);
+    const json = await res.json();
+    const content = json?.choices?.[0]?.message?.content;
+    if (!content) throw new Error("AI 返回为空");
+    return NextResponse.json({ ok: true, markdown: preamble + content, ai: true });
+  } catch (e) {
+    return NextResponse.json({ ok: false, message: `AI 生成失败：${e instanceof Error ? e.message : e}` }, { status: 502 });
+  }
 }

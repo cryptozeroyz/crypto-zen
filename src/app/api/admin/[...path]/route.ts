@@ -46,6 +46,8 @@ export async function POST(req: Request, { params }: Ctx) {
       return H.watchlistPOST(req);
     case "journal":
       return H.journalPOST(req);
+    case "ai-report":
+      return H.aiReportPOST(req);
     case "links":
       return H.linksPOST(req);
     case "posts":

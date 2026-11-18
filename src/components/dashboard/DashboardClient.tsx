@@ -715,6 +715,7 @@ export function ResearchDrawer({
                       <div className="rounded-xl border border-dashed border-violet-400/40 bg-violet-500/5 px-3.5 py-2.5">
                         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
                           <span className="font-semibold text-violet-600 dark:text-violet-400">{d.evJournal}</span>
+                          {item.journal.tags.includes("AI") && <span className="rounded bg-accent px-1.5 py-px text-[9px] font-bold text-white">AI</span>}
                           <span className="text-[11.5px] tabular-nums text-muted">{item.journal.date}</span>
                           {item.journal.tags.map((tg) => (
                             <span key={tg} className="rounded-full bg-codebg px-1.5 py-px text-[10px] text-muted">{tg}</span>
