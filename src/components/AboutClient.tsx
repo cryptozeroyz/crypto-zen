@@ -151,7 +151,7 @@ export default function AboutClient({ locale }: { locale: Locale }) {
         <div aria-hidden="true" className="pointer-events-none absolute inset-0" style={{ background: `radial-gradient(55% 45% at ${glow.x}% ${glow.y}%, rgba(37,99,235,.10), transparent)` }} />
         <div className="mx-auto w-full max-w-[860px] px-6">
           <div className="text-xs font-semibold uppercase tracking-[0.18em] text-accent dark:text-accent-mint">{c.eyebrow}</div>
-          <h1 className="font-serif mt-5 text-[clamp(52px,9vw,96px)] font-bold leading-[1.05] tracking-[-0.03em] text-heading" style={rv(0)}>
+          <h1 data-rv className="font-serif mt-5 text-[clamp(52px,9vw,96px)] font-bold leading-[1.05] tracking-[-0.03em] text-heading" style={rv(0)}>
             {c.title}
           </h1>
           <div className="font-serif mt-5 text-[clamp(17px,2.6vw,25px)] italic text-accent dark:text-accent-mint" aria-label={c.roles.join(" ")}>
@@ -165,8 +165,8 @@ export default function AboutClient({ locale }: { locale: Locale }) {
               </span>
             ))}
           </div>
-          <p className="mt-4 text-[15px] text-muted" style={rv(700)}>{c.zhLine}</p>
-          <p className="mt-7 max-w-[560px] text-[15px] leading-[1.9] text-text" style={rv(850)}>{c.bio}</p>
+          <p data-rv className="mt-4 text-[15px] text-muted" style={rv(700)}>{c.zhLine}</p>
+          <p data-rv className="mt-7 max-w-[560px] text-[15px] leading-[1.9] text-text" style={rv(850)}>{c.bio}</p>
         </div>
         <span className="absolute bottom-7 left-6 text-[11px] tracking-[0.2em] text-muted">{c.scroll}</span>
       </header>
@@ -174,7 +174,7 @@ export default function AboutClient({ locale }: { locale: Locale }) {
       {/* 02 BACKGROUND */}
       <section className="mx-auto w-full max-w-[860px] px-6 py-20">
         <div data-rv style={rv()} className="relative mb-10 flex items-baseline gap-4">
-          <span aria-hidden="true" className="font-serif pointer-events-none absolute -top-10 -left-2 select-none text-[110px] font-bold leading-none text-heading/[0.05]">01</span>
+          <span aria-hidden="true" className="font-serif pointer-events-none absolute -top-10 -left-2 select-none text-[110px] font-bold leading-none" style={{ color: "var(--heading)", opacity: 0.05 }}>01</span>
           <h2 className="font-serif text-[clamp(24px,4vw,34px)] font-bold tracking-[-0.02em] text-heading">{c.sec1}</h2>
         </div>
         <div className="grid gap-4 sm:grid-cols-3">
@@ -191,7 +191,7 @@ export default function AboutClient({ locale }: { locale: Locale }) {
       {/* 03 WHAT I WRITE */}
       <section className="mx-auto w-full max-w-[860px] border-t border-line px-6 py-20">
         <div data-rv style={rv()} className="relative mb-10 flex items-baseline gap-4">
-          <span aria-hidden="true" className="font-serif pointer-events-none absolute -top-10 -left-2 select-none text-[110px] font-bold leading-none text-heading/[0.05]">02</span>
+          <span aria-hidden="true" className="font-serif pointer-events-none absolute -top-10 -left-2 select-none text-[110px] font-bold leading-none" style={{ color: "var(--heading)", opacity: 0.05 }}>02</span>
           <h2 className="font-serif text-[clamp(24px,4vw,34px)] font-bold tracking-[-0.02em] text-heading">{c.sec2}</h2>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -227,14 +227,14 @@ export default function AboutClient({ locale }: { locale: Locale }) {
       {/* 05 DISCLAIMER */}
       <section className="mx-auto w-full max-w-[860px] border-t border-line px-6 py-20">
         <div data-rv style={rv()} className="relative mb-10 flex items-baseline gap-4">
-          <span aria-hidden="true" className="font-serif pointer-events-none absolute -top-10 -left-2 select-none text-[110px] font-bold leading-none text-heading/[0.05]">03</span>
+          <span aria-hidden="true" className="font-serif pointer-events-none absolute -top-10 -left-2 select-none text-[110px] font-bold leading-none" style={{ color: "var(--heading)", opacity: 0.05 }}>03</span>
           <h2 className="font-serif text-[clamp(24px,4vw,34px)] font-bold tracking-[-0.02em] text-heading">{c.sec3}</h2>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {c.rules.map((r, i) => (
-            <div key={r.b} data-rv style={rv(i * 80)} className="flex items-baseline gap-3 rounded-xl border border-line bg-card px-5 py-4 text-[14px] text-text">
-              <span className={`font-bold ${r.ok ? "text-emerald-500" : "text-accent"}`}>{r.ok ? "✓" : "✕"}</span>
-              <span><b className="text-heading">{r.b}</b> — {r.p}</span>
+            <div key={r.b} data-rv style={rv(i * 80)} className="flex gap-3 rounded-xl border border-line bg-card px-5 py-4 text-[14px] text-text">
+              <span className={`mt-0.5 font-bold ${r.ok ? "text-emerald-500" : "text-accent"}`}>{r.ok ? "✓" : "✕"}</span>
+              <span><b className="block text-heading">{r.b}</b><span className="mt-0.5 block text-[13px] text-muted">{r.p}</span></span>
             </div>
           ))}
         </div>
