@@ -39,6 +39,7 @@ export interface WatchCoinRow {
   holdAmount?: number;
   avgCost?: number;
   followPrice?: number;
+  profile?: { narrative?: string; risks?: string; catalysts?: string; invalidate?: string };
   events?: WatchEvent[];
   priceUsd?: number;
   change24h?: number;
@@ -77,6 +78,10 @@ export default function WatchlistManager({
   const [holdAmount, setHoldAmount] = useState("");
   const [avgCost, setAvgCost] = useState("");
   const [why, setWhy] = useState<string[]>([]);
+  const [profNarrative, setProfNarrative] = useState("");
+  const [profRisks, setProfRisks] = useState("");
+  const [profCatalysts, setProfCatalysts] = useState("");
+  const [profInvalidate, setProfInvalidate] = useState("");
   const [tags, setTags] = useState<WhyTag[]>(initialTags);
   const [newTag, setNewTag] = useState("");
   const [editing, setEditing] = useState(false);
@@ -93,6 +98,10 @@ export default function WatchlistManager({
     setHoldAmount("");
     setAvgCost("");
     setWhy([]);
+    setProfNarrative("");
+    setProfRisks("");
+    setProfCatalysts("");
+    setProfInvalidate("");
     setEditing(false);
   };
 
@@ -111,6 +120,12 @@ export default function WatchlistManager({
           why,
           holdAmount: holdAmount.trim() === "" ? null : Number(holdAmount),
           avgCost: avgCost.trim() === "" ? null : Number(avgCost),
+          profile: {
+            narrative: profNarrative,
+            risks: profRisks,
+            catalysts: profCatalysts,
+            invalidate: profInvalidate,
+          },
         }),
       });
       const data = await res.json().catch(() => null);
@@ -134,6 +149,10 @@ export default function WatchlistManager({
     setHoldAmount(row.holdAmount ? String(row.holdAmount) : "");
     setAvgCost(row.avgCost ? String(row.avgCost) : "");
     setWhy(row.why ?? []);
+    setProfNarrative(row.profile?.narrative ?? "");
+    setProfRisks(row.profile?.risks ?? "");
+    setProfCatalysts(row.profile?.catalysts ?? "");
+    setProfInvalidate(row.profile?.invalidate ?? "");
     setEditing(true);
     setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -295,6 +314,30 @@ export default function WatchlistManager({
               </label>
             </>
           )}
+        </div>
+        <div className="sm:col-span-2">
+          <label className="mb-1.5 block text-sm text-muted">
+            研究档案（可选，会显示在币的看板详情里）
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                ["叙事", profNarrative, setProfNarrative, "这个故事是什么"],
+                ["风险", profRisks, setProfRisks, "最大的坑在哪"],
+                ["催化剂", profCatalysts, setProfCatalysts, "等什么事件"],
+                ["证伪条件", profInvalidate, setProfInvalidate, "什么情况下我错了"],
+              ] as const
+            ).map(([label, value, setter, ph]) => (
+              <textarea
+                key={label}
+                value={value}
+                onChange={(e) => setter(e.target.value)}
+                rows={2}
+                placeholder={ph}
+                className="w-full resize-y rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
+              />
+            ))}
+          </div>
         </div>
         <div className="flex items-end justify-end gap-3">
           {editing && (

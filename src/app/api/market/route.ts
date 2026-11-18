@@ -16,6 +16,7 @@
 import { NextResponse } from "next/server";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
 import { getAllPosts } from "@/lib/posts";
+import { getJournal } from "@/lib/journal";
 
 export const revalidate = 60;
 
@@ -208,6 +209,7 @@ export async function GET(req: Request) {
       const localeParam = searchParams.get("locale");
       const locale = localeParam === "en" ? "en" : "zh";
       const { coins, tags } = await fetchWatchlistWithData();
+      const journal = getJournal();
       const posts = getAllPosts(locale).map((p) => ({
         slug: p.slug,
         title: p.title,
@@ -235,7 +237,25 @@ export async function GET(req: Request) {
               })
             )
             .map((p) => ({ slug: p.slug, title: p.title, date: p.date }));
-          return { ...c, spark, posts: related };
+          const relatedJournal = journal
+            .filter((j) =>
+              j.tokens.some((tk) => {
+                const s = tk.trim().toLowerCase();
+                return (
+                  s.length > 0 &&
+                  (s === (c.symbol ?? "").toLowerCase() ||
+                    s === c.address.toLowerCase())
+                );
+              })
+            )
+            .map((j) => ({
+              id: j.id,
+              date: j.date,
+              title: j.title,
+              body: j.body.slice(0, 400),
+              tags: j.tags,
+            }));
+          return { ...c, spark, posts: related, journal: relatedJournal };
         })
       );
       return NextResponse.json(

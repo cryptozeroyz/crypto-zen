@@ -27,11 +27,21 @@ export interface RelatedPost {
   date: string;
 }
 
+export interface RelatedJournal {
+  id: string;
+  date: string;
+  title: string;
+  body: string;
+  tags: string[];
+}
+
 export interface DashboardCoin extends WatchCoin {
   data: CoinMarketData | null;
   spark: number[] | null;
   /** 关联研报（frontmatter tokens 匹配 symbol 或 CA） */
   posts?: RelatedPost[];
+  /** 关联研究日志（journal tokens 匹配） */
+  journal?: RelatedJournal[];
 }
 
 interface GradeData {
@@ -526,11 +536,27 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                   {[
                     ...activeCoin.events.map((ev) => ({ kind: "ev" as const, date: ev.date, ev })),
                     ...(activeCoin.posts ?? []).map((p) => ({ kind: "post" as const, date: p.date, post: p })),
+                    ...(activeCoin.journal ?? []).map((j) => ({ kind: "journal" as const, date: j.date, journal: j })),
                   ]
                     .sort((a, b) => a.date.localeCompare(b.date))
                     .reverse()
                     .map((item, i) =>
-                      item.kind === "post" ? (
+                      item.kind === "journal" ? (
+                        <div key={`j-${item.journal.id}`} className="relative">
+                          <span className="absolute -left-5 top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-violet-500 text-[7px] font-bold text-white" aria-hidden="true">志</span>
+                          <div className="rounded-xl border border-dashed border-violet-400/40 bg-violet-500/5 px-3.5 py-2.5">
+                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
+                              <span className="font-semibold text-violet-600 dark:text-violet-400">{d.evJournal}</span>
+                              <span className="text-[11.5px] tabular-nums text-muted">{item.journal.date}</span>
+                              {item.journal.tags.map((tg) => (
+                                <span key={tg} className="rounded-full bg-codebg px-1.5 py-px text-[10px] text-muted">{tg}</span>
+                              ))}
+                            </div>
+                            {item.journal.title && <p className="mt-1 text-[13px] font-medium text-heading">{item.journal.title}</p>}
+                            <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-muted">{item.journal.body}</p>
+                          </div>
+                        </div>
+                      ) : item.kind === "post" ? (
                         <div key={`p-${item.post.slug}`} className="relative">
                           <span className="absolute -left-5 top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-accent-mint text-[8px] font-bold text-white" aria-hidden="true">文</span>
                           <a
@@ -570,6 +596,32 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                     )}
                 </div>
               </section>
+
+              {/* 研究档案（叙事/风险/催化剂/证伪条件） */}
+              {activeCoin.profile && (activeCoin.profile.narrative || activeCoin.profile.risks || activeCoin.profile.catalysts || activeCoin.profile.invalidate) && (
+                <section className="mt-6">
+                  <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">{d.profileTitle}</h3>
+                  <div className="grid gap-2.5">
+                    {(
+                      [
+                        ["📖", d.profileNarrative, activeCoin.profile.narrative],
+                        ["⚠️", d.profileRisks, activeCoin.profile.risks],
+                        ["🧨", d.profileCatalysts, activeCoin.profile.catalysts],
+                        ["🧭", d.profileInvalidate, activeCoin.profile.invalidate],
+                      ] as const
+                    )
+                      .filter(([, , v]) => v)
+                      .map(([icon, label, value]) => (
+                        <div key={label} className="rounded-xl border border-line bg-card px-3.5 py-2.5">
+                          <div className="text-[11px] font-semibold tracking-wide text-muted">
+                            {icon} {label}
+                          </div>
+                          <p className="mt-1 text-[13px] leading-relaxed text-heading">{value}</p>
+                        </div>
+                      ))}
+                  </div>
+                </section>
+              )}
 
               {activeCoin.holdAmount && activeCoin.avgCost && (
                 <DrawerHolding coin={activeCoin} t={d} />

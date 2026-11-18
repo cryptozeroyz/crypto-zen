@@ -50,6 +50,8 @@ export interface WatchCoin {
   followMcap?: number;
   holdAmount?: number;
   avgCost?: number;
+  /** 研究档案：叙事/风险/催化剂/证伪条件 */
+  profile?: { narrative?: string; risks?: string; catalysts?: string; invalidate?: string };
   events: WatchEvent[];
 }
 
@@ -158,6 +160,10 @@ export function getWatchlist(): WatchCoin[] {
           holdAmount:
             typeof c.holdAmount === "number" ? c.holdAmount : undefined,
           avgCost: typeof c.avgCost === "number" ? c.avgCost : undefined,
+          profile:
+            c.profile && typeof c.profile === "object"
+              ? (c.profile as WatchCoin["profile"])
+              : undefined,
           events,
         };
       });

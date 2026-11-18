@@ -344,6 +344,8 @@ interface WatchCoinEntry {
   followMcap?: number;
   holdAmount?: number;
   avgCost?: number;
+  /** 研究档案：叙事/风险/催化剂/证伪条件 */
+  profile?: { narrative?: string; risks?: string; catalysts?: string; invalidate?: string };
   events?: Array<{
     type: string;
     date: string;
@@ -489,6 +491,7 @@ export async function watchlistPOST(req: Request) {
   let holdAmount: number | undefined;
   let avgCost: number | undefined;
   let pairAddress: string | null | undefined;
+  let profile: WatchCoinEntry["profile"];
   try {
     const body = await req.json();
     ca = String(body.ca ?? "").trim();
@@ -507,6 +510,15 @@ export async function watchlistPOST(req: Request) {
     if (cost !== undefined) avgCost = cost === null ? undefined : cost;
     pairAddress =
       body.pairAddress === undefined ? undefined : body.pairAddress === null ? null : String(body.pairAddress);
+    if (body.profile && typeof body.profile === "object") {
+      const p = body.profile as Record<string, unknown>;
+      profile = {
+        narrative: String(p.narrative ?? "").trim().slice(0, 800) || undefined,
+        risks: String(p.risks ?? "").trim().slice(0, 800) || undefined,
+        catalysts: String(p.catalysts ?? "").trim().slice(0, 800) || undefined,
+        invalidate: String(p.invalidate ?? "").trim().slice(0, 800) || undefined,
+      };
+    }
   } catch {
     /* 下方统一校验 */
   }
@@ -526,6 +538,7 @@ export async function watchlistPOST(req: Request) {
     if (holdAmount !== undefined) existing.holdAmount = holdAmount;
     if (avgCost !== undefined) existing.avgCost = avgCost;
     if (pairAddress !== undefined) existing.pairAddress = pairAddress ?? undefined;
+    if (profile) existing.profile = profile;
     // 同步更新首条 follow 事件的标签与论点
     const evs = Array.isArray(existing.events) ? existing.events : [];
     if (evs.length > 0 && evs[0].type === "follow") {
@@ -768,5 +781,86 @@ export async function linksDELETE(req: Request) {
       { status: 500 }
     );
   }
+  return NextResponse.json({ ok: true });
+}
+
+/* ---------------- 研究日志（Research Journal） ---------------- */
+
+const JOURNAL_PATH = "content/journal.json";
+
+async function readJournal(): Promise<
+  Array<Record<string, unknown> & { id: string }>
+> {
+  const raw = await readTextFile(JOURNAL_PATH);
+  if (!raw) return [];
+  try {
+    const json = JSON.parse(raw);
+    return Array.isArray(json) ? json : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function journalGET() {
+  if (!isAuthed()) return unauthorized();
+  return NextResponse.json({ ok: true, entries: await readJournal() });
+}
+
+export async function journalPOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  try {
+    const body = await req.json();
+    const id = String(body.id ?? "").trim();
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(String(body.date ?? ""))
+      ? String(body.date)
+      : new Date().toISOString().slice(0, 10);
+    const entry = {
+      id: id || `j-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+      date,
+      tokens: (Array.isArray(body.tokens) ? body.tokens : [])
+        .map(String)
+        .map((s: string) => s.trim())
+        .filter(Boolean)
+        .slice(0, 8),
+      tags: (Array.isArray(body.tags) ? body.tags : [])
+        .map(String)
+        .map((s: string) => s.trim())
+        .filter(Boolean)
+        .slice(0, 8),
+      title: String(body.title ?? "").trim().slice(0, 120),
+      body: String(body.body ?? "").trim(),
+      thesis: String(body.thesis ?? "").trim().slice(0, 500) || undefined,
+      risks: String(body.risks ?? "").trim().slice(0, 500) || undefined,
+    };
+    if (!entry.body && !entry.title) return badRequest("正文或标题至少填一项");
+    const list = await readJournal();
+    const now = new Date().toISOString();
+    const existing = list.find((j) => j.id === entry.id);
+    if (existing) {
+      Object.assign(existing, entry, { updatedAt: now });
+    } else {
+      list.unshift({ ...entry, createdAt: now, updatedAt: now });
+    }
+    await saveTextFile(JOURNAL_PATH, JSON.stringify(list, null, 2) + "\n");
+    return NextResponse.json({ ok: true, id: entry.id });
+  } catch {
+    return badRequest("格式不正确");
+  }
+}
+
+export async function journalDELETE(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  let id = "";
+  try {
+    id = String((await req.json()).id ?? "").trim();
+  } catch {
+    /* 下方校验 */
+  }
+  if (!id) return badRequest("缺少 id");
+  const list = await readJournal();
+  const next = list.filter((j) => j.id !== id);
+  if (next.length === list.length)
+    return NextResponse.json({ ok: false, message: "未找到该记录" }, { status: 404 });
+  await saveTextFile(JOURNAL_PATH, JSON.stringify(next, null, 2) + "\n");
   return NextResponse.json({ ok: true });
 }

@@ -67,6 +67,12 @@ export default async function AdminPage() {
             关注列表
           </Link>
           <Link
+            href="/admin/journal"
+            className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
+          >
+            研究日志
+          </Link>
+          <Link
             href="/admin/links"
             className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
           >

@@ -25,6 +25,7 @@ export async function GET(_req: Request, { params }: Ctx) {
   if (a === "posts" && !b) return H.postsGET();
   if (a === "watchlist" && !b) return H.watchlistGET();
   if (a === "links" && !b) return H.linksGET();
+  if (a === "journal" && !b) return H.journalGET();
   return NOT_FOUND();
 }
 
@@ -43,6 +44,8 @@ export async function POST(req: Request, { params }: Ctx) {
       if (b === "events") return H.watchlistEventPOST(req);
       if (b === "tags") return H.tagsPOST(req);
       return H.watchlistPOST(req);
+    case "journal":
+      return H.journalPOST(req);
     case "links":
       return H.linksPOST(req);
     case "posts":
@@ -62,6 +65,7 @@ export async function DELETE(req: Request, { params }: Ctx) {
   const [a, b] = params.path ?? [];
   if (a === "posts" && b) return H.postDELETE(b);
   if (a === "watchlist" && !b) return H.watchlistDELETE(req);
+  if (a === "journal" && !b) return H.journalDELETE(req);
   if (a === "links" && !b) return H.linksDELETE(req);
   return NOT_FOUND();
 }
