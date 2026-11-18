@@ -244,7 +244,7 @@ export default function AboutClient({ locale }: { locale: Locale }) {
           <p className="mt-3 text-[13px] italic text-muted">{c.who}</p>
           <div className="mt-7 flex justify-center gap-7 text-[13px]">
             <a href={siteConfig.social.twitter} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-accent">𝕏 {siteConfig.social.twitterHandle}</a>
-            <a href={`https://t.me/${siteConfig.social.telegramHandle?.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-accent">Telegram</a>
+            <a href={siteConfig.social.telegram} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-accent">Telegram</a>
             <a href={`/${locale}`} className="text-muted transition-colors hover:text-accent">{c.back}</a>
           </div>
         </div>
