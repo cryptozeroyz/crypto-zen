@@ -77,6 +77,12 @@
         "why": [
           "animals"
         ]
+      },
+      {
+        "type": "close_position",
+        "date": "2026-11-18",
+        "price": 0.001175,
+        "note": "完成清仓，原因是当前市场比较弱，:3 的ticker 传播性上弱了一些，虽然形象上人尽皆知。"
       }
     ],
     "symbol": ":3",
