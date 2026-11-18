@@ -895,7 +895,7 @@ export async function aiReportPOST(req: Request) {
   let narrative = "";
   if (process.env.GROK_API_KEY) {
     try {
-      const gres = await fetch("https://api.xai.com/v1/chat/completions", {
+      const gres = await fetch((process.env.GROK_BASE_URL || "https://api.xai.com/v1") + "/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.GROK_API_KEY}` },
         body: JSON.stringify({
