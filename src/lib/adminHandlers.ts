@@ -344,7 +344,8 @@ interface WatchCoinEntry {
   followMcap?: number;
   holdAmount?: number;
   avgCost?: number;
-  /** 研究档案：叙事/风险/催化剂/证伪条件 */
+  image?: string;
+  /** 研究档案 */
   profile?: { narrative?: string; risks?: string; catalysts?: string; invalidate?: string };
   events?: Array<{
     type: string;
@@ -491,6 +492,7 @@ export async function watchlistPOST(req: Request) {
   let holdAmount: number | undefined;
   let avgCost: number | undefined;
   let pairAddress: string | null | undefined;
+  let image: string | null | undefined;
   let profile: WatchCoinEntry["profile"];
   try {
     const body = await req.json();
@@ -510,6 +512,7 @@ export async function watchlistPOST(req: Request) {
     if (cost !== undefined) avgCost = cost === null ? undefined : cost;
     pairAddress =
       body.pairAddress === undefined ? undefined : body.pairAddress === null ? null : String(body.pairAddress);
+    if (typeof body.image === "string") image = body.image.trim().slice(0, 200) || null;
     if (body.profile && typeof body.profile === "object") {
       const p = body.profile as Record<string, unknown>;
       profile = {
@@ -538,6 +541,7 @@ export async function watchlistPOST(req: Request) {
     if (holdAmount !== undefined) existing.holdAmount = holdAmount;
     if (avgCost !== undefined) existing.avgCost = avgCost;
     if (pairAddress !== undefined) existing.pairAddress = pairAddress ?? undefined;
+    if (image !== undefined) existing.image = image ?? undefined;
     if (profile) existing.profile = profile;
     // 同步更新首条 follow 事件的标签与论点
     const evs = Array.isArray(existing.events) ? existing.events : [];
@@ -578,6 +582,7 @@ export async function watchlistPOST(req: Request) {
     };
     if (holdAmount !== undefined) entry.holdAmount = holdAmount;
     if (avgCost !== undefined) entry.avgCost = avgCost;
+    if (image) entry.image = image;
     // 关注瞬间自动记录价格/市值 + 链/交易对信息，作为基准（失败不阻塞保存）
     try {
       const d = await fetchCoinData(ca);

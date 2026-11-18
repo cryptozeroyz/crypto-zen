@@ -639,6 +639,9 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                 const latest = activeCoin.events[activeCoin.events.length - 1];
                 const text = latest?.note || activeCoin.comment;
                 if (!text) return null;
+              {activeCoin.image && (
+                <img src={activeCoin.image} alt="" className="mt-4 w-full rounded-xl border border-line object-cover" />
+              )}
                 const isInitial = !latest || latest.type === "follow";
                 return (
                   <section className="mt-6">

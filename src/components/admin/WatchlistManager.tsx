@@ -39,6 +39,7 @@ export interface WatchCoinRow {
   holdAmount?: number;
   avgCost?: number;
   followPrice?: number;
+  image?: string;
   profile?: { narrative?: string; risks?: string; catalysts?: string; invalidate?: string };
   events?: WatchEvent[];
   priceUsd?: number;
@@ -82,6 +83,8 @@ export default function WatchlistManager({
   const [profRisks, setProfRisks] = useState("");
   const [profCatalysts, setProfCatalysts] = useState("");
   const [profInvalidate, setProfInvalidate] = useState("");
+  const [image, setImage] = useState("");
+  const [imageBusy, setImageBusy] = useState(false);
   const [tags, setTags] = useState<WhyTag[]>(initialTags);
   const [newTag, setNewTag] = useState("");
   const [editing, setEditing] = useState(false);
@@ -102,6 +105,7 @@ export default function WatchlistManager({
     setProfRisks("");
     setProfCatalysts("");
     setProfInvalidate("");
+    setImage("");
     setEditing(false);
   };
 
@@ -120,6 +124,7 @@ export default function WatchlistManager({
           why,
           holdAmount: holdAmount.trim() === "" ? null : Number(holdAmount),
           avgCost: avgCost.trim() === "" ? null : Number(avgCost),
+          image: image || null,
           profile: {
             narrative: profNarrative,
             risks: profRisks,
@@ -153,6 +158,7 @@ export default function WatchlistManager({
     setProfRisks(row.profile?.risks ?? "");
     setProfCatalysts(row.profile?.catalysts ?? "");
     setProfInvalidate(row.profile?.invalidate ?? "");
+    setImage(row.image ?? "");
     setEditing(true);
     setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -317,6 +323,27 @@ export default function WatchlistManager({
         </div>
         <div className="sm:col-span-2">
           <label className="mb-1.5 block text-sm text-muted">
+        <div className="sm:col-span-2">
+          <label className="mb-1.5 block text-sm text-muted">关注原因配图（可选）</label>
+          <div className="flex items-center gap-3">
+            <label className="cursor-pointer rounded-lg border border-line px-4 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading">
+              {imageBusy ? "上传中…" : image ? "更换图片" : "＋ 上传图片"}
+              <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" className="hidden" onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (!f) return;
+                setImageBusy(true);
+                const fd = new FormData();
+                fd.append("file", f);
+                fetch("/api/admin/upload", { method: "POST", body: fd })
+                  .then((r) => r.json())
+                  .then((d) => { if (d?.url) setImage(d.url); else setError(d?.message ?? "上传失败"); })
+                  .catch(() => setError("上传失败"))
+                  .finally(() => setImageBusy(false));
+              }} />
+            </label>
+            {image && <><img src={image} alt="" className="h-10 w-10 rounded-lg border border-line object-cover" /><button type="button" onClick={() => setImage("")} className="text-xs text-red-600 hover:underline dark:text-red-400">移除</button></>}
+          </div>
+        </div>
             研究档案（可选，会显示在币的看板详情里）
           </label>
           <div className="grid gap-3 sm:grid-cols-2">

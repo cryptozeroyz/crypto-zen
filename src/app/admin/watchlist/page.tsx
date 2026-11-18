@@ -40,6 +40,7 @@ export default async function AdminWatchlistPage() {
         name: c.name ?? d?.name,
         dex: c.dex ?? d?.dexId,
         pairAddress: c.pairAddress ?? d?.pairAddress,
+        image: c.image,
         status: c.status ?? (c.holding ? "holding" : "watching"),
         why: Array.isArray(c.why) ? c.why : [],
         comment: String(c.comment ?? ""),

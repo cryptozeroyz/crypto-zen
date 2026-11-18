@@ -61,8 +61,9 @@ export default async function HomePage({
     const p = allPosts.filter((pt) => match(pt.tokens ?? []));
     const laterEvents = (c.events ?? []).slice(1);
     const newCount = j.length + p.length + laterEvents.length;
-    if (newCount === 0) continue;
+    /* 最近动态日期：建立关注本身就是一次动态，新币据此优先展示 */
     const latest = [
+      c.addedAt,
       ...j.map((x) => x.date),
       ...p.map((x) => x.date),
       ...laterEvents.map((e) => e.date),

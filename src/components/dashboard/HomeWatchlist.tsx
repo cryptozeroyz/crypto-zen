@@ -25,17 +25,16 @@ export default function HomeWatchlist({
   /** 投研活跃度：address → { 最近动态日期, 动态条数(日志+研报+事件) } */
   activities?: Record<string, { latest: string; newCount: number }>;
 }) {
-  /* 有动态更新的币按最近活动排序优先，其余保持原有顺序 */
-  const active = coins
-    .filter((c) => c.data && activities[c.address])
+  /* 全部有行情的币按最近动态（含建立关注）排序 */
+  const top = coins
+    .filter((c) => c.data)
     .sort(
       (a, b) =>
         (activities[b.address]?.latest ?? "").localeCompare(
           activities[a.address]?.latest ?? ""
         )
-    );
-  const rest = coins.filter((c) => c.data && !activities[c.address]);
-  const top = [...active, ...rest].slice(0, 4);
+    )
+    .slice(0, 4);
 
   return (
     <div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-5">
@@ -52,9 +51,15 @@ export default function HomeWatchlist({
             href={`/${locale}/dashboard?coin=${c.address}`}
             className="group relative rounded-2xl border border-line bg-card p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-lg"
           >
-            {act && (
+            {act && act.newCount > 0 && (
               <span className="absolute -right-1.5 -top-1.5 z-10 flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white shadow-md">
                 新 · {act.newCount}
+              </span>
+            )}
+            {act && act.newCount === 0 &&
+              Date.now() - new Date(act.latest).getTime() < 7 * 864e5 && (
+              <span className="absolute -right-1.5 -top-1.5 z-10 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-md">
+                新关注
               </span>
             )}
             <div className="flex items-center gap-2.5">
