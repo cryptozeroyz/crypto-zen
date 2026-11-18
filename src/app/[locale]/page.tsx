@@ -19,7 +19,6 @@ import RandomPostButton from "@/components/RandomPostButton";
 import NowPlaying from "@/components/NowPlaying";
 import PriceTicker from "@/components/PriceTicker";
 import { getAllPosts } from "@/lib/posts";
-import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
 import { getJournal } from "@/lib/journal";
@@ -48,7 +47,7 @@ export default async function HomePage({
 
   /* 投研活跃度：日志 + 关联研报 + 时间线后续事件（首页优先展示有动态更新的币） */
   const journal = getJournal();
-  const posts = getAllPosts(locale);
+  const allPosts = getAllPosts(locale);
   const activities: Record<string, { latest: string; newCount: number }> = {};
   for (const c of coins) {
     const sym = (c.symbol ?? "").toLowerCase();
@@ -59,7 +58,7 @@ export default async function HomePage({
         return s.length > 0 && (s === sym || s === addr);
       });
     const j = journal.filter((e) => match(e.tokens));
-    const p = posts.filter((pt) => match(pt.tokens ?? []));
+    const p = allPosts.filter((pt) => match(pt.tokens ?? []));
     const laterEvents = (c.events ?? []).slice(1);
     const newCount = j.length + p.length + laterEvents.length;
     if (newCount === 0) continue;
