@@ -91,7 +91,7 @@
   {
     "chain": "solana",
     "address": "FSkyjfqB26u6c2GSgpACrjbxp9yQAR8rutxprVNppump",
-    "status": "watching",
+    "status": "exited",
     "why": [
       "animals"
     ],
@@ -114,6 +114,12 @@
         "date": "2026-11-18",
         "price": 0.001175,
         "note": "完成清仓，原因是当前市场比较弱，:3 的ticker 传播性上弱了一些，虽然形象上人尽皆知。"
+      },
+      {
+        "type": "unfollow",
+        "date": "2026-11-18",
+        "price": 0.000743,
+        "note": "已经获利了结"
       }
     ],
     "symbol": ":3",
