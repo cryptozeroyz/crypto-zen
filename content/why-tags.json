@@ -38,5 +38,10 @@
     "id": "pfp",
     "zh": "pfp",
     "en": "pfp"
+  },
+  {
+    "id": "utility_tokens",
+    "zh": "utility_tokens",
+    "en": "utility_tokens"
   }
 ]
