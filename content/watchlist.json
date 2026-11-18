@@ -39,7 +39,7 @@
   {
     "address": "MoR1whCWjcLiUqAan4GHLRcn8wK4Jktk2DyDryNmeta",
     "ca": "MoR1whCWjcLiUqAan4GHLRcn8wK4Jktk2DyDryNmeta",
-    "status": "watching",
+    "status": "holding",
     "why": [
       "thesis",
       "utility_tokens"
@@ -57,6 +57,12 @@
           "utility_tokens"
         ],
         "price": 0.06983
+      },
+      {
+        "type": "open_position",
+        "date": "2026-11-18",
+        "price": 0.04642,
+        "note": "开启第一次建仓尝试"
       }
     ],
     "followPrice": 0.06983,
