@@ -79,6 +79,7 @@ export default function PostEditor({
       category: "essay",
       excerpt: "",
       tags: [],
+      tokens: [],
       cover: "",
       dexScreener: "",
       draft: false,
@@ -86,6 +87,9 @@ export default function PostEditor({
   );
   const [tagsInput, setTagsInput] = useState(
     (initial?.fields.tags ?? []).join(", ")
+  );
+  const [tokensInput, setTokensInput] = useState(
+    (initial?.fields.tokens ?? []).join(", ")
   );
   const [body, setBody] = useState(initial?.body ?? "");
   const [fontSize, setFontSize] = useState<(typeof FONT_SIZES)[number]["value"]>(14);
@@ -147,8 +151,12 @@ export default function PostEditor({
       .split(/[,，]/)
       .map((t) => t.trim())
       .filter(Boolean);
+    const tokens = tokensInput
+      .split(/[,，]/)
+      .map((t) => t.trim())
+      .filter(Boolean);
 
-    const markdown = buildMarkdown({ ...fields, tags }, body);
+    const markdown = buildMarkdown({ ...fields, tags, tokens }, body);
     setSaving(true);
     try {
       const res = isEdit
@@ -294,6 +302,19 @@ export default function PostEditor({
             value={tagsInput}
             onChange={(e) => setTagsInput(e.target.value)}
             placeholder="链上分析, 筹码结构"
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <label htmlFor="pe-tokens" className={labelClass}>
+            关联代币（看板时间线联动）
+          </label>
+          <input
+            id="pe-tokens"
+            type="text"
+            value={tokensInput}
+            onChange={(e) => setTokensInput(e.target.value)}
+            placeholder="BONK 或 CA，逗号分隔多个"
             className={inputClass}
           />
         </div>

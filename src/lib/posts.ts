@@ -37,6 +37,8 @@ export interface PostMeta {
   category: PostCategory;
   excerpt: string;
   tags: string[];
+  /** 关联代币（看板时间线联动）：symbol 或 CA */
+  tokens?: string[];
   readingTime: number; // 分钟
   cover?: string; // 研究报告封面图
   dexScreener?: string; // DexScreener 交易对链接
@@ -106,6 +108,7 @@ function toMeta(slug: string, data: Record<string, unknown>, content: string): P
     category,
     excerpt: String(data.excerpt ?? ""),
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
+    tokens: Array.isArray(data.tokens) ? data.tokens.map(String) : [],
     readingTime: calcReadingTime(content),
     cover: data.cover ? String(data.cover) : undefined,
     dexScreener: data.dexScreener ? String(data.dexScreener) : undefined,

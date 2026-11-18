@@ -15,6 +15,8 @@ export interface FrontmatterFields {
   category: Category;
   excerpt: string;
   tags: string[];
+  /** 关联代币（看板时间线联动）：symbol 或 CA，逗号分隔录入 */
+  tokens: string[];
   cover: string; // 研究报告封面图路径/URL，可为空
   dexScreener: string; // DexScreener 交易对链接，可为空
   draft: boolean;
@@ -27,6 +29,7 @@ export const EMPTY_FIELDS: FrontmatterFields = {
   category: "essay",
   excerpt: "",
   tags: [],
+  tokens: [],
   cover: "",
   dexScreener: "",
   draft: false,
@@ -67,9 +70,9 @@ export function parseMarkdown(raw: string): {
         const key = kv[1] as keyof FrontmatterFields;
         const value = kv[2].trim();
         lastKey = key;
-        if (key === "tags") {
-          // 支持两种写法：tags: ["a", "b"]（行内）与 tags:\n  - "a"（块状）
-          fields.tags = value.startsWith("[")
+        if (key === "tags" || key === "tokens") {
+          // 支持两种写法：行内 ["a","b"] 与块状列表
+          fields[key] = value.startsWith("[")
             ? value
                 .slice(1, value.endsWith("]") ? -1 : undefined)
                 .split(",")
@@ -83,10 +86,10 @@ export function parseMarkdown(raw: string): {
         }
         continue;
       }
-      // tags 列表项：  - "xxx"
+      // 列表项：  - "xxx"（tags / tokens）
       const item = line.match(/^\s+-\s*(.*)$/);
-      if (item && lastKey === "tags") {
-        fields.tags.push(unq(item[1]));
+      if (item && (lastKey === "tags" || lastKey === "tokens")) {
+        fields[lastKey].push(unq(item[1]));
       }
     }
   }
@@ -110,6 +113,10 @@ export function buildMarkdown(fields: FrontmatterFields, body: string): string {
   lines.push(`excerpt: "${yq(f.excerpt)}"`);
   lines.push("tags:");
   for (const tag of f.tags) lines.push(`  - "${yq(tag)}"`);
+  if (f.tokens.length > 0) {
+    lines.push("tokens:");
+    for (const tk of f.tokens) lines.push(`  - "${yq(tk)}"`);
+  }
   lines.push(`draft: ${f.draft ? "true" : "false"}`);
   lines.push("---", "");
   return lines.join("\n") + "\n" + body.trim() + "\n";

@@ -217,6 +217,7 @@ const zh = {
     evReduce: "减仓",
     evClose: "清仓",
     evUnfollow: "取消关注",
+    evPost: "研报",
   },
   ticker: {
     aria: "BTC / ETH / SOL 实时价格",
@@ -486,6 +487,7 @@ const en: typeof zh = {
     evReduce: "Reduced",
     evClose: "Closed All",
     evUnfollow: "Unfollowed",
+    evPost: "Research Post",
   },
   ticker: {
     aria: "Live BTC / ETH / SOL prices",

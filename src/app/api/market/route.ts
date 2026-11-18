@@ -15,6 +15,7 @@
 
 import { NextResponse } from "next/server";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
+import { getAllPosts } from "@/lib/posts";
 
 export const revalidate = 60;
 
@@ -201,10 +202,18 @@ export async function GET(req: Request) {
     }
   }
 
-  /* ---------- 看板聚合数据：关注列表 + 行情 + 7D 走势 + Why 标签 ---------- */
+  /* ---------- 看板聚合数据：关注列表 + 行情 + 7D 走势 + Why 标签 + 关联研报 ---------- */
   if (type === "watchlist") {
     try {
+      const localeParam = searchParams.get("locale");
+      const locale = localeParam === "en" ? "en" : "zh";
       const { coins, tags } = await fetchWatchlistWithData();
+      const posts = getAllPosts(locale).map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        date: p.date,
+        tokens: p.tokens ?? [],
+      }));
       const enriched = await Promise.all(
         coins.map(async (c) => {
           let spark: number[] | null = null;
@@ -213,7 +222,20 @@ export async function GET(req: Request) {
               () => null
             );
           }
-          return { ...c, spark };
+          /* 关联研报：frontmatter tokens 含该币 symbol（不区分大小写）或 CA */
+          const related = posts
+            .filter((p) =>
+              p.tokens.some((tk) => {
+                const s = tk.trim().toLowerCase();
+                return (
+                  s.length > 0 &&
+                  (s === (c.symbol ?? "").toLowerCase() ||
+                    s === c.address.toLowerCase())
+                );
+              })
+            )
+            .map((p) => ({ slug: p.slug, title: p.title, date: p.date }));
+          return { ...c, spark, posts: related };
         })
       );
       return NextResponse.json(

@@ -7,6 +7,7 @@ cover: "/covers/pepe-report.svg"
 dexScreener: "https://dexscreener.com/ethereum/0xa43fe16908251ee70ef74718545e4fe6c5ccec9f"
 excerpt: "过去一个季度，PEPE 的前 50 大持仓地址出现了明显的结构变化：早期巨鲸仓位下降 12%，而一类『慢速吸筹』地址的份额持续抬升。这篇报告把链上数据拆开给你看。"
 tags: ["链上分析", "筹码结构", "PEPE"]
+tokens: ["PEPE"]
 ---
 
 这是本季度 Meme 蓝筹复盘系列的第一篇，标的选 PEPE——不是因为它最性感，而是因为它的holder结构最典型：早期巨鲸、做市商、散户、以及一类近年来占比越来越高的「慢速吸筹」地址。

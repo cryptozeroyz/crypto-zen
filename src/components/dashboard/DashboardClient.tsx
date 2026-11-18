@@ -21,9 +21,17 @@ import type {
 import { avatarHue, formatMcap, formatPrice } from "@/lib/coin-format";
 import CoinAvatar from "@/components/CoinAvatar";
 
+export interface RelatedPost {
+  slug: string;
+  title: string;
+  date: string;
+}
+
 export interface DashboardCoin extends WatchCoin {
   data: CoinMarketData | null;
   spark: number[] | null;
+  /** 关联研报（frontmatter tokens 匹配 symbol 或 CA） */
+  posts?: RelatedPost[];
 }
 
 interface GradeData {
@@ -89,7 +97,7 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch("/api/market?type=watchlist", { cache: "no-store" });
+      const res = await fetch(`/api/market?type=watchlist&locale=${locale}`, { cache: "no-store" });
       const json = (await res.json()) as { coins?: DashboardCoin[]; tags?: WhyTag[] };
       if (Array.isArray(json.coins)) {
         setPayload({ coins: json.coins, tags: json.tags ?? [] });
@@ -98,7 +106,7 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
     } catch {
       setFailed(true);
     }
-  }, []);
+  }, [locale]);
 
   useEffect(() => {
     void load();
@@ -510,33 +518,56 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                 )}
               </div>
 
-              {/* 投研时间线 */}
+              {/* 投研时间线（事件 + 关联研报，按日期合并） */}
               <section className="mt-6">
                 <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">{d.timeline}</h3>
                 <div className="relative space-y-3 pl-5">
                   <span className="absolute bottom-2 left-[5px] top-2 w-0.5 bg-line" aria-hidden="true" />
-                  {[...activeCoin.events].reverse().map((ev, i) => (
-                    <div key={i} className="relative">
-                      <span className={`absolute -left-5 top-1.5 h-2.5 w-2.5 rounded-full ${EV_STYLE[ev.type] ?? "bg-muted"}`} aria-hidden="true" />
-                      <div className="rounded-xl border border-line bg-card px-3.5 py-2.5">
-                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
-                          <span className="font-semibold text-heading">{evLabel(ev.type)}</span>
-                          <span className="text-[11.5px] tabular-nums text-muted">{ev.date}</span>
-                          {typeof ev.price === "number" && (
-                            <span className="ml-auto font-mono text-xs font-medium text-heading">@{formatPrice(ev.price)}</span>
-                          )}
+                  {[
+                    ...activeCoin.events.map((ev) => ({ kind: "ev" as const, date: ev.date, ev })),
+                    ...(activeCoin.posts ?? []).map((p) => ({ kind: "post" as const, date: p.date, post: p })),
+                  ]
+                    .sort((a, b) => a.date.localeCompare(b.date))
+                    .reverse()
+                    .map((item, i) =>
+                      item.kind === "post" ? (
+                        <div key={`p-${item.post.slug}`} className="relative">
+                          <span className="absolute -left-5 top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-accent-mint text-[8px] font-bold text-white" aria-hidden="true">文</span>
+                          <a
+                            href={`/${locale}/writing/${item.post.slug}`}
+                            className="block rounded-xl border border-accent/30 bg-accent/5 px-3.5 py-2.5 transition-colors hover:border-accent/60"
+                          >
+                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
+                              <span className="font-semibold text-accent dark:text-accent-mint">{d.evPost}</span>
+                              <span className="text-[11.5px] tabular-nums text-muted">{item.post.date}</span>
+                              <span aria-hidden="true" className="ml-auto text-xs text-muted">→</span>
+                            </div>
+                            <p className="mt-1 text-[13px] font-medium leading-relaxed text-heading">{item.post.title}</p>
+                          </a>
                         </div>
-                        {ev.note && <p className="mt-1 text-[13px] leading-relaxed text-muted">{ev.note}</p>}
-                        {(ev.why ?? []).length > 0 && (
-                          <div className="mt-1.5 flex flex-wrap gap-1">
-                            {ev.why!.map((w) => (
-                              <span key={w} className="rounded-full border border-line px-2 py-px text-[10.5px] text-muted">{tagName(w)}</span>
-                            ))}
+                      ) : (
+                        <div key={`e-${i}`} className="relative">
+                          <span className={`absolute -left-5 top-1.5 h-2.5 w-2.5 rounded-full ${EV_STYLE[item.ev.type] ?? "bg-muted"}`} aria-hidden="true" />
+                          <div className="rounded-xl border border-line bg-card px-3.5 py-2.5">
+                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
+                              <span className="font-semibold text-heading">{evLabel(item.ev.type)}</span>
+                              <span className="text-[11.5px] tabular-nums text-muted">{item.ev.date}</span>
+                              {typeof item.ev.price === "number" && (
+                                <span className="ml-auto font-mono text-xs font-medium text-heading">@{formatPrice(item.ev.price)}</span>
+                              )}
+                            </div>
+                            {item.ev.note && <p className="mt-1 text-[13px] leading-relaxed text-muted">{item.ev.note}</p>}
+                            {(item.ev.why ?? []).length > 0 && (
+                              <div className="mt-1.5 flex flex-wrap gap-1">
+                                {item.ev.why!.map((w) => (
+                                  <span key={w} className="rounded-full border border-line px-2 py-px text-[10.5px] text-muted">{tagName(w)}</span>
+                                ))}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                        </div>
+                      )
+                    )}
                 </div>
               </section>
 
