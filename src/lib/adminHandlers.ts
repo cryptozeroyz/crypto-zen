@@ -923,14 +923,36 @@ export async function aiReportPOST(req: Request) {
     return NextResponse.json({ ok: true, markdown: preamble.replace(/AI 基于公开链上数据自动生成|Grok（X 实时数据）\+ DeepSeek 双模型基于公开信息自动生成/, "模板基于公开数据自动生成") + tpl, ai: false, models: [] });
   }
 
-  const prompt = `你是加密 Meme 币研究员。请基于以下材料写一份客观、独立的中文代币研报——不引用任何个人投资者的观点或持仓理由，只陈述代币本身的事实与可验证信息。严格用六段结构，每段 2-4 句；链上数据是事实依据，社区叙事必须标注"（社区叙事，待验证）"，禁止编造材料之外的内容。\n\n【链上数据快照】\n${dataBlock}\n${narrative ? `\n【X 社区叙事素材】\n${narrative}\n` : ""}\n结构：\n## 一句话概览\n## 数据快照（链上事实）\n## 叙事与社区动态${narrative ? "（区分事实与社区说法）" : "（待验证）"}\n## 风险清单\n## 待验证事项（DYOR 检查项）\n## 总结`;
+  const prompt = `你是一位专业的 Memecoin 研究员和社区分析师，擅长快速梳理代币基本面、叙事来源、链上数据和社区氛围。请根据以下信息，生成一份结构清晰、客观中立的研报。
+
+【代币基本信息】
+- 代币名称：${data.name}
+- Ticker：$${data.symbol}
+- 合约地址：${ca}
+- 链：${data.chainId}
+- 发射平台/交易对：${data.dexId}
+- 数据快照：价格 $${data.priceUsd}｜24H 涨跌 ${data.change24h}%｜近 7 日 ${chg7d}%｜市值 ${data.marketCap ?? data.fdv ?? "暂无"}｜流动性 ${data.liquidity ?? "暂无"}｜24H 成交量 ${data.volume24h ?? "暂无"}
+- DexScreener：${data.url}
+${narrative ? `
+【X 社区实时讨论素材（来自 Grok，未经证实）】
+${narrative}
+` : ""}
+【分析要求】从以下维度深度分析，严格按结构输出：
+1. **项目概述**（150字以内）：一句话核心叙事 / 发射背景与时间线 / 当前市场定位
+2. **叙事与 Meme 来源**：叙事起源（梗图、事件、人物、文化符号）/ 与当前热门叙事的契合度 / 叙事强度与可持续性评估
+3. **社区氛围与情绪分析**（重点）：X 讨论热度与多空观点分布 / 关键 KOL 态度与参与度 / TG/Discord 氛围（如有）/ 情绪变化趋势 / 代表性高赞讨论总结
+4. **链上与市场数据观察**：持仓集中度与大户行为 / 交易活跃度与资金流向 / 流动性与发射状态 / 近期异常交易或关键地址动向
+5. **风险与机会**：主要风险点 / 潜在催化剂 / 短期 vs 中期观察重点
+6. **综合评估**：社区氛围评分（1-10 附理由）/ 叙事强度评分（1-10）/ 风险等级（低/中/高）/ 一句话总结
+
+输出要求：标题分段清晰；保持客观，不吹捧不绝对化；突出社区真实氛围而非堆砌数据；材料中没有的信息如实写"暂无数据"，禁止编造；结尾必须加上：以上内容仅供参考，不构成任何投资建议，请自行 DYOR。`;
 
   try {
     const res = await fetch("https://api.deepseek.com/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}` },
       body: JSON.stringify({ model: "deepseek-chat", temperature: 0.3, messages: [{ role: "user", content: prompt }] }),
-      signal: AbortSignal.timeout(60_000),
+      signal: AbortSignal.timeout(90_000),
     });
     if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);
     const json = await res.json();
