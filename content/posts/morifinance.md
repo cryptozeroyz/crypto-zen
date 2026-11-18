@@ -7,6 +7,8 @@ dexScreener: "https://dexscreener.com/solana/hbywtfdywgw45a69cg4jwzft78kmnd9q4kv
 excerpt: "Mori Finance 做的事情一句话能讲完：你把手里的 SOL、cbBTC、PENGU 存进去，选一个你愿意卖出的价格和到期日，立刻先拿一笔 USDC 权利金。到期没涨到行权价，币和权利金都归你；涨过了，就按你设定的价格卖出。传统金融里这叫备兑看涨，是规模十万亿美元的生意，但在 Solana 上，它是第一个把这套东西做到长尾资产上的——PENGU 这种币，Deribit 根本不会给你开期权市场。"
 tags:
   - "研究报告"
+tokens:
+  - "MORI"
 draft: false
 ---
 
