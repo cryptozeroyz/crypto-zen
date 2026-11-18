@@ -50,6 +50,7 @@ export default async function HomePage({
   const allPosts = getAllPosts(locale);
   const activities: Record<string, { latest: string; newCount: number }> = {};
   for (const c of coins) {
+    if (c.status === "exited") continue;
     const sym = (c.symbol ?? "").toLowerCase();
     const addr = c.address.toLowerCase();
     const match = (tks: string[]) =>

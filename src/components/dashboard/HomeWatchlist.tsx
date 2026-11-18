@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { ResearchDrawer, type DashboardCoin } from "@/components/dashboard/DashboardClient";
+import type { WhyTag } from "@/lib/watchlist";
 
 /**
  * HomeWatchlist.tsx —— 首页「关注列表」精简区
@@ -25,6 +30,26 @@ export default function HomeWatchlist({
   /** 投研活跃度：address → { 最近动态日期, 动态条数(日志+研报+事件) } */
   activities?: Record<string, { latest: string; newCount: number }>;
 }) {
+  const [cache, setCache] = useState<{ coins: DashboardCoin[]; tags: WhyTag[] } | null>(null);
+  const [activeAddr, setActiveAddr] = useState<string | null>(null);
+
+  const openResearch = async (e: React.MouseEvent, address: string) => {
+    e.preventDefault();
+    if (!cache) {
+      try {
+        const res = await fetch(`/api/market?type=watchlist&locale=${locale}`, { cache: "no-store" });
+        const json = await res.json();
+        setCache({ coins: json.coins ?? [], tags: json.tags ?? [] });
+      } catch {
+        window.location.href = `/${locale}/dashboard?coin=${address}`;
+        return;
+      }
+    }
+    setActiveAddr(address);
+  };
+
+  const activeCoin = cache?.coins.find((c) => c.address === activeAddr) ?? null;
+
   /* 全部有行情的币按最近动态（含建立关注）排序 */
   const top = coins
     .filter((c) => c.data)
@@ -50,6 +75,7 @@ export default function HomeWatchlist({
             key={c.address}
             href={`/${locale}/dashboard?coin=${c.address}`}
             className="group relative rounded-2xl border border-line bg-card p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-lg"
+            onClick={(e) => void openResearch(e, c.address)}
           >
             {act && act.newCount > 0 && (
               <span className="absolute -right-1.5 -top-1.5 z-10 flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[10px] font-bold text-white shadow-md">
@@ -134,6 +160,9 @@ export default function HomeWatchlist({
           {t.watchlist.viewDashboard} →
         </span>
       </Link>
+      {activeCoin && (
+        <ResearchDrawer coin={activeCoin} locale={locale} d={t.dashboard} tags={cache?.tags ?? []} onClose={() => setActiveAddr(null)} />
+      )}
     </div>
   );
 }

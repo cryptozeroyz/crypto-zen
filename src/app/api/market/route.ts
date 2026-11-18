@@ -272,12 +272,22 @@ export async function GET(req: Request) {
     try {
       const { coins } = await fetchWatchlistWithData();
       const withSince = coins
-        .map((c) => ({
-          c,
-          since: c.data?.priceUsd && c.followPrice
-            ? (c.data.priceUsd / c.followPrice - 1) * 100
-            : null,
-        }))
+        .map((c) => {
+          let cur = c.data?.priceUsd;
+          if (c.status === "exited") {
+            for (let i = c.events.length - 1; i >= 0; i--) {
+              const ev = c.events[i];
+              if (ev.type === "unfollow" && typeof ev.price === "number") {
+                cur = ev.price;
+                break;
+              }
+            }
+          }
+          return {
+            c,
+            since: cur && c.followPrice ? (cur / c.followPrice - 1) * 100 : null,
+          };
+        })
         .filter((x): x is { c: (typeof coins)[number]; since: number } => x.since !== null);
 
       /* 叙事胜率：按 why 标签分组（一个币的多个标签各计一次） */

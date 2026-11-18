@@ -96,9 +96,7 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
   const [sortK, setSortK] = useState<"mcap" | "since" | "c24">("mcap");
   const [sortDir, setSortDir] = useState(-1);
   const [active, setActive] = useState<string | null>(null);
-  const [range, setRange] = useState<"24H" | "7D" | "30D" | "ALL">("7D");
-  const [closes, setCloses] = useState<number[] | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState("");
 
   const tagName = useCallback(
     (id: string) => payload?.tags.find((x) => x.id === id)?.[locale] ?? id,
@@ -138,10 +136,21 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
   }, []);
 
   const sinceOf = useCallback(
-    (c: DashboardCoin): number | null =>
-      c.data?.priceUsd && c.followPrice
-        ? (c.data.priceUsd / c.followPrice - 1) * 100
-        : null,
+    (c: DashboardCoin): number | null => {
+      if (!c.followPrice) return null;
+      let current = c.data?.priceUsd;
+      /* 已收官：冻结在取消关注那一刻的价格，不再随行情变动 */
+      if (c.status === "exited") {
+        for (let i = c.events.length - 1; i >= 0; i--) {
+          const ev = c.events[i];
+          if (ev.type === "unfollow" && typeof ev.price === "number") {
+            current = ev.price;
+            break;
+          }
+        }
+      }
+      return current ? (current / c.followPrice - 1) * 100 : null;
+    },
     []
   );
 
@@ -184,25 +193,13 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
   const worst = sortedBySince[sortedBySince.length - 1];
 
   const activeCoin = payload?.coins.find((c) => c.address === active) ?? null;
-  useEffect(() => {
-    if (!activeCoin?.data?.pairAddress) return;
-    let cancelled = false;
-    setCloses(null);
-    fetch(
-      `/api/market?type=ohlcv&chain=${activeCoin.data.chainId}&pair=${activeCoin.data.pairAddress}&range=${range}`
-    )
-      .then((r) => r.json())
-      .then((j: { closes?: number[] }) => !cancelled && setCloses(j.closes?.length ? j.closes : []))
-      .catch(() => !cancelled && setCloses([]));
-    return () => { cancelled = true; };
-  }, [activeCoin, range]);
 
   const copyCa = async (ca: string) => {
     try {
       await navigator.clipboard.writeText(ca);
       (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("复制CA");
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      setCopied(ca);
+      setTimeout(() => setCopied(""), 1500);
     } catch { /* 静默 */ }
   };
 
@@ -453,7 +450,7 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                   const up24 = (c.data?.change24h ?? 0) >= 0;
                   const st = statusMeta(c);
                   return (
-                    <tr key={c.address} onClick={() => { setActive(c.address); setRange("7D"); (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("查看代币"); }} className="cursor-pointer border-b border-line transition-colors last:border-0 hover:bg-accent/5">
+                    <tr key={c.address} onClick={() => { setActive(c.address); (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("查看代币"); }} className="cursor-pointer border-b border-line transition-colors last:border-0 hover:bg-accent/5">
                       <td className="px-3 py-3.5">
                         <div className="flex items-center gap-2.5">
                           <CoinAvatar imageUrl={c.data?.imageUrl} symbol={c.data?.symbol ?? c.address.slice(0, 4)} hue={avatarHue(c.address)} size={36} />
@@ -462,6 +459,11 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
                             <span className="block text-xs text-muted">
                               {c.data?.symbol ?? c.address.slice(0, 6)} · {c.data?.chainId ?? c.chain ?? "—"}
                             </span>
+                      <button type="button"
+                        onClick={(e) => { e.stopPropagation(); void copyCa(c.address); }}
+                        className="ml-1 rounded border border-line px-1.5 py-px text-[10px] text-muted transition-colors hover:border-accent hover:text-accent">
+                        {copied === c.address ? "✓" : "CA"}
+                      </button>
                           </span>
                         </div>
                       </td>
@@ -498,184 +500,9 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
 
       <p className="mt-4 text-xs text-muted">行情来自 DexScreener · K 线来自 GeckTerminal · 非投资建议</p>
 
-      {/* ===== 详情抽屉 ===== */}
-      <div className={`fixed inset-0 z-[80] bg-black/40 backdrop-blur-[2px] transition-opacity duration-200 ${active ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={() => setActive(null)} aria-hidden="true" />
-      <aside className={`fixed right-0 top-0 bottom-0 z-[90] flex w-full max-w-[460px] transform flex-col border-l border-line bg-paper shadow-2xl transition-transform duration-300 ease-out ${active ? "translate-x-0" : "translate-x-full"}`} role="dialog" aria-modal="true" aria-hidden={!active}>
-        {activeCoin && (
-          <>
-            <div className="flex items-center gap-3.5 border-b border-line px-5 py-4">
-              <CoinAvatar imageUrl={activeCoin.data?.imageUrl} symbol={activeCoin.data?.symbol ?? activeCoin.address.slice(0, 4)} hue={avatarHue(activeCoin.address)} size={48} />
-              <div className="min-w-0">
-                <div className="truncate text-lg font-bold text-heading">{activeCoin.data?.name ?? "…"}</div>
-                <div className="text-xs text-muted">
-                  {activeCoin.data?.symbol ? `$${activeCoin.data.symbol} · ` : ""}
-                  {activeCoin.data?.chainId ?? activeCoin.chain ?? ""}
-                </div>
-              </div>
-              <div className="ml-auto text-right">
-                <div className="text-lg font-bold tabular-nums text-heading">{activeCoin.data ? formatPrice(activeCoin.data.priceUsd) : "—"}</div>
-                <div className={`text-xs tabular-nums ${upCls(activeCoin.data?.change24h ?? 0)}`}>
-                  {activeCoin.data ? fmtPct(activeCoin.data.change24h) : ""} 24H
-                </div>
-              </div>
-              <button type="button" onClick={() => setActive(null)} aria-label="Close" className="rounded-lg p-2 text-muted transition-colors hover:bg-line hover:text-heading">✕</button>
-            </div>
-            <div className="flex-1 overflow-y-auto px-5 pb-8 pt-4">
-              <div className="rounded-2xl border border-line bg-card p-4">
-                <div className="mx-auto flex w-max gap-1 rounded-xl bg-codebg p-1">
-                  {(["24H", "7D", "30D", "ALL"] as const).map((r) => (
-                    <button key={r} type="button" onClick={() => setRange(r)} className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${range === r ? "bg-card text-heading shadow-sm" : "text-muted hover:text-heading"}`}>
-                      {r === "24H" ? d.range24 : r === "7D" ? d.range7 : r === "30D" ? d.range30 : d.rangeAll}
-                    </button>
-                  ))}
-                </div>
-                <Chart closes={closes} />
-                {closes !== null && closes.length === 0 && (
-                  <p className="py-6 text-center text-xs text-muted">{d.chartEmpty}</p>
-                )}
-              </div>
-
-              {/* 投研时间线（事件 + 关联研报，按日期合并） */}
-              <section className="mt-6">
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">{d.timeline}</h3>
-                <div className="relative space-y-3 pl-5">
-                  <span className="absolute bottom-2 left-[5px] top-2 w-0.5 bg-line" aria-hidden="true" />
-                  {[
-                    ...activeCoin.events.map((ev) => ({ kind: "ev" as const, date: ev.date, ev })),
-                    ...(activeCoin.posts ?? []).map((p) => ({ kind: "post" as const, date: p.date, post: p })),
-                    ...(activeCoin.journal ?? []).map((j) => ({ kind: "journal" as const, date: j.date, journal: j })),
-                  ]
-                    .sort((a, b) => a.date.localeCompare(b.date))
-                    .reverse()
-                    .map((item, i) =>
-                      item.kind === "journal" ? (
-                        <div key={`j-${item.journal.id}`} className="relative">
-                          <span className="absolute -left-5 top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-violet-500 text-[7px] font-bold text-white" aria-hidden="true">志</span>
-                          <div className="rounded-xl border border-dashed border-violet-400/40 bg-violet-500/5 px-3.5 py-2.5">
-                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
-                              <span className="font-semibold text-violet-600 dark:text-violet-400">{d.evJournal}</span>
-                              <span className="text-[11.5px] tabular-nums text-muted">{item.journal.date}</span>
-                              {item.journal.tags.map((tg) => (
-                                <span key={tg} className="rounded-full bg-codebg px-1.5 py-px text-[10px] text-muted">{tg}</span>
-                              ))}
-                            </div>
-                            {item.journal.title && <p className="mt-1 text-[13px] font-medium text-heading">{item.journal.title}</p>}
-                            <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-muted">{item.journal.body}</p>
-                          </div>
-                        </div>
-                      ) : item.kind === "post" ? (
-                        <div key={`p-${item.post.slug}`} className="relative">
-                          <span className="absolute -left-5 top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-accent-mint text-[8px] font-bold text-white" aria-hidden="true">文</span>
-                          <a
-                            href={`/${locale}/writing/${item.post.slug}`}
-                            onClick={() => (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("打开研报")}
-                            className="block rounded-xl border border-accent/30 bg-accent/5 px-3.5 py-2.5 transition-colors hover:border-accent/60"
-                          >
-                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
-                              <span className="font-semibold text-accent dark:text-accent-mint">{d.evPost}</span>
-                              <span className="text-[11.5px] tabular-nums text-muted">{item.post.date}</span>
-                              <span aria-hidden="true" className="ml-auto text-xs text-muted">→</span>
-                            </div>
-                            <p className="mt-1 text-[13px] font-medium leading-relaxed text-heading">{item.post.title}</p>
-                          </a>
-                        </div>
-                      ) : (
-                        <div key={`e-${i}`} className="relative">
-                          <span className={`absolute -left-5 top-1.5 h-2.5 w-2.5 rounded-full ${EV_STYLE[item.ev.type] ?? "bg-muted"}`} aria-hidden="true" />
-                          <div className="rounded-xl border border-line bg-card px-3.5 py-2.5">
-                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
-                              <span className="font-semibold text-heading">{evLabel(item.ev.type)}</span>
-                              <span className="text-[11.5px] tabular-nums text-muted">{item.ev.date}</span>
-                              {typeof item.ev.price === "number" && (
-                                <span className="ml-auto font-mono text-xs font-medium text-heading">@{formatPrice(item.ev.price)}</span>
-                              )}
-                            </div>
-                            {item.ev.note && <p className="mt-1 text-[13px] leading-relaxed text-muted">{item.ev.note}</p>}
-                            {(item.ev.why ?? []).length > 0 && (
-                              <div className="mt-1.5 flex flex-wrap gap-1">
-                                {item.ev.why!.map((w) => (
-                                  <span key={w} className="rounded-full border border-line px-2 py-px text-[10.5px] text-muted">{tagName(w)}</span>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )
-                    )}
-                </div>
-              </section>
-
-              {/* 研究档案（叙事/风险/催化剂/证伪条件） */}
-              {activeCoin.profile && (activeCoin.profile.narrative || activeCoin.profile.risks || activeCoin.profile.catalysts || activeCoin.profile.invalidate) && (
-                <section className="mt-6">
-                  <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">{d.profileTitle}</h3>
-                  <div className="grid gap-2.5">
-                    {(
-                      [
-                        ["📖", d.profileNarrative, activeCoin.profile.narrative],
-                        ["⚠️", d.profileRisks, activeCoin.profile.risks],
-                        ["🧨", d.profileCatalysts, activeCoin.profile.catalysts],
-                        ["🧭", d.profileInvalidate, activeCoin.profile.invalidate],
-                      ] as const
-                    )
-                      .filter(([, , v]) => v)
-                      .map(([icon, label, value]) => (
-                        <div key={label} className="rounded-xl border border-line bg-card px-3.5 py-2.5">
-                          <div className="text-[11px] font-semibold tracking-wide text-muted">
-                            {icon} {label}
-                          </div>
-                          <p className="mt-1 text-[13px] leading-relaxed text-heading">{value}</p>
-                        </div>
-                      ))}
-                  </div>
-                </section>
-              )}
-
-              {activeCoin.holdAmount && activeCoin.avgCost && (
-                <DrawerHolding coin={activeCoin} t={d} />
-              )}
-
-              {(() => {
-                const latest = activeCoin.events[activeCoin.events.length - 1];
-                const text = latest?.note || activeCoin.comment;
-                if (!text) return null;
-              {activeCoin.image && (
-                <img src={activeCoin.image} alt="" className="mt-4 w-full rounded-xl border border-line object-cover" />
-              )}
-                const isInitial = !latest || latest.type === "follow";
-                return (
-                  <section className="mt-6">
-                    <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">
-                      {isInitial ? d.myComment : d.latestThesis}
-                    </h3>
-                    <p className="rounded-2xl border border-line bg-card px-4 py-3.5 text-sm leading-relaxed text-heading">{text}</p>
-                  </section>
-                );
-              })()}
-
-              <section className="mt-6">
-                <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">{d.onchain}</h3>
-                <div className="overflow-hidden rounded-2xl border border-line bg-card">
-                  <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
-                    <span className="shrink-0 text-sm text-muted">{d.ca}</span>
-                    <span className="truncate font-mono text-xs text-muted">{activeCoin.address}</span>
-                  </div>
-                  <div className="flex items-center gap-2 px-4 py-3">
-                    <button type="button" onClick={() => void copyCa(activeCoin.address)} className="rounded-lg bg-accent px-3.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-deep">
-                      {copied ? d.copy + " ✓" : d.copy}
-                    </button>
-                    {activeCoin.data?.url && (
-                      <a href={activeCoin.data.url} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-line px-3.5 py-1.5 text-xs font-medium text-heading transition-colors hover:border-accent hover:text-accent">
-                        {d.kline} ↗
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </section>
-            </div>
-          </>
-        )}
-      </aside>
+      {activeCoin && payload && (
+        <ResearchDrawer coin={activeCoin} locale={locale} d={d} tags={payload.tags} onClose={() => setActive(null)} />
+      )}
     </div>
   );
 }
@@ -767,4 +594,236 @@ function Chart({ closes }: { closes: number[] | null }) {
   if (closes === null) return <div className="h-[190px] animate-pulse rounded-xl bg-codebg/60" />;
   if (closes.length < 2) return <div className="h-[190px]" />;
   return <canvas ref={ref} className="mt-2 block h-[190px] w-full" />;
+}
+
+
+/* ================= 共享研究抽屉（看板与首页复用） ================= */
+
+export function ResearchDrawer({
+  coin,
+  locale,
+  d,
+  tags,
+  onClose,
+}: {
+  coin: DashboardCoin;
+  locale: Locale;
+  d: Dictionary["dashboard"];
+  tags: WhyTag[];
+  onClose: () => void;
+}) {
+  const [range, setRange] = useState<"24H" | "7D" | "30D" | "ALL">("7D");
+  const [closes, setCloses] = useState<number[] | null>(null);
+  const [copied, setCopied] = useState(false);
+  const tagName = (id: string) => tags.find((x) => x.id === id)?.[locale] ?? id;
+  const evLabel = (type: string): string =>
+    type === "follow" ? d.evFollow
+    : type === "open_position" ? d.evOpen
+    : type === "add" ? d.evAdd
+    : type === "reduce" ? d.evReduce
+    : type === "close_position" ? d.evClose
+    : type === "unfollow" ? d.evUnfollow
+    : type;
+
+  useEffect(() => {
+    if (!coin.data?.pairAddress) return;
+    let cancelled = false;
+    setCloses(null);
+    fetch(`/api/market?type=ohlcv&chain=${coin.data.chainId}&pair=${coin.data.pairAddress}&range=${range}`)
+      .then((r) => r.json())
+      .then((j: { closes?: number[] }) => !cancelled && setCloses(j.closes?.length ? j.closes : []))
+      .catch(() => !cancelled && setCloses([]));
+    return () => {
+      cancelled = true;
+    };
+  }, [coin, range]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  const copyCa = async () => {
+    try {
+      await navigator.clipboard.writeText(coin.address);
+      (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("复制CA");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* 静默 */
+    }
+  };
+
+  return (
+    <>
+      <div className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-[2px]" onClick={onClose} aria-hidden="true" />
+      <aside className="fixed right-0 top-0 bottom-0 z-[90] flex w-full max-w-[460px] transform flex-col border-l border-line bg-paper shadow-2xl" role="dialog" aria-modal="true">
+        <div className="flex items-center gap-3.5 border-b border-line px-5 py-4">
+          <CoinAvatar imageUrl={coin.data?.imageUrl} symbol={coin.data?.symbol ?? coin.address.slice(0, 4)} hue={avatarHue(coin.address)} size={48} />
+          <div className="min-w-0">
+            <div className="truncate text-lg font-bold text-heading">{coin.data?.name ?? "…"}</div>
+            <div className="text-xs text-muted">
+              {coin.data?.symbol ? `$${coin.data.symbol} · ` : ""}
+              {coin.data?.chainId ?? coin.chain ?? ""}
+            </div>
+          </div>
+          <div className="ml-auto text-right">
+            <div className="text-lg font-bold tabular-nums text-heading">{coin.data ? formatPrice(coin.data.priceUsd) : "—"}</div>
+            <div className={`text-xs tabular-nums ${upCls(coin.data?.change24h ?? 0)}`}>
+              {coin.data ? fmtPct(coin.data.change24h) : ""} 24H
+            </div>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Close" className="rounded-lg p-2 text-muted transition-colors hover:bg-line hover:text-heading">✕</button>
+        </div>
+        <div className="flex-1 overflow-y-auto px-5 pb-8 pt-4">
+          <div className="rounded-2xl border border-line bg-card p-4">
+            <div className="mx-auto flex w-max gap-1 rounded-xl bg-codebg p-1">
+              {(["24H", "7D", "30D", "ALL"] as const).map((r) => (
+                <button key={r} type="button" onClick={() => setRange(r)} className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors ${range === r ? "bg-card text-heading shadow-sm" : "text-muted hover:text-heading"}`}>
+                  {r === "24H" ? d.range24 : r === "7D" ? d.range7 : r === "30D" ? d.range30 : d.rangeAll}
+                </button>
+              ))}
+            </div>
+            <Chart closes={closes} />
+            {closes !== null && closes.length === 0 && (
+              <p className="py-6 text-center text-xs text-muted">{d.chartEmpty}</p>
+            )}
+          </div>
+
+          <section className="mt-6">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">{d.timeline}</h3>
+            <div className="relative space-y-3 pl-5">
+              <span className="absolute bottom-2 left-[5px] top-2 w-0.5 bg-line" aria-hidden="true" />
+              {[
+                ...coin.events.map((ev) => ({ kind: "ev" as const, date: ev.date, ev })),
+                ...(coin.posts ?? []).map((p) => ({ kind: "post" as const, date: p.date, post: p })),
+                ...(coin.journal ?? []).map((j) => ({ kind: "journal" as const, date: j.date, journal: j })),
+              ]
+                .sort((a, b) => a.date.localeCompare(b.date))
+                .reverse()
+                .map((item, i) =>
+                  item.kind === "journal" ? (
+                    <div key={`j-${item.journal.id}`} className="relative">
+                      <span className="absolute -left-5 top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-violet-500 text-[7px] font-bold text-white" aria-hidden="true">志</span>
+                      <div className="rounded-xl border border-dashed border-violet-400/40 bg-violet-500/5 px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
+                          <span className="font-semibold text-violet-600 dark:text-violet-400">{d.evJournal}</span>
+                          <span className="text-[11.5px] tabular-nums text-muted">{item.journal.date}</span>
+                          {item.journal.tags.map((tg) => (
+                            <span key={tg} className="rounded-full bg-codebg px-1.5 py-px text-[10px] text-muted">{tg}</span>
+                          ))}
+                        </div>
+                        {item.journal.title && <p className="mt-1 text-[13px] font-medium text-heading">{item.journal.title}</p>}
+                        <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-muted">{item.journal.body}</p>
+                      </div>
+                    </div>
+                  ) : item.kind === "post" ? (
+                    <div key={`p-${item.post.slug}`} className="relative">
+                      <span className="absolute -left-5 top-1.5 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-accent-mint text-[8px] font-bold text-white" aria-hidden="true">文</span>
+                      <a
+                        href={`/${locale}/writing/${item.post.slug}`}
+                        onClick={() => (window as unknown as { umami?: { track: (e: string) => void } }).umami?.track("打开研报")}
+                        className="block rounded-xl border border-accent/30 bg-accent/5 px-3.5 py-2.5 transition-colors hover:border-accent/60"
+                      >
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
+                          <span className="font-semibold text-accent dark:text-accent-mint">{d.evPost}</span>
+                          <span className="text-[11.5px] tabular-nums text-muted">{item.post.date}</span>
+                          <span aria-hidden="true" className="ml-auto text-xs text-muted">→</span>
+                        </div>
+                        <p className="mt-1 text-[13px] font-medium leading-relaxed text-heading">{item.post.title}</p>
+                      </a>
+                    </div>
+                  ) : (
+                    <div key={`e-${i}`} className="relative">
+                      <span className={`absolute -left-5 top-1.5 h-2.5 w-2.5 rounded-full ${EV_STYLE[item.ev.type] ?? "bg-muted"}`} aria-hidden="true" />
+                      <div className="rounded-xl border border-line bg-card px-3.5 py-2.5">
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-[13px]">
+                          <span className="font-semibold text-heading">{evLabel(item.ev.type)}</span>
+                          <span className="text-[11.5px] tabular-nums text-muted">{item.ev.date}</span>
+                          {typeof item.ev.price === "number" && (
+                            <span className="ml-auto font-mono text-xs font-medium text-heading">@{formatPrice(item.ev.price)}</span>
+                          )}
+                        </div>
+                        {item.ev.note && <p className="mt-1 text-[13px] leading-relaxed text-muted">{item.ev.note}</p>}
+                        {(item.ev.why ?? []).length > 0 && (
+                          <div className="mt-1.5 flex flex-wrap gap-1">
+                            {item.ev.why!.map((w) => (
+                              <span key={w} className="rounded-full border border-line px-2 py-px text-[10.5px] text-muted">{tagName(w)}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
+                )}
+            </div>
+          </section>
+
+          {coin.profile && (coin.profile.narrative || coin.profile.risks || coin.profile.catalysts || coin.profile.invalidate) && (
+            <section className="mt-6">
+              <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">{d.profileTitle}</h3>
+              <div className="grid gap-2.5">
+                {([
+                  ["📖", d.profileNarrative, coin.profile.narrative],
+                  ["⚠️", d.profileRisks, coin.profile.risks],
+                  ["🧨", d.profileCatalysts, coin.profile.catalysts],
+                  ["🧭", d.profileInvalidate, coin.profile.invalidate],
+                ] as const)
+                  .filter(([, , v]) => v)
+                  .map(([icon, label, value]) => (
+                    <div key={label} className="rounded-xl border border-line bg-card px-3.5 py-2.5">
+                      <div className="text-[11px] font-semibold tracking-wide text-muted">{icon} {label}</div>
+                      <p className="mt-1 text-[13px] leading-relaxed text-heading">{value}</p>
+                    </div>
+                  ))}
+              </div>
+            </section>
+          )}
+
+          {coin.holdAmount && coin.avgCost && <DrawerHolding coin={coin} t={d} />}
+
+          {(() => {
+            const latest = coin.events[coin.events.length - 1];
+            const text = latest?.note || coin.comment;
+            if (!text) return null;
+            const isInitial = !latest || latest.type === "follow";
+            return (
+              <section className="mt-6">
+                <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">{isInitial ? d.myComment : d.latestThesis}</h3>
+                {coin.image && <img src={coin.image} alt="" className="mb-2.5 w-full rounded-xl border border-line object-cover" />}
+                <p className="rounded-2xl border border-line bg-card px-4 py-3.5 text-sm leading-relaxed text-heading">{text}</p>
+              </section>
+            );
+          })()}
+
+          <section className="mt-6">
+            <h3 className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-muted">{d.onchain}</h3>
+            <div className="overflow-hidden rounded-2xl border border-line bg-card">
+              <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
+                <span className="shrink-0 text-sm text-muted">{d.ca}</span>
+                <span className="truncate font-mono text-xs text-muted">{coin.address}</span>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-3">
+                <button type="button" onClick={() => void copyCa()} className="rounded-lg bg-accent px-3.5 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent-deep">
+                  {copied ? d.copy + " ✓" : d.copy}
+                </button>
+                {coin.data?.url && (
+                  <a href={coin.data.url} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-line px-3.5 py-1.5 text-xs font-medium text-heading transition-colors hover:border-accent hover:text-accent">
+                    {d.kline} ↗
+                  </a>
+                )}
+              </div>
+            </div>
+          </section>
+        </div>
+      </aside>
+    </>
+  );
 }
