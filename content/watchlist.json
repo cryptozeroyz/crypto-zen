@@ -78,7 +78,7 @@
   {
     "chain": "solana",
     "address": "9k2nqjUrSh9p2ZBnWxNE3QRWYiLocrWZfoDm3Vdxpump",
-    "status": "watching",
+    "status": "exited",
     "why": [],
     "comment": "持币即玩的gamefi叙事，CHAR铸1个英雄NFT，组队打怪掉souls，souls直接兑换奖池里的 CHAR。风险点就是dev发过很多代币成功率低，gamefi成功率低",
     "addedAt": "2026-11-17",
@@ -91,6 +91,12 @@
         "price": 0.0002531,
         "note": "持币即玩的gamefi叙事，CHAR铸1个英雄NFT，组队打怪掉souls，souls直接兑换奖池里的 CHAR。风险点就是dev发过很多代币成功率低，gamefi成功率低",
         "why": []
+      },
+      {
+        "type": "unfollow",
+        "date": "2026-11-18",
+        "price": 0.00008094,
+        "note": "取消关注，并没被炒作起来"
       }
     ],
     "symbol": "CHAR",
