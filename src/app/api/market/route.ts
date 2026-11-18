@@ -238,14 +238,9 @@ export async function GET(req: Request) {
       const withSince = coins
         .map((c) => {
           let cur = c.data?.priceUsd;
-          if (c.status === "exited") {
-            for (let i = c.events.length - 1; i >= 0; i--) {
-              const ev = c.events[i];
-              if (ev.type === "unfollow" && typeof ev.price === "number") {
-                cur = ev.price;
-                break;
-              }
-            }
+          const last = c.events[c.events.length - 1];
+          if (last && (last.type === "close_position" || last.type === "unfollow") && typeof last.price === "number") {
+            cur = last.price;
           }
           return {
             c,

@@ -140,15 +140,10 @@ export default function DashboardClient({ locale, t }: { locale: Locale; t: Dict
     (c: DashboardCoin): number | null => {
       if (!c.followPrice) return null;
       let current = c.data?.priceUsd;
-      /* 已收官：冻结在取消关注那一刻的价格，不再随行情变动 */
-      if (c.status === "exited") {
-        for (let i = c.events.length - 1; i >= 0; i--) {
-          const ev = c.events[i];
-          if (ev.type === "unfollow" && typeof ev.price === "number") {
-            current = ev.price;
-            break;
-          }
-        }
+      /* 已结束（清仓/取消关注）：结果定格在结束那一刻，胜/负不再随行情波动 */
+      const last = c.events[c.events.length - 1];
+      if (last && (last.type === "close_position" || last.type === "unfollow") && typeof last.price === "number") {
+        current = last.price;
       }
       return current ? (current / c.followPrice - 1) * 100 : null;
     },

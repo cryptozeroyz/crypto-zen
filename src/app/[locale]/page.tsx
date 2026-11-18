@@ -251,25 +251,6 @@ export default async function HomePage({
       )}
 
       {/* ============ 关于我 ============ */}
-      <section id="about" className="scroll-mt-24">
-        <Container className="py-7 sm:py-8">
-          <SectionHead title={t.home.sections.about} />
-          <div className="mt-6 flex items-start gap-4">
-            <Image
-              src="/avatar.png"
-              alt="Crypto Zen avatar"
-              width={56}
-              height={56}
-              className="rounded-2xl border border-line"
-            />
-            <div className="prose max-w-2xl">
-              {t.about.paragraphs.map((p) => (
-                <p key={p.slice(0, 24)}>{p}</p>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
 
       {/* ============ 找到我 ============ */}
       <section id="contact" className="scroll-mt-24">

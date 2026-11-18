@@ -81,6 +81,8 @@ export default function Header({ locale, t }: HeaderProps) {
         ? `/${locale}/news`
         : anchor === "watchlist"
           ? `/${locale}/dashboard`
+          : anchor === "about"
+          ? `/${locale}/about`
           : onHome
             ? `#${anchor}`
             : `/${locale}/#${anchor}`;
