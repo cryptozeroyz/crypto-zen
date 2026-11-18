@@ -20,6 +20,7 @@ import type {
 } from "@/lib/watchlist";
 import { avatarHue, formatMcap, formatPrice } from "@/lib/coin-format";
 import CoinAvatar from "@/components/CoinAvatar";
+import { marked } from "marked";
 
 export interface RelatedPost {
   slug: string;
@@ -597,6 +598,26 @@ function Chart({ closes }: { closes: number[] | null }) {
 }
 
 
+/* 日志正文：Markdown 渲染 + 超长折叠 */
+function MdFold({ body, locale }: { body: string; locale: Locale }) {
+  const [open, setOpen] = useState(false);
+  const html = marked.parse(body) as string;
+  const long = body.length > 320;
+  return (
+    <div>
+      <div
+        className={`prose-journal text-[13px] leading-relaxed text-muted ${!open && long ? "max-h-24 overflow-hidden" : ""} [&_h2]:mt-2 [&_h2]:text-[13px] [&_h2]:font-bold [&_h2]:text-heading [&_h3]:mt-1.5 [&_h3]:font-semibold [&_h3]:text-heading [&_blockquote]:border-l-2 [&_blockquote]:border-accent/40 [&_blockquote]:pl-2.5 [&_ul]:list-disc [&_ul]:pl-4 [&_li]:mt-0.5 [&_strong]:text-heading`}
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+      {long && (
+        <button type="button" onClick={() => setOpen(!open)} className="mt-1 text-xs font-medium text-accent hover:underline dark:text-accent-mint">
+          {open ? (locale === "zh" ? "收起 ↑" : "Collapse") : (locale === "zh" ? "展开全文 ↓" : "Read more")}
+        </button>
+      )}
+    </div>
+  );
+}
+
 /* ================= 共享研究抽屉（看板与首页复用） ================= */
 
 export function ResearchDrawer({
@@ -722,7 +743,7 @@ export function ResearchDrawer({
                           ))}
                         </div>
                         {item.journal.title && <p className="mt-1 text-[13px] font-medium text-heading">{item.journal.title}</p>}
-                        <p className="mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed text-muted">{item.journal.body}</p>
+                        <MdFold body={item.journal.body} locale={locale} />
                       </div>
                     </div>
                   ) : item.kind === "post" ? (
