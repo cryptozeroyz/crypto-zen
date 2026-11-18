@@ -32,3 +32,4 @@ yarn-error.log*
 next-env.d.ts
 *.log
 *.dpl-*
+ck.txt
