@@ -2,7 +2,7 @@
   {
     "address": "EadD2LMp6EbH9PrbXUFWcrZKMhoKVrZN1gpwRhH5pump",
     "ca": "EadD2LMp6EbH9PrbXUFWcrZKMhoKVrZN1gpwRhH5pump",
-    "status": "watching",
+    "status": "exited",
     "why": [
       "event"
     ],
@@ -18,6 +18,12 @@
           "event"
         ],
         "price": 0.0003627
+      },
+      {
+        "type": "unfollow",
+        "date": "2026-11-18",
+        "price": 0.0001345,
+        "note": "没有因为 anthropic上市而大幅炒作，短期标的结束关注"
       }
     ],
     "followPrice": 0.0003627,
