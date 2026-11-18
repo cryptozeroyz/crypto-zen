@@ -25,7 +25,6 @@ const NAV_ITEMS = [
   { key: "articles", anchor: "articles" },
   { key: "news", anchor: "news" },
   { key: "links", anchor: "links" },
-  { key: "journal", anchor: "journal" },
   { key: "bookmarks", anchor: "reading" },
   { key: "about", anchor: "about" },
 ] as const;
@@ -80,9 +79,7 @@ export default function Header({ locale, t }: HeaderProps) {
       ? `/${locale}/resources`
       : anchor === "news"
         ? `/${locale}/news`
-        : anchor === "journal"
-          ? `/${locale}/journal`
-          : anchor === "watchlist"
+        : anchor === "watchlist"
           ? `/${locale}/dashboard`
           : onHome
             ? `#${anchor}`
