@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>关注列表样式 · 两方案原型</title>
+<style>
+:root{
+  --bg:#f7f8fa; --card:#ffffff; --text:#3b4654; --heading:#192536;
+  --muted:#7a8590; --line:rgba(25,37,54,.1); --code:#eef1f4;
+  --accent:#2563eb; --mint:#38bdf8; --up:#059669; --down:#dc2626;
+  --shadow:0 10px 30px -12px rgba(25,37,54,.15);
+}
+html.dark{
+  --bg:#141719; --card:#1d2125; --text:#dde2e7; --heading:#eef1f4;
+  --muted:#96a0a9; --line:rgba(255,255,255,.1); --code:#20252a;
+  --up:#34d399; --down:#f87171; --shadow:0 10px 30px -12px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:ui-sans-serif,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px}
+.up{color:var(--up)}.down{color:var(--down)}
+h1{font-size:26px;font-weight:700;color:var(--heading);margin-top:36px}
+.phead p{color:var(--muted);font-size:13.5px;margin-top:6px}
+.opt{margin-top:40px}
+.om{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+.om .tag{font-size:11px;font-weight:700;background:var(--heading);color:var(--bg);border-radius:6px;padding:3px 9px}
+.om h2{font-size:17px;color:var(--heading)}
+.om span{color:var(--muted);font-size:12.5px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+
+/* ============ 方案 X · 饱满行卡 ============ */
+.x-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
+.x-row:last-child{border-bottom:0}
+.x-row:hover{background:color-mix(in srgb,var(--accent) 4%,transparent)}
+.x-main{display:flex;align-items:center;gap:12px;min-width:0}
+.x-ava{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0}
+.x-info{min-width:0}
+.x-name{font-weight:700;color:var(--heading);display:flex;align-items:center;gap:7px}
+.x-name .st{font-size:10px;font-weight:600;border-radius:999px;padding:2px 8px}
+.st.hold{background:var(--accent);color:#fff}.st.watch{border:1px solid var(--line);color:var(--muted)}.st.exit{background:var(--code);color:var(--muted)}
+.x-meta{font-size:11.5px;color:var(--muted);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.x-why{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.x-why i{font-style:normal;font-size:10.5px;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:1px 7px}
+.x-right{display:flex;align-items:center;gap:16px}
+.x-since{text-align:right}
+.x-since .v{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.x-since .l{font-size:10px;color:var(--muted)}
+.x-24{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.x-spark{opacity:.95}
+@media(max-width:640px){.x-row{grid-template-columns:auto 1fr}.x-right{grid-column:1/-1;justify-content:space-between;border-top:1px dashed var(--line);padding-top:8px;margin-top:2px}}
+
+/* ============ 方案 Y · 交易终端行 ============ */
+.y-head,.y-row{display:grid;grid-template-columns:1.6fr .8fr .9fr .9fr .9fr .9fr .8fr;gap:10px;align-items:center;padding:10px 18px}
+.y-head{font-size:11px;color:var(--muted);border-bottom:1px solid var(--line);background:var(--code)}
+.y-row{border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
+.y-row:hover{background:color-mix(in srgb,var(--accent) 4%,transparent)}
+.y-row:last-child{border-bottom:0}
+.y-tk{display:flex;align-items:center;gap:9px;min-width:0}
+.y-tk .ava{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0}
+.y-tk .nm{font-weight:600;color:var(--heading);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.y-tk .ch{font-size:10.5px;color:var(--muted)}
+.y-cell{text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;white-space:nowrap}
+.y-cell .sub{display:block;font-size:10px;color:var(--muted);font-weight:400}
+.y-st{justify-self:end}
+@media(max-width:760px){.y-head{display:none}.y-row{grid-template-columns:auto 1fr auto;row-gap:6px}.y-cell{text-align:left}}
+</style>
+</head>
+<body>
+<div class="wrap phead">
+  <h1>关注列表 · 两种新样式</h1>
+  <p>同样 8 枚币的信息密度对比：X 强调「判断与叙事」，Y 强调「数据对齐」。点击行可感受悬停态。</p>
+</div>
+
+<!-- 方案 X -->
+<section class="opt wrap">
+  <div class="om"><span class="tag">X</span><h2>叙事行卡</h2><span>头像 + 名字/状态 + 叙事标签 + 关注以来大字 + 迷你走势，信息饱满且人味足</span></div>
+  <div class="panel" id="x"></div>
+</section>
+
+<!-- 方案 Y -->
+<section class="opt wrap" style="margin-bottom:80px">
+  <div class="om"><span class="tag">Y</span><h2>终端对齐</h2><span>类交易终端的列对齐：价格/关注价/市值/24H/7D/状态，一眼扫全局</span></div>
+  <div class="panel">
+    <div class="y-head"><span>代币</span><span style="text-align:right">当前价</span><span style="text-align:right">关注价</span><span style="text-align:right">市值</span><span style="text-align:right">24H</span><span style="text-align:right">关注以来</span><span style="text-align:right">状态</span></div>
+    <div id="y"></div>
+  </div>
+</section>
+
+<script>
+const COINS=[
+ {sym:'ANT',name:'ANT Finance',chain:'SOLANA',st:['watch','观望中'],since:-4.2,c24:12.5,fp:0.0021,pr:0.00201,mc:'$810K',why:['聪明钱持续买入','重大事件驱动'],spark:[3,4,6,5,8,7,9,11]},
+ {sym:'MORI',name:'Mori Finance',chain:'SOLANA',st:['hold','持仓中'],since:18.6,c24:6.8,fp:0.83,pr:0.985,mc:'$9.8M',why:['个人叙事判断'],spark:[2,3,3,5,4,6,8,9]},
+ {sym:':3',name:':3',chain:'SOLANA',st:['hold','持仓中'],since:22.8,c24:8.5,fp:0.000368,pr:0.000452,mc:'$388K',why:['KOL 传播'],spark:[4,5,4,7,6,8,9,11]},
+ {sym:'NIO',name:'Niga Its Over',chain:'SOLANA',st:['watch','观望中'],since:-0.6,c24:-0.4,fp:0.001383,pr:0.001375,mc:'$1.4M',why:[],spark:[6,5,6,4,5,3,4,3]},
+ {sym:'mihao',name:'ni hao cat',chain:'SOLANA',st:['hold','持仓中'],since:-1.6,c24:-15.2,fp:0.01347,pr:0.01326,mc:'$13.3M',why:['社区增长'],spark:[9,8,6,7,4,5,3,2]},
+ {sym:'Jacket',name:'Just a jacket',chain:'BSC',st:['exit','已收官'],since:-42.3,c24:-2.1,fp:0.0013,pr:0.00075,mc:'$760K',why:['重大事件驱动'],spark:[8,6,5,3,4,2,2,1]},
+];
+const hue=s=>{let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))%360;return h};
+const bg=n=>`linear-gradient(135deg,hsl(${hue(n)} 70% 55%),hsl(${(hue(n)+40)%360} 70% 45%))`;
+const fp=p=>p<0.01?'$'+p.toPrecision(3):p<1?'$'+p.toFixed(4):'$'+p;
+const pc=v=>`<b class="${v>=0?'up':'down'}">${v>=0?'+':''}${v.toFixed(1)}%</b>`;
+const spark=(pts,up)=>{const w=80,h=24,mn=Math.min(...pts),mx=Math.max(...pts),sp=mx-mn||1;
+ return `<svg width="${w}" height="${h}" fill="none"><polyline points="${pts.map((p,i)=>`${(i/(pts.length-1)*w).toFixed(1)},${(h-2-(p-mn)/sp*(h-4)).toFixed(1)}`).join(' ')}" stroke="${up?'var(--up)':'var(--down)'}" stroke-width="1.5" stroke-linecap="round"/></svg>`};
+
+document.getElementById('x').innerHTML=COINS.map(c=>`
+ <div class="x-row">
+  <div class="x-main">
+    <span class="x-ava" style="background:${bg(c.sym)}">${c.sym[0]}</span>
+    <div class="x-info">
+      <div class="x-name">${c.name}<span class="st ${c.st[0]}">${c.st[1]}</span></div>
+      <div class="x-meta"><span>$${c.sym}</span><span>·</span><span>${c.chain}</span><span>·</span><span>市值 ${c.mc}</span></div>
+      ${c.why.length?`<div class="x-why">${c.why.map(w=>`<i>${w}</i>`).join('')}</div>`:''}
+    </div>
+  </div>
+  <div></div>
+  <div class="x-right">
+    <div class="x-24">${pc(c.c24)}<span style="color:var(--muted);font-weight:400;font-size:10px"> 24H</span></div>
+    <span class="x-spark">${spark(c.spark,c.since>=0)}</span>
+    <div class="x-since"><div class="v ${c.since>=0?'up':'down'}">${c.since>=0?'+':''}${c.since.toFixed(1)}%</div><div class="l">关注以来</div></div>
+  </div>
+ </div>`).join('');
+
+document.getElementById('y').innerHTML=COINS.map(c=>`
+ <div class="y-row">
+  <div class="y-tk"><span class="ava" style="background:${bg(c.sym)}">${c.sym[0]}</span>
+    <span><span class="nm">${c.name}</span> <span class="ch">$${c.sym} · ${c.chain}</span></span></div>
+  <div class="y-cell">${fp(c.pr)}</div>
+  <div class="y-cell">${fp(c.fp)}</div>
+  <div class="y-cell">${c.mc}</div>
+  <div class="y-cell">${pc(c.c24)}</div>
+  <div class="y-cell" style="font-weight:700">${pc(c.since)}</div>
+  <div class="y-cell y-st"><span class="st ${c.st[0]}" style="font-size:10px;font-weight:600;border-radius:999px;padding:2px 9px;${c.st[0]==='hold'?'background:var(--accent);color:#fff':c.st[0]==='exit'?'background:var(--code);color:var(--muted)':'border:1px solid var(--line);color:var(--muted)'}">${c.st[1]}</span></div>
+ </div>`).join('');
+</script>
+</body>
+</html>
