@@ -216,7 +216,7 @@ export async function GET(req: Request) {
               id: j.id,
               date: j.date,
               title: j.title,
-              body: j.body.slice(0, 400),
+              body: j.body,
               tags: j.tags,
             }));
           return { ...c, spark, posts: related, journal: relatedJournal };
