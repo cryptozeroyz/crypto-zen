@@ -9,7 +9,6 @@ import { locales, isLocale, getDictionary } from "@/lib/i18n";
 import { siteConfig } from "@/lib/siteConfig";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import FlowerFloat from "@/components/FlowerFloat";
 import RedesignRail from "@/components/RedesignRail";
 
 export function generateStaticParams() {
@@ -67,7 +66,6 @@ export default function LocaleLayout({
       </main>
       <Footer t={t} />
       <RedesignRail locale={locale} />
-      <FlowerFloat sendLabel={t.flowers.send} receivedLabel={t.flowers.received} />
     </>
   );
 }

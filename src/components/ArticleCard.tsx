@@ -18,7 +18,7 @@ export default function ArticleCard({ post, locale, t }: ArticleCardProps) {
   return (
     <Link
       href={`/${locale}/writing/${post.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-card transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/40"
+      className="group flex h-full flex-col overflow-hidden rounded-[4px_18px_4px_22px] border-[1.5px] border-dashed border-[#2a2230] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)] hover:rotate-0 rotate-[-0.4deg]"
     >
       {/* 封面（16:9）；未上传封面时由 /api/cover 按标题自动生成 */}
       <div className="aspect-[16/9] overflow-hidden bg-codebg">
@@ -46,12 +46,12 @@ export default function ArticleCard({ post, locale, t }: ArticleCardProps) {
       <div className="flex flex-1 flex-col p-4">
         <time
           dateTime={post.date}
-          className="text-[11px] tabular-nums text-muted"
+          className="text-[10px] tracking-[.2em] tabular-nums text-[#ff5b3a] font-bold"
         >
           {formatDate(post.date, locale)}
         </time>
 
-        <h3 className="mt-1.5 font-bold leading-snug tracking-tight text-heading transition-colors duration-200 group-hover:text-accent dark:group-hover:text-accent-mint line-clamp-2">
+        <h3 className="mt-1.5 font-serif font-bold leading-snug tracking-tight text-[#5c2a52] line-clamp-2">
           {post.title}
         </h3>
 

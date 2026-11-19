@@ -19,7 +19,6 @@ import RandomPostButton from "@/components/RandomPostButton";
 import NowPlaying from "@/components/NowPlaying";
 import PriceTicker from "@/components/PriceTicker";
 import TypewriterHero from "@/components/TypewriterHero";
-import RedesignStrip from "@/components/RedesignStrip";
 import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
@@ -77,7 +76,6 @@ export default async function HomePage({
   return (
     <div className="home-paper">
       <TypewriterHero locale={locale} />
-      <RedesignStrip locale={locale} t={t} />
         {/* 快讯跑马灯（点击进入 /news） */}
         <Container>
           <NewsMarquee items={news} href={`/${locale}/news`} />
