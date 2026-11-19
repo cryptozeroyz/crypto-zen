@@ -43,5 +43,10 @@
     "id": "utility_tokens",
     "zh": "utility_tokens",
     "en": "utility_tokens"
+  },
+  {
+    "id": "news",
+    "zh": "news",
+    "en": "news"
   }
 ]
