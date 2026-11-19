@@ -110,17 +110,13 @@ export default async function HomePage({
       {links.length > 0 && (
         <section id="links" className="scroll-mt-24">
           <Container className="py-7 sm:py-8">
-            <SectionHead
-              title={t.home.sections.links}
-              href={`/${locale}/resources`}
-              linkText={`${t.home.viewAll ?? "查看全部 →"}`}
-            />
+            <div className="home-sh"><span className="no">03 / </span>Resources</div>
             <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {links.slice(0, 4).map((l) => (
                 <Link
                   key={l.url}
                   href={`/${locale}/resources`}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-line bg-card transition-all duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-lg hover:shadow-black/5 dark:hover:shadow-black/40"
+                  className="group flex flex-col overflow-hidden rounded-[4px_18px_4px_22px] border-[1.5px] border-dashed border-[#2a2230] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]"
                 >
                   <div className="flex aspect-[16/9] items-center justify-center bg-codebg px-4">
                     <span className="min-w-0 truncate text-sm font-semibold text-heading transition-colors group-hover:text-accent dark:group-hover:text-accent-mint">
@@ -142,15 +138,6 @@ export default async function HomePage({
 
       {/* ============ 关于我 ============ */}
 
-      {/* ============ 找到我 ============ */}
-      <section id="contact" className="scroll-mt-24">
-        <Container className="py-7 sm:py-8">
-          <SectionHead title={t.home.sections.social} />
-          <div className="mt-5">
-            <SocialLinks t={t} />
-          </div>
-        </Container>
-      </section>
       <section className="mx-auto w-full max-w-[860px] px-6 pb-4">
         <a href={`/${locale}/alpha`} className="block rounded-[14px_18px_12px_20px] border-[1.5px] border-dashed border-[#5c2a52] bg-white px-6 py-8 text-center transition-all hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]">
           <div className="font-serif text-[22px] font-bold text-[#5c2a52]">🎐 Daily Alpha · 每日好运签</div>
