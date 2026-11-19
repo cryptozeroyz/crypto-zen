@@ -1,5 +1,38 @@
 [
   {
+    "address": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
+    "ca": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
+    "status": "watching",
+    "why": [
+      "event",
+      "news"
+    ],
+    "comment": "这是一场典型的“游戏道具 → 社区复刻 → 精确 ticker 确认”叙事闭环。但当前市值已经高度依赖 GTA VI 热度、X 传播和持续关注，高波动、高投机，价格极易受情绪和热度影响。",
+    "addedAt": "2026-11-19",
+    "holding": false,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-19",
+        "note": "这是一场典型的“游戏道具 → 社区复刻 → 精确 ticker 确认”叙事闭环。但当前市值已经高度依赖 GTA VI 热度、X 传播和持续关注，高波动、高投机，价格极易受情绪和热度影响。",
+        "why": [
+          "event",
+          "news"
+        ],
+        "price": 0.01973
+      }
+    ],
+    "followPrice": 0.01973,
+    "followMcap": 18657924,
+    "chain": "solana",
+    "symbol": "DCTY",
+    "name": "DacityCoin",
+    "dex": "pumpswap",
+    "pairAddress": "DChXQ4qFPpNPEDfZLNiwvPhrVuuFGfqEDLAAZbiZHUWf",
+    "pairLiquidity": 578083.94,
+    "pairVolume24h": 55108751.86
+  },
+  {
     "address": "EadD2LMp6EbH9PrbXUFWcrZKMhoKVrZN1gpwRhH5pump",
     "ca": "EadD2LMp6EbH9PrbXUFWcrZKMhoKVrZN1gpwRhH5pump",
     "status": "exited",
