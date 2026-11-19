@@ -38,42 +38,10 @@ export default function RedesignRail({ locale }: { locale: Locale }) {
 
   return (
     <>
-      <style jsx>{`
-        .noise { position: fixed; inset: 0; z-index: 4; pointer-events: none; opacity: 0.03; background-image: ${NOISE}; }
-        .rail { position: fixed; right: 0; top: 0; bottom: 0; width: 72px; z-index: 55; display: flex; flex-direction: column; align-items: center; padding: 24px 0; background: #5c2a52; }
-        .ava { border-radius: 50%; border: 2px solid rgba(255,255,255,.75); object-fit: cover; }
-        .burger { margin: auto 0; width: 44px; height: 116px; background: #ff5b3a; border: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; border-radius: 2px; }
-        .burger i, .burger i::before, .burger i::after { content: ""; position: absolute; width: 20px; height: 2px; background: #fff; left: 12px; transition: 0.3s; }
-        .burger i { top: 56px; }
-        .burger i::before { top: -6px; }
-        .burger i::after { top: 6px; }
-        .burger[aria-expanded="true"] i { background: transparent; }
-        .burger[aria-expanded="true"] i::before { top: 0; transform: rotate(45deg); }
-        .burger[aria-expanded="true"] i::after { top: 0; transform: rotate(-45deg); }
-        .arrow { color: #fff; font-size: 17px; animation: bob 1.6s infinite; }
-        @keyframes bob { 50% { transform: translateY(6px); } }
-        .soc { display: flex; flex-direction: column; gap: 16px; margin-top: 18px; }
-        .soc a { opacity: .9; transition: .2s; }
-        .soc a:hover { opacity: 1; transform: scale(1.12); }
-        .menu { position: fixed; right: 72px; top: 0; bottom: 0; width: min(320px, calc(100vw - 72px)); background: #ff5b3a; z-index: 54; transform: translateX(105%); transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.25, 1); padding: 100px 40px; overflow-y: auto; }
-        .menu.open { transform: none; }
-        .menu a { display: block; color: #fff; text-decoration: none; font-size: 19px; margin: 24px 0; letter-spacing: 0.05em; opacity: 0; transform: translateX(18px); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.25, 1) var(--d), opacity 0.5s var(--d), color 0.2s; }
-        .menu.open a { opacity: 1; transform: none; }
-        .menu a:hover { color: #5c2a52; }
-        .menu .en { display: block; font-size: 11px; opacity: 0.75; letter-spacing: 0.2em; }
-        .mask { position: fixed; inset: 0; z-index: 53; background: rgba(30, 15, 30, 0.35); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .mask.show { opacity: 1; pointer-events: auto; }
-        @media (max-width: 640px) {
-          .rail { width: 56px; }
-          .menu { right: 56px; width: calc(100vw - 56px); }
-          .soc { gap: 12px; }
-        }
-      `}</style>
-
       <div className="noise" aria-hidden="true" />
-      <div className={`mask ${open ? "show" : ""}`} onClick={() => setOpen(false)} aria-hidden="true" />
+      <div className={`rail-mask ${open ? "show" : ""}`} onClick={() => setOpen(false)} aria-hidden="true" />
 
-      <nav className={`menu ${open ? "open" : ""}`} aria-hidden={!open}>
+      <nav className={`rail-menu ${open ? "open" : ""}`} aria-hidden={!open}>
         {ITEMS.map((it, i) => (
           <Link key={it.href || "home"} href={`/${locale}${it.href}`} style={{ "--d": `${0.08 + i * 0.06}s` } as React.CSSProperties} tabIndex={open ? 0 : -1}>
             {locale === "zh" ? it.zh : it.en}
