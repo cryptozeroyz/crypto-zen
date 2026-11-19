@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Crypto Zen · Redesign 原型（sabanna 风）</title>
+<style>
+:root{
+  --paper:#f6f3ee; --ink:#2a2230; --plum:#5c2a52; --coral:#ff5b3a;
+  --pink:#ffd9d2; --blue:#3a6ea5; --mono:"Courier Prime","Courier New",ui-monospace,monospace;
+  --serif:"Iowan Old Style",Palatino,Georgia,"Songti SC",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:14px;line-height:1.9;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23p)' opacity='.55'/%3E%3C/svg%3E")}
+
+/* ===== 右侧垂直轨道 ===== */
+.rail{position:fixed;right:0;top:0;bottom:0;width:76px;background:var(--plum);z-index:60;display:flex;flex-direction:column;align-items:center;padding:26px 0}
+.rail .logo{color:#fff;font-family:var(--serif);font-size:26px;font-weight:700;border:2px solid rgba(255,255,255,.7);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center}
+.rail .burger{margin:auto 0;width:44px;height:120px;background:var(--coral);border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative}
+.rail .burger span,.rail .burger span::before,.rail .burger span::after{content:"";position:absolute;width:20px;height:2px;background:#fff;left:12px;transition:.3s}
+.rail .burger span{top:58px}.rail .burger span::before{top:-6px;left:0}.rail .burger span::after{top:6px;left:0}
+.rail .social{display:flex;flex-direction:column;gap:14px;color:#fff;font-size:15px;opacity:.85}
+.rail .arrow{color:#fff;margin-top:16px;font-size:18px;animation:bob 1.6s infinite}
+@keyframes bob{50%{transform:translateY(6px)}}
+
+/* 滑出菜单 */
+.menu{position:fixed;right:76px;top:0;bottom:0;width:min(320px,70vw);background:var(--coral);z-index:55;transform:translateX(105%);transition:transform .45s cubic-bezier(.2,.8,.25,1);padding:110px 40px}
+.menu.open{transform:none}
+.menu a{display:block;color:#fff;text-decoration:none;font-size:19px;margin:26px 0;letter-spacing:.06em;transition:.2s;transform:translateX(18px);opacity:0}
+.menu.open a{transform:none;opacity:1;transition:transform .5s cubic-bezier(.2,.8,.25,1) var(--d),opacity .5s var(--d)}
+.menu a:hover{color:var(--plum)}
+.menu .en{font-size:11px;opacity:.75;display:block;letter-spacing:.2em}
+
+/* ===== 主区域 ===== */
+.main{margin-right:76px}
+.wrap{max-width:980px;margin:0 auto;padding:0 36px}
+
+/* 角落括号框 */
+.frame{position:relative}
+.frame::before,.frame::after{content:"";position:absolute;width:34px;height:34px;border:3px solid var(--coral)}
+.frame::before{top:-3px;left:-3px;border-right:0;border-bottom:0}
+.frame::after{bottom:-3px;right:-3px;border-left:0;border-top:0}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative}
+.hero .grid{display:grid;grid-template-columns:280px 1fr;gap:50px;align-items:center;width:100%}
+.sketch{width:260px;height:330px;position:relative;transform:rotate(-2deg)}
+.sketch svg{width:100%;height:100%}
+.hero h1{font-family:var(--serif);font-size:clamp(40px,6vw,64px);color:var(--plum);letter-spacing:-.01em}
+.type{white-space:pre-wrap;min-height:300px;font-size:14.5px;letter-spacing:.04em}
+.type .nm{font-family:var(--serif);font-size:clamp(26px,3.6vw,38px);color:var(--plum);letter-spacing:.02em}
+.type .hl{color:var(--coral);font-weight:700}
+.caret{display:inline-block;width:9px;height:1.1em;background:var(--coral);vertical-align:-2px;animation:blink .8s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media(max-width:820px){.hero .grid{grid-template-columns:1fr}.sketch{display:none}}
+
+/* 区块通用 */
+.sec{padding:90px 0}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:36px}
+.sec-head .no{font-family:var(--serif);font-size:15px;color:var(--coral)}
+.sec-head h2{font-family:var(--serif);font-size:clamp(24px,3.4vw,34px);color:var(--plum)}
+
+/* 看板速览（手绘卡） */
+.watch{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.wcard{background:#fff;border:1.5px dashed var(--ink);border-radius:14px 18px 12px 20px;padding:16px;transform:rotate(var(--r,0deg));transition:.25s;cursor:pointer}
+.wcard:hover{transform:rotate(0) translateY(-5px);border-style:solid;border-color:var(--coral)}
+.wcard .top{display:flex;align-items:center;gap:9px}
+.wcard .ava{width:34px;height:34px;border-radius:50% 45% 52% 48%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;border:2px solid var(--ink)}
+.wcard .nm{font-weight:700;font-size:13.5px}
+.wcard .ch{font-size:10px;opacity:.6}
+.wcard .pc{font-family:var(--serif);font-size:20px;font-weight:700;margin-top:8px}
+.up{color:#1d8a4e}.down{color:var(--coral)}
+.wcard .sub{font-size:10.5px;opacity:.65;margin-top:2px}
+@media(max-width:820px){.watch{grid-template-columns:repeat(2,1fr)}}
+
+/* 文章卡（参考其白卡+色块） */
+.arts{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.acard{display:grid;grid-template-columns:1fr .8fr;background:#fff;border:1.5px solid var(--ink);border-radius:4px 18px 4px 22px;overflow:hidden;transform:rotate(-.4deg);transition:.25s}
+.acard:nth-child(2n){transform:rotate(.5deg)}
+.acard:hover{transform:rotate(0) translateY(-4px);box-shadow:6px 8px 0 rgba(92,42,82,.15)}
+.acard .fig{min-height:180px;background:#fff;border-right:1.5px dashed var(--ink);display:flex;align-items:center;justify-content:center;position:relative}
+.acard .txt{padding:22px 20px}
+.acard .txt .cat{font-size:10px;letter-spacing:.2em;color:var(--coral)}
+.acard h3{font-family:var(--serif);font-size:17px;line-height:1.5;margin:8px 0;color:var(--plum)}
+.acard p{font-size:12px;line-height:1.8;opacity:.75}
+.acard .date{font-size:10.5px;margin-top:12px;opacity:.55}
+@media(max-width:820px){.arts{grid-template-columns:1fr}}
+
+/* 快讯条 */
+.news{border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);padding:16px 0;overflow:hidden;white-space:nowrap}
+.news .in{display:inline-block;animation:mq 30s linear infinite;font-size:13px;letter-spacing:.03em}
+.news b{color:var(--coral)}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* 理念 */
+.philo{text-align:center;padding:100px 0}
+.philo .big{font-family:var(--serif);font-size:clamp(30px,5vw,48px);color:var(--plum);line-height:1.35}
+.philo .mono-line{margin-top:18px;font-size:13px;letter-spacing:.1em}
+.philo .fun{margin:36px auto 0;max-width:460px;font-size:12.5px;border:1.5px dashed var(--coral);border-radius:16px 4px 16px 4px;padding:16px 20px;transform:rotate(-1deg)}
+
+/* 页脚 */
+footer{border-top:2px solid var(--ink);padding:40px 0 60px;font-size:11px;opacity:.7;line-height:2}
+.badge{position:fixed;left:14px;bottom:14px;background:var(--plum);color:#fff;font-size:11px;padding:5px 12px;border-radius:3px;opacity:.8;z-index:70;font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<!-- 右侧轨道 + 滑出菜单 -->
+<nav class="menu" id="menu">
+  <a href="#top" style="--d:.08s">首页<span class="en">HOME</span></a>
+  <a href="#watch" style="--d:.14s">投研成绩单<span class="en">TRACK RECORD</span></a>
+  <a href="#articles" style="--d:.2s">文章<span class="en">WRITING</span></a>
+  <a href="#news" style="--d:.26s">方程式新闻<span class="en">NEWS</span></a>
+  <a href="#philo" style="--d:.32s">好运签 / 关于<span class="en">ALPHA & ABOUT</span></a>
+</nav>
+<aside class="rail">
+  <div class="logo serif">CZ</div>
+  <button class="burger" id="burger" aria-label="菜单" aria-expanded="false"><span></span></button>
+  <div class="arrow">⇣</div>
+  <div class="social">𝕏<br>✈<br>🐦</div>
+</aside>
+
+<div class="main" id="top">
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap grid">
+    <div class="sketch"><svg viewBox="0 0 200 260" fill="none" stroke="#2a2230" stroke-width="2" stroke-linecap="round">
+      <path d="M60 40 Q100 5 140 40 Q175 70 165 130 Q185 160 160 210 Q120 250 75 235 Q30 215 35 150 Q20 95 60 40Z" fill="#fff" opacity=".7"/>
+      <circle cx="80" cy="105" r="7"/><circle cx="128" cy="100" r="7"/>
+      <path d="M70 90 q10 -8 20 -2 M118 84 q12 -6 22 0"/>
+      <path d="M104 112 q-4 18 -10 24 q6 5 14 2"/>
+      <path d="M78 165 q26 18 52 -4" stroke-width="3"/>
+      <path d="M60 190 q40 26 84 0" opacity=".4"/>
+      <path d="M30 240 q70 30 140 0" opacity=".3"/>
+    </svg></div>
+    <div class="frame" style="padding:36px 40px">
+      <div class="type" id="type"></div>
+    </div>
+  </div>
+</header>
+
+<!-- 看板速览 -->
+<section class="sec" id="watch">
+  <div class="wrap">
+    <div class="sec-head"><span class="no">01 /</span><h2>Track Record</h2></div>
+    <div class="watch">
+      <div class="wcard" style="--r:-1deg"><div class="top"><span class="ava" style="background:var(--coral)">A</span><span><div class="nm">ANT</div><div class="ch">SOLANA</div></span></div><div class="pc up">+38.2%</div><div class="sub">关注以来 · 新</div></div>
+      <div class="wcard" style="--r:.8deg"><div class="top"><span class="ava" style="background:var(--plum)">M</span><span><div class="nm">MORI</div><div class="ch">SOLANA</div></span></div><div class="pc up">+18.6%</div><div class="sub">持仓中</div></div>
+      <div class="wcard" style="--r:-.6deg"><div class="top"><span class="ava" style="background:var(--blue)">:3</span><span><div class="nm">:3</div><div class="ch">SOLANA</div></span></div><div class="pc down">-2.7%</div><div class="sub">观望中</div></div>
+      <div class="wcard" style="--r:1.2deg"><div class="top"><span class="ava" style="background:#999">J</span><span><div class="nm">Jacket</div><div class="ch">BSC</div></span></div><div class="pc down">-42.3%</div><div class="sub">已收官 ✓定格</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 文章 -->
+<section class="sec" id="articles" style="padding-top:20px">
+  <div class="wrap">
+    <div class="sec-head"><span class="no">02 /</span><h2>Writing</h2></div>
+    <div class="arts">
+      <article class="acard">
+        <div class="fig"><svg viewBox="0 0 120 120" width="120" stroke="#2a2230" fill="none" stroke-width="2"><path d="M60 8 L108 34 V86 L60 112 L12 86 V34 Z" fill="#dbe9f6"/><path d="M60 8 L108 34 V86 L60 112 L12 86 V34 Z" stroke-dasharray="4 3" opacity=".5"/><path d="M35 70 L50 55 L65 68 L85 45" stroke="var(--coral)" stroke-width="3"/></svg></div>
+        <div class="txt" style="background:var(--pink)"><div class="cat">RESEARCH · AI</div><h3>ANT 快速研报：数据与社区氛围速览</h3><p>双模型自动生成 · 流动性 25K · 讨论极少 · 风险等级：高</p><div class="date">2026-11-18 · ⚡ AI</div></div>
+      </article>
+      <article class="acard">
+        <div class="fig"><svg viewBox="0 0 120 120" width="120" stroke="#2a2230" fill="none" stroke-width="2"><circle cx="60" cy="60" r="46" fill="#efe6f5"/><path d="M30 78 q30 -50 60 0" stroke="var(--plum)" stroke-width="3" fill="none"/><circle cx="60" cy="46" r="6" fill="var(--coral)" stroke="none"/></svg></div>
+        <div class="txt" style="background:#e7f0e9"><div class="cat">RESEARCH</div><h3>PEPE 筹码结构季度复盘</h3><p>早期巨鲸仓位下降 12%，慢速吸筹地址份额持续抬升……</p><div class="date">2026-11-06</div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 快讯跑马灯 -->
+<div class="news" id="news"><div class="in" id="mq"></div></div>
+
+<!-- 理念 -->
+<section class="philo" id="philo">
+  <div class="wrap">
+    <div class="big serif">Stay curious.<br/>Stay skeptical.</div>
+    <div class="mono-line">保持好奇 · 保持怀疑 · An Operator. A Trader. An Observer.</div>
+    <div class="fun">“如果你不能笑着面对这个市场，你迟早会被它气死。” — 站主亲笔</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    No Token Launches · No Paid Signals · No Sponsored Shilling · Independent Opinions<br/>
+    Disclaimer: 所有内容仅供学习参考，不构成投资建议，请自行 DYOR。<br/>© 2026 Crypto Zen · cryptozen.fun
+  </div>
+</footer>
+</div>
+
+<div class="badge">PROTOTYPE · REDESIGN v3 · sabanna 风</div>
+<script>
+/* 打字机 */
+const LINES=[["Hey there! My name is",""],["CRYPTO ZEN","nm"],["or you can call me",""],["禅哥","nm"],["I am an Operator, a Trader",""],["and Observer at MEME WORLD,","hl"],["Crypto Researcher",""],["... and just a degen","hl"]];
+const box=document.getElementById('type');let li=0,ci=0,out="";
+function tick(){
+  if(li>=LINES.length){box.innerHTML=out;box.insertAdjacentHTML('beforeend','<span class="caret"></span>');return}
+  const [txt,cls]=LINES[li];
+  ci++;
+  const part=txt.slice(0,ci);
+  const html=cls==='nm'?`<span class="nm">${part}</span>`:cls==='hl'?`<span class="hl">${part}</span>`:part;
+  box.innerHTML=out+html+'<span class="caret"></span>';
+  if(ci>=txt.length){out+=html+"<br>";li++;ci=0;setTimeout(tick,txt.length>12?420:260);}
+  else setTimeout(tick,45+Math.random()*55);
+}
+tick();
+/* 菜单 */
+const burger=document.getElementById('burger'),menu=document.getElementById('menu');
+burger.onclick=()=>{const o=menu.classList.toggle('open');burger.setAttribute('aria-expanded',o)};
+menu.querySelectorAll('a').forEach(a=>a.onclick=()=>{menu.classList.remove('open')});
+/* 跑马灯 */
+const items="⚡ <b>CFTC 批准 Backpack 成为首个采用区块链的 DCO</b> ◆ 🔻 LIT 空头进场：币安 OI +9.0% ◆ ⚡ 约 1550 万美元从 Lighter 两个账户被盗 ◆ 🟢 SOL +4.3% 突破 $74 ◆ ⚡ <b>法官裁定 2500 万美元 MEV 盗窃案不构成欺诈</b> ◆ ";
+document.getElementById('mq').innerHTML=items+items;
+</script>
+</body>
+</html>
