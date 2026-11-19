@@ -7,9 +7,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { locales, isLocale, getDictionary } from "@/lib/i18n";
 import { siteConfig } from "@/lib/siteConfig";
-import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import RedesignRail from "@/components/RedesignRail";
+import TopBar from "@/components/TopBar";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -61,11 +60,13 @@ export default function LocaleLayout({
 
   return (
     <>
-      <main id="main-content" className="flex-1">
+      <div className="noise" aria-hidden="true" />
+      <TopBar locale={locale} />
+      {/* pt-[60px] 为固定顶栏预留空间 */}
+      <main id="main-content" className="flex-1 pt-[60px]">
         {children}
       </main>
       <Footer t={t} />
-      <RedesignRail locale={locale} />
     </>
   );
 }

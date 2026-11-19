@@ -402,29 +402,52 @@ body {
 }
 
 /* ===== Redesign 外壳（第一批） ===== */
+/* ===== 顶栏（替代右侧轨道） ===== */
 .noise{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23p)' opacity='.55'/%3E%3C/svg%3E")}
-.rail{position:fixed;right:0;top:0;bottom:0;width:72px;z-index:55;display:flex;flex-direction:column;align-items:center;padding:24px 0;background:#5c2a52}
-.rail .ava{border-radius:50%;border:2px solid rgba(255,255,255,.75);object-fit:cover}
-.burger{margin:auto 0;width:44px;height:116px;background:#ff5b3a;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative;border-radius:2px}
-.burger i,.burger i::before,.burger i::after{content:"";position:absolute;width:20px;height:2px;background:#fff;left:12px;transition:.3s}
-.burger i{top:56px}.burger i::before{top:-6px}.burger i::after{top:6px}
-.burger[aria-expanded="true"] i{background:transparent}
-.burger[aria-expanded="true"] i::before{top:0;transform:rotate(45deg)}
-.burger[aria-expanded="true"] i::after{top:0;transform:rotate(-45deg)}
-.rail .arrow{color:#fff;font-size:17px;animation:bob 1.6s infinite}
-@keyframes bob{50%{transform:translateY(6px)}}
-.rail .soc{display:flex;flex-direction:column;gap:16px;margin-top:18px}
-.rail .soc a{opacity:.9;transition:.2s;display:block}
-.rail .soc a:hover{opacity:1;transform:scale(1.12)}
-.rail-menu{position:fixed;right:72px;top:0;bottom:0;width:min(320px,calc(100vw - 72px));background:#ff5b3a;z-index:54;transform:translateX(105%);transition:transform .45s cubic-bezier(.2,.8,.25,1);padding:100px 40px;overflow-y:auto}
-.rail-menu.open{transform:none}
-.rail-menu a{display:block;color:#fff;text-decoration:none;font-size:19px;margin:24px 0;letter-spacing:.05em;opacity:0;transform:translateX(18px);transition:transform .5s cubic-bezier(.2,.8,.25,1) var(--d),opacity .5s var(--d),color .2s}
-.rail-menu.open a{opacity:1;transform:none}
-.rail-menu a:hover{color:#5c2a52}
-.rail-menu .en{display:block;font-size:11px;opacity:.75;letter-spacing:.2em}
-.rail-mask{position:fixed;inset:0;z-index:53;background:rgba(30,15,30,.35);opacity:0;pointer-events:none;transition:opacity .3s}
-.rail-mask.show{opacity:1;pointer-events:auto}
-@media(max-width:640px){.rail{width:56px}.rail-menu{right:56px;width:calc(100vw - 56px)}.rail .soc{gap:12px}}
+.topbar{position:fixed;top:0;left:0;right:0;height:60px;z-index:55;background:#f6f3ee;border-bottom:1.5px solid #2a2230;transition:box-shadow .3s}
+.dark .topbar{background:#181419;border-bottom-color:#f6f3ee2e}
+.topbar.scrolled{box-shadow:0 12px 32px -14px rgba(42,34,48,.28)}
+.tb-in{width:100%;max-width:1100px;margin:0 auto;padding:0 20px;height:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.tb-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.tb-ava{border-radius:50%;border:2px solid #2a2230cc;object-fit:cover;transition:transform .25s}
+.tb-brand:hover .tb-ava{transform:rotate(-8deg) scale(1.06)}
+.tb-word{font-family:var(--font-serif,"Iowan Old Style",Palatino,Georgia,"Songti SC",serif);font-weight:700;font-size:17px;color:#5c2a52;letter-spacing:.02em}
+.dark .tb-word{color:#e8b7d9}
+/* 桌面导航：悬停珊瑚橙下划线滑入 */
+.tb-nav{display:none;align-items:center;gap:24px}
+@media(min-width:820px){.tb-nav{display:flex}}
+.tb-nav a{position:relative;font-size:13px;letter-spacing:.06em;color:rgba(42,34,48,.7);text-decoration:none;padding:4px 0;transition:color .2s}
+.dark .tb-nav a{color:#e8e2eab3}
+.tb-nav a::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:#ff5b3a;border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .25s cubic-bezier(.2,.8,.25,1)}
+.tb-nav a:hover{color:#2a2230}
+.dark .tb-nav a:hover{color:#e8e2ea}
+.tb-nav a:hover::after,.tb-nav a.on::after{transform:scaleX(1)}
+.tb-nav a.on{color:#ff5b3a;font-weight:600}
+/* 右侧工具 */
+.tb-tools{display:flex;align-items:center;gap:12px}
+.tb-lang{font-family:ui-monospace,"Courier New",monospace;font-size:11px;font-weight:700;letter-spacing:1px;color:rgba(42,34,48,.75);text-decoration:none;transition:color .2s}
+.dark .tb-lang{color:#e8e2eab3}
+.tb-lang:hover{color:#ff5b3a}
+.tb-ico{display:flex;align-items:center;justify-content:center;color:rgba(42,34,48,.75);transition:color .2s,transform .2s}
+.dark .tb-ico{color:#e8e2eab3}
+.tb-ico:hover{color:#ff5b3a;transform:translateY(-1px)}
+/* 汉堡：珊瑚橙手绘块 */
+.tb-burger{display:none;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:40px;height:40px;background:#ff5b3a;border:0;cursor:pointer;border-radius:4px;transition:transform .2s}
+.tb-burger:hover{transform:rotate(-3deg)}
+.tb-burger i{display:block;width:18px;height:2px;background:#fff;transition:.3s}
+.tb-burger[aria-expanded="true"] i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.tb-burger[aria-expanded="true"] i:nth-child(2){opacity:0}
+.tb-burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:819px){.tb-burger{display:flex}}
+/* 下拉菜单（窄屏，从顶栏下方滑出） */
+.tb-menu{position:fixed;top:60px;left:0;right:0;background:#ff5b3a;z-index:54;transform:translateY(-105%);transition:transform .42s cubic-bezier(.2,.8,.25,1);padding:10px 28px 30px;border-bottom:2px solid #2a2230;max-height:calc(100vh - 60px);overflow-y:auto}
+.tb-menu.open{transform:none}
+.tb-menu a{display:block;color:#fff;text-decoration:none;font-size:18px;margin:18px 0;letter-spacing:.05em;opacity:0;transform:translateY(-10px);transition:transform .45s cubic-bezier(.2,.8,.25,1) var(--d),opacity .45s var(--d),color .2s}
+.tb-menu.open a{opacity:1;transform:none}
+.tb-menu a:hover{color:#5c2a52}
+.tb-menu .en{display:block;font-size:11px;opacity:.75;letter-spacing:.2em}
+.tb-mask{position:fixed;inset:0;z-index:53;background:rgba(30,15,30,.35);opacity:0;pointer-events:none;transition:opacity .3s}
+.tb-mask.show{opacity:1;pointer-events:auto}
 
 /* 改版第三批：首页奶油纸底 */
 .home-paper{background:#f6f3ee}

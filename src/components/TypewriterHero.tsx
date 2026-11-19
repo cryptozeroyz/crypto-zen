@@ -66,8 +66,7 @@ export default function TypewriterHero({ locale }: { locale: Locale }) {
   return (
     <section className="tw-hero" aria-label="Intro">
       <style>{`
-        .tw-hero{min-height:82vh;display:flex;align-items:center;background:#f6f3ee;border-bottom:2px solid #2a2230;position:relative;overflow:hidden;margin-right:72px}
-        @media(max-width:640px){.tw-hero{margin-right:56px}}
+        .tw-hero{min-height:82vh;display:flex;align-items:center;background:#f6f3ee;border-bottom:2px solid #2a2230;position:relative;overflow:hidden}
         .tw-frame{position:relative;padding:44px 40px;width:100%}
         (max-width:820px){.tw-grid{grid-template-columns:1fr !important}.tw-sketch{display:none}}
         .tw-frame::before,.tw-frame::after{content:"";position:absolute;width:34px;height:34px;border:3px solid #ff5b3a}
