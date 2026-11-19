@@ -29,13 +29,13 @@ jobs:
           rm -rf .next/standalone/.next/cache
           cp -r .next/static .next/standalone/.next/static
 
-      - name: 同步到服务器（保留服务器上的 .env 与鲜花计数）
+      - name: 同步到服务器（保留服务器上的 .env 与鲜花计数；--delete 清掉已删除的文章等残留）
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
-          rsync -avz --exclude=".env" -e "ssh -i ~/.ssh/deploy_key" .next/standalone/ root@${{ secrets.DEPLOY_HOST }}:/home/crypto/app/
+          rsync -avz --delete --exclude=".env" --exclude="content/flowers.json" -e "ssh -i ~/.ssh/deploy_key" .next/standalone/ root@${{ secrets.DEPLOY_HOST }}:/home/crypto/app/
 
       - name: 重启应用（standalone 不读 .env，必须先 source 再启动）
         run: |

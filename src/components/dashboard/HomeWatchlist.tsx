@@ -65,6 +65,46 @@ function Sparkline({ data, up }: { data: number[]; up: boolean }) {
   );
 }
 
+/** 手绘「一路向上」装饰走势图：绿色折线爬到右上角 + 珊瑚橙箭头，描线动画 */
+function RisingTrend() {
+  const pts =
+    "8,74 34,68 58,72 84,56 110,62 136,42 162,48 186,26 206,14";
+  const area = `8,84 ${pts} 212,84`;
+  return (
+    <svg
+      viewBox="0 0 220 88"
+      className="dash-trend mt-4 w-full"
+      role="img"
+      aria-label="持续向上的走势示意"
+    >
+      {/* 淡网格点，手绘纸感 */}
+      <g fill="#2a2230" opacity=".18">
+        <circle cx="34" cy="80" r="1.3" /><circle cx="84" cy="80" r="1.3" />
+        <circle cx="136" cy="80" r="1.3" /><circle cx="186" cy="80" r="1.3" />
+      </g>
+      <polygon points={area} fill="rgba(22,163,74,.10)" />
+      <polyline
+        className="line"
+        points={pts}
+        fill="none"
+        stroke="#16a34a"
+        strokeWidth="2.2"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+      {/* 末端箭头：指向右上方 */}
+      <path
+        d="M196 22 L212 10 M212 10 h-8 M212 10 v8"
+        fill="none"
+        stroke="#ff5b3a"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 /** 复制 CA 按钮：点击复制，1.6s 后恢复 */
 function CopyCa({ address }: { address: string }) {
   const [copied, setCopied] = useState(false);
@@ -258,7 +298,7 @@ export default function HomeWatchlist({
       {/* 看板入口卡片 */}
       <Link
         href={`/${locale}/dashboard`}
-        className="group flex min-h-[280px] flex-col items-start justify-between rounded-[16px_20px_14px_22px] border-[1.5px] border-dashed border-[#5c2a52] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]"
+        className="group flex min-h-[280px] flex-col rounded-[16px_20px_14px_22px] border-[1.5px] border-dashed border-[#5c2a52] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]"
       >
         <div>
           <div className="font-serif text-[17px] font-bold text-[#5c2a52]">
@@ -268,8 +308,11 @@ export default function HomeWatchlist({
             {t.watchlist.intro}
           </p>
         </div>
+        <div className="flex flex-1 items-center">
+          <RisingTrend />
+        </div>
         <div className="w-full border-t border-dashed border-[#2a2230]/25 pt-3">
-          <span className="font-mono text-[12px] text-[#ff5b3a] transition-transform duration-200 group-hover:translate-x-1 inline-block">
+          <span className="inline-block font-mono text-[12px] text-[#ff5b3a] transition-transform duration-200 group-hover:translate-x-1">
             {t.watchlist.viewDashboard} →
           </span>
         </div>

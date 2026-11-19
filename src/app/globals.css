@@ -466,3 +466,7 @@ body {
 /* 改版：英文衬线区块标题 */
 .home-sh{font-family:var(--font-serif,"Iowan Old Style",Palatino,Georgia,"Songti SC",serif);font-size:clamp(24px,3.4vw,34px);font-weight:700;color:#5c2a52;margin-bottom:28px;display:flex;align-items:baseline;gap:14px}
 .home-sh .no{font-size:14px;color:#ff5b3a;font-family:var(--font-serif,serif)}
+
+/* 看板入口卡：向上走势装饰线（描线生长动画，仅前几次渲染触发即可） */
+@keyframes dashdraw{to{stroke-dashoffset:0}}
+.dash-trend .line{stroke-dasharray:480;stroke-dashoffset:480;animation:dashdraw 2s .4s cubic-bezier(.4,0,.2,1) forwards}
