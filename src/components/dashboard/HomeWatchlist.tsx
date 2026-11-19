@@ -215,7 +215,7 @@ export default function HomeWatchlist({
             </div>
 
             {/* 行情行：价格 / 24H / 关注以来 */}
-            <div className="mt-4 flex items-end justify-between gap-2">
+            <div className="mt-4 flex flex-wrap items-end justify-between gap-x-2 gap-y-2">
               <div>
                 <div className="text-xl font-bold tabular-nums tracking-tight text-heading">
                   {formatPrice(c.data?.priceUsd ?? 0)}

@@ -446,6 +446,10 @@ body {
 .tb-menu.open a{opacity:1;transform:none}
 .tb-menu a:hover{color:#5c2a52}
 .tb-menu .en{display:block;font-size:11px;opacity:.75;letter-spacing:.2em}
+.tb-menu-soc{display:flex;gap:24px;margin-top:26px;padding-top:18px;border-top:1.5px dashed rgba(255,255,255,.4)}
+.tb-menu-soc a{color:#fff;font-family:ui-monospace,"Courier New",monospace;font-size:12px;letter-spacing:.08em;text-decoration:none;opacity:.9;transition:color .2s}
+.tb-menu-soc a:hover{color:#5c2a52}
+@media(max-width:480px){.tb-in{padding:0 14px;gap:10px}.tb-word{display:none}.tb-ico{display:none}.tb-tools{gap:10px}}
 .tb-mask{position:fixed;inset:0;z-index:53;background:rgba(30,15,30,.35);opacity:0;pointer-events:none;transition:opacity .3s}
 .tb-mask.show{opacity:1;pointer-events:auto}
 

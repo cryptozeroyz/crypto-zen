@@ -154,6 +154,25 @@ export default function TopBar({ locale }: { locale: Locale }) {
             <span className="en">{locale === "zh" ? it.en : it.zh}</span>
           </Link>
         ))}
+        {/* 窄屏社交入口（顶栏图标在小屏隐藏，收进菜单底部） */}
+        <div className="tb-menu-soc">
+          <a
+            href={siteConfig.social.twitter}
+            target="_blank"
+            rel="noopener noreferrer"
+            tabIndex={open ? 0 : -1}
+          >
+            X (Twitter) ↗
+          </a>
+          <a
+            href={siteConfig.social.telegram}
+            target="_blank"
+            rel="noopener noreferrer"
+            tabIndex={open ? 0 : -1}
+          >
+            Telegram ↗
+          </a>
+        </div>
       </nav>
     </>
   );
