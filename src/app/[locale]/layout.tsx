@@ -10,6 +10,7 @@ import { siteConfig } from "@/lib/siteConfig";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FlowerFloat from "@/components/FlowerFloat";
+import RedesignRail from "@/components/RedesignRail";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -66,6 +67,7 @@ export default function LocaleLayout({
         {children}
       </main>
       <Footer t={t} />
+      <RedesignRail locale={locale} />
       <FlowerFloat sendLabel={t.flowers.send} receivedLabel={t.flowers.received} />
     </>
   );
