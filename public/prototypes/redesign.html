@@ -202,9 +202,9 @@ function tick(){
   const [txt,cls]=LINES[li];
   ci++;
   const part=txt.slice(0,ci);
-  const html=cls==='nm'?`<span class="nm">${part}</span>`:cls==='hl'?`<span class="hl">${part}</span>`:part;
+  const html=cls==="link"?`<a href="https://x.com/0CryptoZero" target="_blank" rel="noopener" class="nm" style="text-decoration:underline;text-decoration-color:var(--coral);text-underline-offset:6px">${part}</a>`:cls==="nm"?`<span class="nm">${part}</span>`:cls==="hl"?`<span class="hl">${part}</span>`:part;
   box.innerHTML=out+html+'<span class="caret"></span>';
-  if(ci>=txt.length){out+=html+"<br>";li++;ci=0;setTimeout(tick,txt.length>12?420:260);}
+  if(ci>=txt.length){out+=html+(cls==="link"?`<span style="font-size:11px;opacity:.6"> ↗</span>`:"")+"<br>";li++;ci=0;setTimeout(tick,txt.length>12?420:260);}
   else setTimeout(tick,45+Math.random()*55);
 }
 tick();
