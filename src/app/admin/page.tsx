@@ -8,7 +8,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Container from "@/components/Container";
-import LogoutButton from "@/components/admin/LogoutButton";
 import DeleteButton from "@/components/admin/DeleteButton";
 import { requireAdmin } from "@/lib/adminGuard";
 import { listRawPosts, getAdapterName, POSTS_DIR, POSTS_EN_DIR } from "@/lib/storage";
@@ -53,39 +52,12 @@ export default async function AdminPage() {
             存储模式：{adapterName === "github" ? "GitHub（提交后自动部署生效）" : "本地文件（开发模式，刷新页面即可见）"}
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
-          >
-            ← 返回站点
-          </Link>
-          <Link
-            href="/admin/watchlist"
-            className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
-          >
-            关注列表
-          </Link>
-          <Link
-            href="/admin/journal"
-            className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
-          >
-            研究日志
-          </Link>
-          <Link
-            href="/admin/links"
-            className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
-          >
-            链接收藏
-          </Link>
-          <Link
-            href="/admin/new"
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-deep"
-          >
-            + 新建文章
-          </Link>
-          <LogoutButton />
-        </div>
+        <Link
+          href="/"
+          className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
+        >
+          ← 返回站点
+        </Link>
       </div>
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-line bg-card">

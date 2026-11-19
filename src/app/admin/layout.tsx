@@ -1,9 +1,11 @@
 /**
  * admin/layout.tsx —— 后台的公共布局
- * 提供独立的标题模板和无障碍主内容区（公开站点的 Header/Footer 不进入后台）。
+ * AdminShell 提供全后台统一顶栏（文章/投研/链接收藏 + 新建文章 + 退出），
+ * 登录页由 AdminShell 自行降级为无导航。公开站点的 Header/Footer 不进后台。
  */
 
 import type { Metadata } from "next";
+import AdminShell from "@/components/admin/AdminShell";
 
 export const metadata: Metadata = {
   title: {
@@ -17,5 +19,5 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <main id="main-content">{children}</main>;
+  return <AdminShell>{children}</AdminShell>;
 }

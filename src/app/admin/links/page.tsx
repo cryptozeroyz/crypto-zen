@@ -3,7 +3,6 @@
  */
 
 import type { Metadata } from "next";
-import Link from "next/link";
 import Container from "@/components/Container";
 import LinksManager from "@/components/admin/LinksManager";
 import { requireAdmin } from "@/lib/adminGuard";
@@ -37,12 +36,6 @@ export default async function AdminLinksPage() {
             收集好用的工具、文章、网站，带一句话推荐，前台首页「推荐」区块展示。
           </p>
         </div>
-        <Link
-          href="/admin"
-          className="rounded-lg border border-line px-3.5 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading"
-        >
-          ← 返回文章管理
-        </Link>
       </div>
 
       <div className="mt-8">
