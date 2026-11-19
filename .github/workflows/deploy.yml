@@ -28,6 +28,13 @@ jobs:
           npm run build
           rm -rf .next/standalone/.next/cache
           cp -r .next/static .next/standalone/.next/static
+          # 预置封面/OG 图中文字体（VPS 访问 Google Fonts 不稳，避免运行时 500）
+          mkdir -p .next/standalone/fonts
+          for w in 400 700; do
+            css=$(curl -sfL -A "Mozilla/4.0" "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@$w&display=swap")
+            url=$(echo "$css" | grep -oP "url\(\Khttps:[^)]+?\.ttf" | head -1)
+            curl -sfL "$url" -o ".next/standalone/fonts/NotoSansSC-$w.ttf" || echo "字体 $w 下载失败（运行时将回退在线拉取）"
+          done
 
       - name: 同步到服务器（保留服务器上的 .env 与鲜花计数；--delete 清掉已删除的文章等残留）
         run: |

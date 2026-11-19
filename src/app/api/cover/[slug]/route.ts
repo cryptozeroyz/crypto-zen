@@ -48,7 +48,8 @@ export async function GET(
             : "public, immutable, no-transform, max-age=31536000",
       },
     });
-  } catch {
+  } catch (e) {
+    console.error("[cover] 生成失败:", e);
     return new Response("Cover generation failed", { status: 500 });
   }
 }
