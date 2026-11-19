@@ -129,13 +129,13 @@ export default async function HomePage({
         </Container>
       </section>
 
-      {/* ============ 好物精选（全集见 /resources） ============ */}
+      {/* ============ 好物精选（首页 3+1，全集见 /resources） ============ */}
       {links.length > 0 && (
         <section id="links" className="scroll-mt-24">
           <Container className="py-7 sm:py-8">
             <div className="home-sh"><span className="no">03 / </span>Resources</div>
             <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {links.slice(0, 4).map((l) => (
+              {links.slice(0, 3).map((l) => (
                 <Link
                   key={l.url}
                   href={`/${locale}/resources`}
@@ -154,6 +154,26 @@ export default async function HomePage({
                   </div>
                 </Link>
               ))}
+
+              {/* 第 4 张：查看全部（Track Record 3+1 同款入口卡） */}
+              <Link
+                href={`/${locale}/resources`}
+                className="group flex min-h-[180px] flex-col rounded-[16px_20px_14px_22px] border-[1.5px] border-dashed border-[#5c2a52] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]"
+              >
+                <div className="font-serif text-[17px] font-bold text-[#5c2a52]">
+                  {locale === "zh" ? "好物推荐" : "Resources"}
+                </div>
+                <p className="mt-2 text-[13px] leading-relaxed text-muted">
+                  {locale === "zh"
+                    ? "读过的书、用过的工具、踩过的坑。"
+                    : "Books, tools and hard-earned lessons."}
+                </p>
+                <div className="mt-auto w-full border-t border-dashed border-[#2a2230]/25 pt-3">
+                  <span className="inline-block font-mono text-[12px] text-[#ff5b3a] transition-transform duration-200 group-hover:translate-x-1">
+                    {locale === "zh" ? "查看全部" : "View all"} →
+                  </span>
+                </div>
+              </Link>
             </div>
           </Container>
         </section>
@@ -161,13 +181,7 @@ export default async function HomePage({
 
       {/* ============ 关于我 ============ */}
 
-      <section className="mx-auto w-full max-w-[860px] px-6 pb-4">
-        <a href={`/${locale}/alpha`} className="block rounded-[14px_18px_12px_20px] border-[1.5px] border-dashed border-[#5c2a52] bg-white px-6 py-8 text-center transition-all hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]">
-          <div className="font-serif text-[22px] font-bold text-[#5c2a52]">🎐 Daily Alpha · 每日好运签</div>
-          <div className="mt-1 font-mono text-[12px] text-[#ff5b3a]">一天一签 · 抽取今日份 Crypto 好运 →</div>
-        </a>
-      </section>
-      <section className="home-philo"><div className="mx-auto max-w-[860px] px-6 py-20 text-center"><div className="font-serif text-[clamp(30px,5vw,48px)] font-bold leading-[1.3] text-[#5c2a52]">Stay curious.<br/>Stay skeptical.</div><p className="mt-5 text-[13px] tracking-[.1em] text-[#2a2230]/70">保持好奇 · 保持怀疑 · An Operator. A Trader. An Observer.</p><p className="mx-auto mt-10 max-w-[460px] rotate-[-1deg] rounded-[16px_4px_16px_4px] border-[1.5px] border-dashed border-[#ff5b3a] px-5 py-4 font-serif text-[13px] italic text-[#2a2230]">“如果你不能笑着面对这个市场，你迟早会被它气死。”</p></div></section>
+      <section className="home-philo"><div className="mx-auto max-w-[860px] px-6 py-20 text-center"><div className="font-serif text-[clamp(30px,5vw,48px)] font-bold leading-[1.3] text-[#5c2a52]">Stay curious.<br/>Stay skeptical.</div><p className="mt-5 text-[13px] tracking-[.1em] text-[#2a2230]/70">保持好奇 · 保持怀疑 · An Operator. A Trader. An Observer.</p></div></section>
     </div>
   );
 }

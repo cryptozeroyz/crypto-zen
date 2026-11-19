@@ -22,6 +22,7 @@ const ITEMS = [
   { zh: "文章", en: "Writing", href: "/writing" },
   { zh: "方程式新闻", en: "News", href: "/news" },
   { zh: "推荐", en: "Resources", href: "/resources" },
+  { zh: "好运签", en: "Alpha", href: "/alpha" },
   { zh: "关于", en: "About", href: "/about" },
 ] as const;
 

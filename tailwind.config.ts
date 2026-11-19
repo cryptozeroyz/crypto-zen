@@ -21,11 +21,11 @@ const config: Config = {
         muted: "var(--muted)",
         line: "var(--line)",
         codebg: "var(--code-bg)",
-        /** 品牌强调色（蓝色系，固定） */
+        /** 品牌强调色（手绘风珊瑚橙，与首页一致） */
         accent: {
-          DEFAULT: "#2563eb",
-          deep: "#1d4ed8",
-          mint: "#38bdf8",
+          DEFAULT: "#ff5b3a",
+          deep: "#d94828",
+          mint: "#5c2a52",
         },
       },
       fontFamily: {

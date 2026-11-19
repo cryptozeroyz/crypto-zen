@@ -16,9 +16,9 @@ type Tab = "all" | LinkType;
 const LINK_TYPE_ORDER: LinkType[] = ["book", "goods", "tool", "file"];
 
 const BOOK_GRADIENTS: Array<[string, string]> = [
-  ["#2563eb", "#1e3a8a"],
-  ["#4f66d2", "#26327e"],
-  ["#6d5bd0", "#3d2f86"],
+  ["#5c2a52", "#3a1a35"],
+  ["#ff5b3a", "#d94828"],
+  ["#2a2230", "#171219"],
 ];
 
 function bookGradient(index: number): [string, string] {
@@ -265,7 +265,7 @@ export default function ResourcesClient({
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 rounded-full border border-accent/35 px-3.5 py-1.5 text-xs font-medium text-accent transition-all duration-200 hover:border-accent/60 hover:shadow-[0_0_14px_rgba(37,99,235,0.2)] dark:text-accent-mint"
+                      className="inline-flex items-center gap-1 rounded-full border border-accent/35 px-3.5 py-1.5 text-xs font-medium text-accent transition-all duration-200 hover:border-accent/60 hover:shadow-[0_0_14px_rgba(255,91,58,0.2)] dark:text-accent-mint"
                     >
                       {item.type === "book"
                         ? t.resources.buy

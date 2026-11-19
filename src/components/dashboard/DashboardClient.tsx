@@ -680,7 +680,9 @@ export function ResearchDrawer({
   return (
     <>
       <div className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-[2px]" onClick={onClose} aria-hidden="true" />
-      <aside className="fixed right-0 top-0 bottom-0 z-[90] flex w-full max-w-[460px] transform flex-col border-l border-line bg-paper shadow-2xl" role="dialog" aria-modal="true">
+      {/* 居中弹窗：轻微弹入，内容区独立滚动 */}
+      <div className="pointer-events-none fixed inset-0 z-[90] flex items-center justify-center p-4">
+        <aside className="modal-pop pointer-events-auto flex max-h-[85vh] w-full max-w-[640px] flex-col overflow-hidden rounded-2xl border border-line bg-paper shadow-2xl" role="dialog" aria-modal="true">
         <div className="flex items-center gap-3.5 border-b border-line px-5 py-4">
           <CoinAvatar imageUrl={coin.data?.imageUrl} symbol={coin.data?.symbol ?? coin.address.slice(0, 4)} hue={avatarHue(coin.address)} size={48} />
           <div className="min-w-0">
@@ -840,7 +842,8 @@ export function ResearchDrawer({
             </div>
           </section>
         </div>
-      </aside>
+        </aside>
+      </div>
     </>
   );
 }

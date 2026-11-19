@@ -12,8 +12,8 @@ const themeInitScript = `(function(){try{var t=localStorage.getItem("theme");var
 /* 移动端浏览器主题色：亮暗分别适配 */
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f8fa" },
-    { media: "(prefers-color-scheme: dark)", color: "#141719" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f3ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#181419" },
   ],
 };
 

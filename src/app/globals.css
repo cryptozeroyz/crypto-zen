@@ -7,23 +7,23 @@
    ============================================================ */
 
 :root {
-  --bg: #f5f8fc;
+  --bg: #f6f3ee;
   --card: #ffffff;
-  --text: #3a4a63;
-  --heading: #16233a;
-  --muted: #7186a1;
-  --line: rgba(30, 60, 120, 0.12);
-  --code-bg: #eaf1f9;
+  --text: #453c4e;
+  --heading: #2a2230;
+  --muted: #857a8a;
+  --line: rgba(42, 34, 48, 0.16);
+  --code-bg: #efe9e1;
 }
 
 .dark {
-  --bg: #0a1424;
-  --card: #101d33;
-  --text: #c9d6e8;
-  --heading: #eef4ff;
-  --muted: #8296b0;
-  --line: rgba(148, 184, 255, 0.14);
-  --code-bg: #14233d;
+  --bg: #181419;
+  --card: #221c26;
+  --text: #e8e2ea;
+  --heading: #f2ecf4;
+  --muted: #a89fb0;
+  --line: rgba(232, 226, 234, 0.14);
+  --code-bg: #221c26;
 }
 
 /* ============================================================
@@ -41,16 +41,16 @@
   }
 
   ::selection {
-    background: rgba(37, 99, 235, 0.16);
+    background: rgba(255, 91, 58, 0.18);
   }
 
   .dark ::selection {
-    background: rgba(56, 189, 248, 0.25);
+    background: rgba(255, 91, 58, 0.28);
   }
 
-  /* 焦点态可见：品牌蓝描边 */
+  /* 焦点态可见：珊瑚橙描边 */
   :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 2px solid #ff5b3a;
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -414,7 +414,7 @@ body {
 .tb-word{font-family:var(--font-serif,"Iowan Old Style",Palatino,Georgia,"Songti SC",serif);font-weight:700;font-size:17px;color:#5c2a52;letter-spacing:.02em}
 .dark .tb-word{color:#e8b7d9}
 /* 桌面导航：悬停珊瑚橙下划线滑入 */
-.tb-nav{display:none;align-items:center;gap:24px}
+.tb-nav{display:none;align-items:center;gap:20px}
 @media(min-width:820px){.tb-nav{display:flex}}
 .tb-nav a{position:relative;font-size:13px;letter-spacing:.06em;color:rgba(42,34,48,.7);text-decoration:none;padding:4px 0;transition:color .2s}
 .dark .tb-nav a{color:#e8e2eab3}
@@ -470,3 +470,7 @@ body {
 /* 看板入口卡：向上走势装饰线（描线生长动画，仅前几次渲染触发即可） */
 @keyframes dashdraw{to{stroke-dashoffset:0}}
 .dash-trend .line{stroke-dasharray:480;stroke-dashoffset:480;animation:dashdraw 2s .4s cubic-bezier(.4,0,.2,1) forwards}
+
+/* 代币详情：居中弹窗弹入动画 */
+@keyframes modalpop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.modal-pop{animation:modalpop .32s cubic-bezier(.2,.8,.25,1)}
