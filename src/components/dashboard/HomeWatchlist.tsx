@@ -269,26 +269,40 @@ export default function HomeWatchlist({
               </div>
             )}
 
-            {/* 最新研究日志 */}
-            {log && (
-              <div className="mt-3 border-t border-dashed border-[#2a2230]/25 pt-3">
-                <div className="text-[10px] tracking-wide text-muted">
-                  ✎ 最新日志 · {log.date}
-                </div>
-                <Link
-                  href={`/${locale}/dashboard?coin=${c.address}`}
-                  className="mt-1 block text-[12.5px] leading-relaxed text-[#2a2230]/85 transition-colors hover:text-[#ff5b3a]"
-                >
-                  {log.title ? (
-                    <span className="font-medium">「{log.title}」 </span>
-                  ) : null}
-                  {plainSnippet(log.body)}
-                </Link>
-              </div>
-            )}
+            {/* 最新研究日志（无日志时渲染占位，保持卡片结构统一） */}
+            <div className="mt-3 border-t border-dashed border-[#2a2230]/25 pt-3">
+              {log ? (
+                <>
+                  <div className="text-[10px] tracking-wide text-muted">
+                    ✎ 最新日志 · {log.date}
+                  </div>
+                  <Link
+                    href={`/${locale}/dashboard?coin=${c.address}`}
+                    className="mt-1 block text-[12.5px] leading-relaxed text-[#2a2230]/85 transition-colors hover:text-[#ff5b3a]"
+                  >
+                    {log.title ? (
+                      <span className="font-medium">「{log.title}」 </span>
+                    ) : null}
+                    {plainSnippet(log.body)}
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <div className="text-[10px] tracking-wide text-muted">
+                    ✎ 最新日志 · 暂无
+                  </div>
+                  <p className="mt-1 font-serif text-[12.5px] italic text-muted/80">
+                    还没有记录，第一条观察会出现在这里。
+                  </p>
+                </>
+              )}
+            </div>
 
-            {/* 底部操作 */}
-            <div className="mt-4 flex items-center justify-between gap-2 border-t border-dashed border-[#2a2230]/25 pt-3">
+            {/* 弹性占位：把底部操作钉在卡片底部，同时保证与上方内容最小间距 */}
+            <div className="min-h-4 flex-1" aria-hidden="true" />
+
+            {/* 底部操作（与同行卡片底部对齐） */}
+            <div className="flex items-center justify-between gap-2 border-t border-dashed border-[#2a2230]/25 pt-3">
               <CopyCa address={c.address} />
               {c.data?.url && (
                 <a
