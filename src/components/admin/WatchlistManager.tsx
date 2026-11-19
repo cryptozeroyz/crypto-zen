@@ -292,11 +292,12 @@ export default function WatchlistManager({
         </div>
         <div>
           <label className="mb-1.5 block text-sm text-muted">当时的论点（会永久保留在时间线第一格）</label>
-          <input
+          <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="为什么关注它？"
-            className="w-full rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
+            rows={4}
+            className="w-full resize-y rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm leading-relaxed text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
           />
         </div>
         <div className="sm:col-span-2">
@@ -400,9 +401,9 @@ export default function WatchlistManager({
                 key={label}
                 value={value}
                 onChange={(e) => setter(e.target.value)}
-                rows={2}
+                rows={3}
                 placeholder={ph}
-                className="w-full resize-y rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
+                className="w-full resize-y rounded-lg border border-line bg-card px-3.5 py-2.5 text-sm leading-relaxed text-heading outline-none transition-colors placeholder:text-muted focus:border-accent"
               />
             ))}
           </div>

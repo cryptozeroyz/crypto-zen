@@ -2,15 +2,17 @@
 
 /**
  * HomeWatchlist.tsx —— 首页「Track Record」区块
- * 一排三张：最新 2 个关注币的大卡片（行情/市值/24H 走势/最新研究日志/复制 CA）
- * + 第 3 张「查看完整看板」入口卡。大卡可点标题进看板详情，K线 ↗ 跳 DexScreener。
+ * 一排三张：最新 2 个关注币的大卡片（行情/市值/24H 走势/关注理由/最新研究日志/复制 CA）
+ * + 第 3 张「查看完整看板」入口卡。点击卡片任意处弹出该币的详情看板（居中弹窗），
+ * 卡片内的链接/按钮（标题、K线、复制 CA）保持原有行为。
  */
 
 import Link from "next/link";
 import { useState } from "react";
 import CoinAvatar from "@/components/CoinAvatar";
+import { ResearchDrawer, type DashboardCoin } from "@/components/dashboard/DashboardClient";
 import { avatarHue, formatMcap, formatPrice } from "@/lib/coin-format";
-import type { WatchCoinWithData } from "@/lib/watchlist";
+import type { WatchCoinWithData, WhyTag } from "@/lib/watchlist";
 import type { Dictionary, Locale } from "@/lib/i18n";
 
 const fmtPct = (v: number) => `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`;
@@ -159,6 +161,38 @@ export default function HomeWatchlist({
   /** 24H 收盘价序列（GeckoTerminal），时间正序 */
   sparks?: Record<string, number[]>;
 }) {
+  /* 点击卡片 → 弹出该币的详情看板（与 /dashboard 同款居中弹窗） */
+  const [cache, setCache] = useState<{ coins: DashboardCoin[]; tags: WhyTag[] } | null>(null);
+  const [activeAddr, setActiveAddr] = useState<string | null>(null);
+
+  const openResearch = async (address: string) => {
+    if (!cache) {
+      try {
+        const res = await fetch(`/api/market?type=watchlist&locale=${locale}`, { cache: "no-store" });
+        const json = await res.json();
+        setCache({ coins: json.coins ?? [], tags: json.tags ?? [] });
+      } catch {
+        window.location.href = `/${locale}/dashboard?coin=${address}`;
+        return;
+      }
+    }
+    setActiveAddr(address);
+  };
+
+  /** 卡片整卡可点；内部链接/按钮（a、button）保持原行为 */
+  const onCardClick = (e: React.MouseEvent, address: string) => {
+    if ((e.target as HTMLElement).closest("a,button")) return;
+    void openResearch(address);
+  };
+  const onCardKey = (e: React.KeyboardEvent, address: string) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    if ((e.target as HTMLElement).closest("a,button")) return;
+    e.preventDefault();
+    void openResearch(address);
+  };
+
+  const activeCoin = cache?.coins.find((c) => c.address === activeAddr) ?? null;
+
   return (
     <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
       {coins.map((c) => {
@@ -174,7 +208,9 @@ export default function HomeWatchlist({
         return (
           <article
             key={c.address}
-            className="group relative flex flex-col rounded-[16px_20px_14px_22px] border-[1.5px] border-dashed border-[#2a2230] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]"
+            onClick={(e) => onCardClick(e, c.address)}
+            onKeyDown={(e) => onCardKey(e, c.address)}
+            className="group relative flex cursor-pointer flex-col rounded-[16px_20px_14px_22px] border-[1.5px] border-dashed border-[#2a2230] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]"
           >
             {/* 动态角标 */}
             {act && act.newCount > 0 && (
@@ -341,6 +377,17 @@ export default function HomeWatchlist({
           </span>
         </div>
       </Link>
+
+      {/* 点击卡片弹出的币详情看板（与 /dashboard 同款） */}
+      {activeCoin && (
+        <ResearchDrawer
+          coin={activeCoin}
+          locale={locale}
+          d={t.dashboard}
+          tags={cache?.tags ?? []}
+          onClose={() => setActiveAddr(null)}
+        />
+      )}
     </div>
   );
 }
