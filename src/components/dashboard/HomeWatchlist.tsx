@@ -74,7 +74,7 @@ export default function HomeWatchlist({
           <Link
             key={c.address}
             href={`/${locale}/dashboard?coin=${c.address}`}
-            className="group relative rounded-2xl border border-line bg-card p-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-lg"
+            className="group relative rounded-[14px_18px_12px_20px] border-[1.5px] border-dashed border-[#2a2230] bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[4px_6px_0_rgba(92,42,82,.12)] hover:rotate-0"
             onClick={(e) => void openResearch(e, c.address)}
           >
             {act && act.newCount > 0 && (

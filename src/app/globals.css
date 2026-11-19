@@ -425,3 +425,6 @@ body {
 .rail-mask{position:fixed;inset:0;z-index:53;background:rgba(30,15,30,.35);opacity:0;pointer-events:none;transition:opacity .3s}
 .rail-mask.show{opacity:1;pointer-events:auto}
 @media(max-width:640px){.rail{width:56px}.rail-menu{right:56px;width:calc(100vw - 56px)}.rail .soc{gap:12px}}
+
+/* 改版第三批：首页奶油纸底 */
+.home-paper{background:#f6f3ee}
