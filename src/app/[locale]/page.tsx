@@ -1,22 +1,15 @@
 /**
- * [locale]/page.tsx —— 首页（单页架构）
- * Hero（+实时行情/最近在听）→ 关注列表 → 文章 → 继续阅读 → 好物精选
- * → 关于我 → 找到我。
+ * [locale]/page.tsx —— 首页（sabanna 手绘风单页）
+ * 打字机 Hero → 方程式跑马灯 → 01/Track Record 关注卡 → 02/Writing 文章
+ * → 03/Resources 推荐 → 好运签 CTA → 理念区。
  */
 
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/Container";
-import MemeHeroArt from "@/components/MemeHeroArt";
-import SectionHead from "@/components/SectionHead";
 import NewsMarquee from "@/components/NewsMarquee";
-import NewsList from "@/components/NewsList";
-import SocialLinks from "@/components/SocialLinks";
 import HomeWatchlist from "@/components/dashboard/HomeWatchlist";
 import ArticlesSection from "@/components/ArticlesSection";
-import RandomPostButton from "@/components/RandomPostButton";
-import NowPlaying from "@/components/NowPlaying";
-import PriceTicker from "@/components/PriceTicker";
 import TypewriterHero from "@/components/TypewriterHero";
 import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
