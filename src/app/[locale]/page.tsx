@@ -18,6 +18,7 @@ import ContinueReading from "@/components/ContinueReading";
 import RandomPostButton from "@/components/RandomPostButton";
 import NowPlaying from "@/components/NowPlaying";
 import PriceTicker from "@/components/PriceTicker";
+import TypewriterHero from "@/components/TypewriterHero";
 import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
@@ -74,84 +75,11 @@ export default async function HomePage({
 
   return (
     <>
-      {/* ============ Hero ============ */}
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="bg-dots absolute inset-0 opacity-70 [mask-image:radial-gradient(75%_80%_at_75%_35%,black,transparent)]"
-        />
-        <Container className="relative grid gap-10 py-10 sm:py-12 lg:grid-cols-[1fr_320px] lg:items-center">
-          <div>
-            <h1 className="text-4xl font-bold leading-[1.18] tracking-tight sm:text-5xl">
-              <span className="block text-heading">{t.home.hero.line1}</span>
-              <span className="relative mt-1 inline-block text-accent dark:text-accent-mint">
-                {t.home.hero.line2}
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 220 12"
-                  preserveAspectRatio="none"
-                  className="absolute -bottom-2 left-0 h-2.5 w-44"
-                >
-                  <path
-                    d="M3 9 C 50 3, 140 12, 217 6"
-                    stroke="#7dd3fc"
-                    strokeWidth="5"
-                    fill="none"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-            </h1>
-
-            <div className="mt-7 space-y-1.5 text-[15px] leading-relaxed text-muted">
-              {t.home.hero.sub.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </div>
-
-            {/* 最近在听 / 现在在做什么（实时） */}
-            <NowPlaying
-              lastfm={siteConfig.lastfm}
-              labels={{
-                listening: t.nowPlaying.listening,
-                recent: t.nowPlaying.recent,
-                now: t.nowPlaying.now,
-              }}
-            />
-
-            {/* 实时行情胶囊芯片（BTC/ETH/SOL，导航改版后从顶栏迁至 Hero） */}
-            <div className="mt-5">
-              <PriceTicker ariaLabel={t.ticker.aria} variant="chips" />
-            </div>
-
-            <div className="mt-7 flex flex-wrap items-center gap-6">
-              <a
-                href="#articles"
-                className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition-all duration-200 hover:bg-accent-deep hover:shadow-lg hover:shadow-accent/25"
-              >
-                {t.home.primaryCta}
-                <span aria-hidden="true">↗</span>
-              </a>
-              <a
-                href="#watchlist"
-                className="text-sm font-medium text-heading transition-colors duration-200 hover:text-accent dark:hover:text-accent-mint"
-              >
-                {t.home.secondaryCta} <span aria-hidden="true">→</span>
-              </a>
-            </div>
-          </div>
-
-          {/* Meme 币漂浮元素（桌面端，官方 logo） */}
-          <div className="relative hidden h-64 lg:block">
-            <MemeHeroArt logos={HERO_LOGOS} className="h-full w-full max-w-[320px]" />
-          </div>
-        </Container>
-
+      <TypewriterHero locale={locale} />
         {/* 快讯跑马灯（点击进入 /news） */}
         <Container>
           <NewsMarquee items={news} href={`/${locale}/news`} />
         </Container>
-      </section>
 
       {/* ============ 关注列表（精简 Top4，完整看板见 /dashboard） ============ */}
       {coins.length > 0 && (
