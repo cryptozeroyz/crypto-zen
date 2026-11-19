@@ -7,6 +7,8 @@ dexScreener: "https://dexscreener.com/solana/dchxq4qfppnpedfzlniwvphrvuufgfqedla
 excerpt: "$DCTY 叙事从“预告片名字炒作”升级为“游戏内精确确认的正主”，市值因此在确认后快速抬升并维持在千万级别。"
 tags:
   - "研究报告"
+tokens:
+  - "DCTY"
 draft: false
 ---
 
