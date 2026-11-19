@@ -17,11 +17,10 @@ import { getDictionary } from "@/lib/i18n";
 
 const ITEMS = [
   { zh: "首页", en: "Home", href: "" },
-  { zh: "投研成绩单", en: "Track Record", href: "/dashboard" },
+  { zh: "投研日志", en: "Journal", href: "/dashboard" },
   { zh: "文章", en: "Writing", href: "/#articles" },
   { zh: "方程式新闻", en: "News", href: "/news" },
-  { zh: "好运签", en: "Daily Alpha", href: "/alpha" },
-  { zh: "收藏", en: "Saved", href: "/bookmarks" },
+  { zh: "推荐", en: "Resources", href: "/resources" },
   { zh: "关于", en: "About", href: "/about" },
 ] as const;
 

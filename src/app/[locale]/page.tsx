@@ -151,6 +151,12 @@ export default async function HomePage({
           </div>
         </Container>
       </section>
+      <section className="mx-auto w-full max-w-[860px] px-6 pb-4">
+        <a href={`/${locale}/alpha`} className="block rounded-[14px_18px_12px_20px] border-[1.5px] border-dashed border-[#5c2a52] bg-white px-6 py-8 text-center transition-all hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]">
+          <div className="font-serif text-[22px] font-bold text-[#5c2a52]">🎐 Daily Alpha · 每日好运签</div>
+          <div className="mt-1 font-mono text-[12px] text-[#ff5b3a]">一天一签 · 抽取今日份 Crypto 好运 →</div>
+        </a>
+      </section>
       <section className="home-philo"><div className="mx-auto max-w-[860px] px-6 py-20 text-center"><div className="font-serif text-[clamp(30px,5vw,48px)] font-bold leading-[1.3] text-[#5c2a52]">Stay curious.<br/>Stay skeptical.</div><p className="mt-5 text-[13px] tracking-[.1em] text-[#2a2230]/70">保持好奇 · 保持怀疑 · An Operator. A Trader. An Observer.</p><p className="mx-auto mt-10 max-w-[460px] rotate-[-1deg] rounded-[16px_4px_16px_4px] border-[1.5px] border-dashed border-[#ff5b3a] px-5 py-4 font-serif text-[13px] italic text-[#2a2230]">“如果你不能笑着面对这个市场，你迟早会被它气死。”</p></div></section>
     </div>
   );
