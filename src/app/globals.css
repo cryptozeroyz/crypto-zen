@@ -428,3 +428,14 @@ body {
 
 /* 改版第三批：首页奶油纸底 */
 .home-paper{background:#f6f3ee}
+.dark .home-paper{background:#181419}
+.dark .tw-hero{background:#181419;border-bottom-color:#f6f3ee22}
+.dark .tw-text{color:#e8e2ea}
+.dark .tw-text .nm{color:#e8b7d9}
+.dark .tw-text a.nm{color:#e8b7d9}
+.dark .rs-strip{background:#181419;border-bottom-color:#f6f3ee22}
+.dark .rs-chip{background:#221c26;border-color:#f6f3ee66;color:#e8e2ea}
+.dark .rs-now{color:#e8b7d9}
+.dark .home-philo{background:#181419}
+.dark .home-philo .font-serif{color:#e8b7d9}
+.dark .home-philo p{color:#e8e2ea99}

@@ -191,6 +191,7 @@ export default async function HomePage({
           </div>
         </Container>
       </section>
+      <section className="home-philo"><div className="mx-auto max-w-[860px] px-6 py-20 text-center"><div className="font-serif text-[clamp(30px,5vw,48px)] font-bold leading-[1.3] text-[#5c2a52]">Stay curious.<br/>Stay skeptical.</div><p className="mt-5 text-[13px] tracking-[.1em] text-[#2a2230]/70">保持好奇 · 保持怀疑 · An Operator. A Trader. An Observer.</p><p className="mx-auto mt-10 max-w-[460px] rotate-[-1deg] rounded-[16px_4px_16px_4px] border-[1.5px] border-dashed border-[#ff5b3a] px-5 py-4 font-serif text-[13px] italic text-[#2a2230]">“如果你不能笑着面对这个市场，你迟早会被它气死。”</p></div></section>
     </div>
   );
 }

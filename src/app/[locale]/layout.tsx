@@ -62,7 +62,6 @@ export default function LocaleLayout({
 
   return (
     <>
-      <Header locale={locale} t={t} />
       <main id="main-content" className="flex-1">
         {children}
       </main>

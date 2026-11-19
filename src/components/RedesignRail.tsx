@@ -12,6 +12,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Locale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/siteConfig";
+import ThemeToggle from "@/components/ThemeToggle";
+import { getDictionary } from "@/lib/i18n";
 
 const ITEMS = [
   { zh: "首页", en: "Home", href: "" },
@@ -57,6 +59,7 @@ export default function RedesignRail({ locale }: { locale: Locale }) {
         <button className="burger" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
           <i />
         </button>
+        <LangToggle locale={locale} />
         <span className="arrow" aria-hidden="true">⇣</span>
         <div className="soc">
           <a href={siteConfig.social.twitter} target="_blank" rel="noopener noreferrer" aria-label="X">
@@ -69,4 +72,24 @@ export default function RedesignRail({ locale }: { locale: Locale }) {
       </aside>
     </>
   );
+}
+
+function LangToggle({ locale }: { locale: Locale }) {
+  const pathname = usePathname();
+  const other = locale === "zh" ? "en" : "zh";
+  const rest = (pathname.startsWith(`/${locale}`) ? pathname.slice(locale.length + 1) : pathname) || "/";
+  const switchPath = `/${other}${rest}`;
+  return (
+    <div className="rail-lang" style={{ display: "flex", flexDirection: "column", gap: 6, margin: "18px 0 0", alignItems: "center" }}>
+      <ThemeToggleMini locale={locale} />
+      <a href={switchPath} onClick={() => { try { document.cookie = `cz_locale=${other};path=/;max-age=31536000`; } catch {} }} className="font-mono text-[11px] font-bold text-white/90 hover:text-white" style={{ letterSpacing: 1 }}>
+        {locale === "zh" ? "EN" : "中"}
+      </a>
+    </div>
+  );
+}
+
+function ThemeToggleMini({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale).theme;
+  return <ThemeToggle labels={t} />;
 }
