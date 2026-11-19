@@ -259,6 +259,16 @@ export default function HomeWatchlist({
               <Sparkline data={spark} up={up24} />
             </div>
 
+            {/* 关注理由（后台维护的 comment，始终展示） */}
+            {c.comment && (
+              <div className="mt-3 border-t border-dashed border-[#2a2230]/25 pt-3">
+                <div className="text-[10px] tracking-wide text-muted">✦ 关注理由</div>
+                <p className="mt-1 line-clamp-3 text-[12.5px] leading-relaxed text-[#2a2230]/85">
+                  {c.comment}
+                </p>
+              </div>
+            )}
+
             {/* 最新研究日志 */}
             {log && (
               <div className="mt-3 border-t border-dashed border-[#2a2230]/25 pt-3">
