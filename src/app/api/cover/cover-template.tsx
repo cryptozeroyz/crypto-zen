@@ -10,11 +10,11 @@ import { loadOgFont, type OgFont } from "@/lib/og-fonts";
 
 export const COVER_SIZE = { width: 1200, height: 675 };
 
-/** 分类 → 渐变配色（蓝色系：研究=品牌蓝，随笔=靛蓝，运营=蓝紫，均低饱和） */
+/** 分类 → 渐变配色（手绘风：研究=深紫，随笔=珊瑚橙，运营=墨色） */
 const GRADIENTS: Record<string, [string, string]> = {
-  research: ["#2563eb", "#1e3a8a"],
-  essay: ["#4f66d2", "#26327e"],
-  ops: ["#6d5bd0", "#3d2f86"],
+  research: ["#5c2a52", "#3a1a35"],
+  essay: ["#ff5b3a", "#d94828"],
+  ops: ["#2a2230", "#171219"],
 };
 
 interface CoverInput {
