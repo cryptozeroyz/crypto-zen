@@ -439,3 +439,7 @@ body {
 .dark .home-philo{background:#181419}
 .dark .home-philo .font-serif{color:#e8b7d9}
 .dark .home-philo p{color:#e8e2ea99}
+
+/* 改版：英文衬线区块标题 */
+.home-sh{font-family:var(--font-serif,"Iowan Old Style",Palatino,Georgia,"Songti SC",serif);font-size:clamp(24px,3.4vw,34px);font-weight:700;color:#5c2a52;margin-bottom:28px;display:flex;align-items:baseline;gap:14px}
+.home-sh .no{font-size:14px;color:#ff5b3a;font-family:var(--font-serif,serif)}

@@ -14,7 +14,6 @@ import NewsList from "@/components/NewsList";
 import SocialLinks from "@/components/SocialLinks";
 import HomeWatchlist from "@/components/dashboard/HomeWatchlist";
 import ArticlesSection from "@/components/ArticlesSection";
-import ContinueReading from "@/components/ContinueReading";
 import RandomPostButton from "@/components/RandomPostButton";
 import NowPlaying from "@/components/NowPlaying";
 import PriceTicker from "@/components/PriceTicker";
@@ -85,7 +84,7 @@ export default async function HomePage({
       {coins.length > 0 && (
         <section id="watchlist" className="scroll-mt-24">
           <Container className="py-7 sm:py-8">
-            <SectionHead title={t.home.sections.watchlist} />
+            <div className="home-sh"><span className="no">01 / </span>Track Record</div>
             <div className="mt-5">
               <HomeWatchlist coins={coins} locale={locale} t={t} activities={activities} />
             </div>
@@ -93,54 +92,17 @@ export default async function HomePage({
         </section>
       )}
 
-      {/* ============ 链上快讯 ============ */}
-      {news.length > 0 && (
-        <section id="news" className="scroll-mt-24">
-          <Container className="py-7 sm:py-8">
-            <SectionHead
-              title={t.news.title}
-              href={`/${locale}/news`}
-              linkText={t.home.viewAll}
-            />
-            <div className="mt-4">
-              <NewsList items={news} locale={locale} t={t} compact />
-            </div>
-          </Container>
-        </section>
-      )}
 
       {/* ============ 文章 ============ */}
       <section id="articles" className="scroll-mt-24">
         <Container className="py-7 sm:py-8">
-          <SectionHead
-            title={t.home.sections.articles}
-            action={
-              <RandomPostButton
-                slugs={posts.map((p) => p.slug)}
-                locale={locale}
-                variant="primary"
-                labels={{
-                  idle: t.articles.random,
-                  drawing: t.articles.randomDrawing,
-                  aria: t.articles.randomAria,
-                }}
-              />
-            }
-          />
+          <div className="home-sh"><span className="no">02 / </span>Writing</div>
           <div className="mt-5">
-            <ArticlesSection posts={posts} locale={locale} t={t} />
+            <ArticlesSection posts={posts.slice(0, 2)} locale={locale} t={t} />
+          <div className="mt-6 flex justify-center gap-4">
+            <a href={`/${locale}/writing`} className="rounded-full border-2 border-dashed border-[#2a2230] bg-white px-6 py-2.5 font-mono text-[13px] text-[#2a2230] transition-all hover:border-solid hover:border-[#ff5b3a] hover:text-[#ff5b3a]">More writings →</a>
           </div>
-        </Container>
-      </section>
-
-      {/* ============ 继续阅读 / 我的收藏（localStorage，客户端） ============ */}
-      <section id="reading" className="scroll-mt-24">
-        <Container className="py-7 sm:py-8">
-          <ContinueReading
-            posts={posts.map((p) => ({ slug: p.slug, title: p.title, cover: p.cover }))}
-            locale={locale}
-            t={t}
-          />
+          </div>
         </Container>
       </section>
 
