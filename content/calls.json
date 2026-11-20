@@ -1,0 +1,532 @@
+[
+ {
+  "call": {
+   "id": "2026-11-20-huss",
+   "chain": "solana",
+   "tokenName": "Huss",
+   "symbol": "Huss",
+   "contractAddress": "CUg7AzWL5p8imZVqqdjEPgRhUsXAkBMW5JxkSJ9fpump",
+   "calledAt": "2026-11-20T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.000439,
+   "mcapAtCall": 418898,
+   "narrative": "tiktok新梗，Huss Huss Huss",
+   "thesis": "tiktok新梗，Huss Huss Huss",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "unknown",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [
+    "tiktok"
+   ],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-20-huss",
+    "at": "2026-11-20T00:00",
+    "type": "note",
+    "content": "现在得到交易量和持币量都不多，相对于其他代币，24h只有500K 只能博弈一下",
+    "priceAt": 0.0004185
+   },
+   {
+    "callId": "2026-11-20-huss",
+    "at": "2026-11-20T00:00",
+    "type": "note",
+    "content": "7月TikTok上出现Huss Valley模因：虚构一个混沌小镇，里面各种怪东西会不停追你，逼你只能“huss”（狂奔逃命）。类似Ohio/Folk Valley那种脑腐风格"
+   }
+  ],
+  "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-19-dcty",
+   "chain": "solana",
+   "tokenName": "DacityCoin",
+   "symbol": "DCTY",
+   "contractAddress": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
+   "calledAt": "2026-11-19T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.01973,
+   "mcapAtCall": 18657924,
+   "narrative": "这是一场典型的“游戏道具 → 社区复刻 → 精确 ticker 确认”叙事闭环。但当前市值已经高度依赖 GTA VI 热度、X 传播和持续关注，高波动、高投机，价格极易受情绪和热度影响。",
+   "thesis": "这是一场典型的“游戏道具 → 社区复刻 → 精确 ticker 确认”叙事闭环。但当前市值已经高度依赖 GTA VI 热度、X 传播和持续关注，高波动、高投机，价格极易受情绪和热度影响。",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "event-driven",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "unknown",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [
+    "dacitycoin"
+   ],
+   "tags": [
+    "event",
+    "news"
+   ],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-19-dcty",
+    "at": "2026-11-19T00:00",
+    "type": "note",
+    "content": "叙事已经从“预告片名字炒作”升级为“游戏内精确确认的正主”，这是市值能够快速抬升并维持在千万美元级别的关键。热度消退后可能出现 “sell the news”。"
+   }
+  ],
+  "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-18-ant",
+   "chain": "solana",
+   "tokenName": "All Natural Tits",
+   "symbol": "ANT",
+   "contractAddress": "EadD2LMp6EbH9PrbXUFWcrZKMhoKVrZN1gpwRhH5pump",
+   "calledAt": "2026-11-18T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.0003627,
+   "mcapAtCall": 352482,
+   "narrative": "纯名字驱动的早期情绪标，没有复杂故事，全靠传播和热度",
+   "thesis": "纯名字驱动的早期情绪标，没有复杂故事，全靠传播和热度",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "event-driven",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "sold",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [
+    "event"
+   ],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-18-ant",
+    "at": "2026-11-18T00:00",
+    "type": "closed",
+    "content": "没有因为 anthropic上市而大幅炒作，短期标的结束关注",
+    "priceAt": 0.0001345,
+    "positionAction": "exit"
+   },
+   {
+    "callId": "2026-11-18-ant",
+    "at": "2026-11-18T00:00",
+    "type": "note",
+    "content": "当前榜一是 Cypsey，持有3.1%的筹码，一般他做榜一的代币都不会太高 这个叙事只是蹭了 anthropic 上市的热度，不应该作为长期持有的标的，短期博弈为主"
+   },
+   {
+    "callId": "2026-11-18-ant",
+    "at": "2026-11-18T00:00",
+    "type": "note",
+    "content": "「26a1 AI 快速研报：ANT」 > ⚠️ 本文由 Grok（X 实时数据）+ DeepSeek 双模型基于公开信息自动生成（2026-11-18），叙事部分来自社区讨论、未经证实；非投资建议，请自行 DYOR。 # $ANT (All Natural Tits) 研报 > 数据快照时间：以提供数据为准｜链：Solana｜平台：PumpSwap ## 1. 项目概述 $ANT 是一个部署在 Solana 上、通过 PumpSwap 发射的 Memecoin，核心叙事直接取自代币名称本身的低俗/戏谑梗（\"All Natural Tits\"），属于典型的\"名称即叙事\"型 pump 类资产。发射背景与具体时间线暂无数据。当前市场定位为极小市值（约 32 万美元）、高换手、短线投机属性极强的高风险微盘 meme，24 小时涨幅 673% 显示处于短期爆发阶段，但缺乏可验证的长期叙事支撑。 ## 2. 叙事与 Meme 来源 - **叙事起源**：直接来源于代币名称的粗俗幽默/身体梗，属于 Solana pump 生态中常见的\"低俗直白命名\"流派，依赖名称的冲击力和传播性而非深层文化符号。是否有具体梗图、事件或人物原型：暂无数据。 - **与当前热门叙事的契合度**：低。该叙事不依附于任何当前主流 meme 赛道（如 AI、政治、动物、名人币等），属于独立自造梗，缺乏外部叙事借力。 - **叙事强度与可持续性**：弱至中等偏低。此类\"名称梗\"币的传播窗口通常极短，靠早期猎奇流量驱动，一旦热度消退缺乏二次叙事接力。可持续性评估为**低**，除非后续出现社区自创内容或 KOL 持续造梗。 ## 3. 社区氛围与情绪分析（重点） - **X 讨论热度**：极低。根据提供的 Grok 实时素材，X 上相关讨论\"极少\"，未形成可观测的讨论声量。 - **多空观点分布**：暂无数据（讨论样本不足，无法统计）。 - **关键 KOL 态度与参与度**：暂无数据，未见可识别 KOL 参与迹象。 - **TG/Discord 氛围**：暂无数据。 - **情绪变化趋势**：暂无数据。仅从价格行为（24H +673%、7D +294%）推断存在短期 FOMO 情绪，但缺乏社区文本层面的证据支撑。 - **代表性高赞讨论**：暂无数据。 **小结**：社区维度是本案最大短板——价格已大幅异动，但社交讨论几乎空白，二者明显背离。这通常意味着上涨由资金/交易行为驱动而非社区共识驱动，需警惕\"有价无市、有价无社区\"的脆弱结构。 ## 4. 链上与市场数据观察 - **持仓集中度与大户行为**：暂无数据（未提供持币分布）。鉴于市值仅约 32 万美元，pump 类代币普遍存在前排地址集中度高的问题，建议自行在链上工具核查。 - **交易活跃度与资金流向**：24H 成交量约 111.6 万美元，相对 32 万市值而言换手率极高（成交量/市值 ≈ 3.5 倍），显示短线博弈激烈、资金快进快出特征明显。净流入方向暂无数据。 - **流动性与发射状态**：流动性约 5.2 万美元，流动性/市值比约 16%，对微盘币属中等水平但绝对金额很小，大额买卖易造成剧烈滑点。发射平台为 PumpSwap，处于 pump 生态内。 - **异常交易或关键地址动向**：暂无数据。 ## 5. 风险与机会 **主要风险点** - 社区真空：价格暴涨但社交讨论极少，缺乏共识支撑，回调风险高。 - 流动性薄：5.2 万美元流动性下，大户出货即可引发踩踏。 - 叙事脆弱：名称梗传播窗口短，无二次叙事接力能力。 - 持仓集中度未知：微盘 pump 币常见前排地址控盘，存在砸盘隐患。 - 低俗命名可能限制部分平台曝光与合规渠道传播。 **潜在催化剂** - 若出现 KOL 或社区自发造梗、 meme 图传播，可能带来第二波流量。 - PumpSwap 生态整体热度外溢。 - 短线动量延续（但不可持续假设）。 **观察重点** - 短期：社交讨论量是否跟随价格放大、前排地址是否减持、流动性是否被抽离。 - 中期：能否形成稳定社区与持续内容产出，否则大概率回归均值。 ## 6. 综合评估 | 维度 | 评分 | 理由 | |---|---|---| | 社区氛围 | **2/10** | X 讨论极少，无 KOL、无 TG/Discord 数据，社区几乎不可观测，与价格异动严重背离 | | 叙事强度 | **3/10** | 名称梗直白但缺乏文化纵深与外部叙事借力，传播可持续性低 | | 风险等级 | **高** | 微盘 + 薄流动性 + 社区真空 + 持仓集中度未知，多重高风险叠加 | **一句话总结**：$ANT 是一个价格短期爆发但社区与叙事几乎空白的 Solana 微盘 pump 币，投机属性极强、共识基础薄弱，属于典型的高风险短线标的。 --- 以上内容仅供参考，不构成任何投资建议，请自行 DYOR。"
+   }
+  ],
+  "outcome": {
+   "callId": "2026-11-18-ant",
+   "closedAt": "2026-11-18T00:00",
+   "verdict": "wrong",
+   "priceAtClose": 0.0001345,
+   "mcapAtClose": 130711,
+   "maxMcapAfterCall": 261783,
+   "minMcapAfterCall": 15668,
+   "returnAtClose": -62.92,
+   "maxDrawdown": 94.01,
+   "invalidationTriggered": false,
+   "lessons": "历史迁移记录，未填写复盘。",
+   "priceSource": "auto"
+  }
+ },
+ {
+  "call": {
+   "id": "2026-11-17-mori",
+   "chain": "solana",
+   "tokenName": "Mori Finance",
+   "symbol": "MORI",
+   "contractAddress": "MoR1whCWjcLiUqAan4GHLRcn8wK4Jktk2DyDryNmeta",
+   "calledAt": "2026-11-17T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.06983,
+   "mcapAtCall": 1801860,
+   "narrative": "Mori Finance 是 Solana 上首个备兑看涨期权协议，创始人 Pavan Katepalli ，前 Consensys 架构师",
+   "thesis": "Mori Finance 是 Solana 上首个备兑看涨期权协议，创始人 Pavan Katepalli ，前 Consensys 架构师",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "unknown",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [
+    "morifinance"
+   ],
+   "tags": [
+    "thesis",
+    "utility_tokens"
+   ],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-17-mori",
+    "at": "2026-11-18T00:00",
+    "type": "note",
+    "content": "开启第一次建仓尝试",
+    "priceAt": 0.04642
+   },
+   {
+    "callId": "2026-11-17-mori",
+    "at": "2026-11-18T00:00",
+    "type": "note",
+    "content": "「研究日志示例：mori finance 观察启动」 看到 mori 的 TVL 三天翻倍，先建档观察。待验证：①收入是否真实流向持有人 ②锁仓曲线。周末拉数据写正式研报。"
+   }
+  ],
+  "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-17-char",
+   "chain": "solana",
+   "tokenName": "Onchain Chars",
+   "symbol": "CHAR",
+   "contractAddress": "9k2nqjUrSh9p2ZBnWxNE3QRWYiLocrWZfoDm3Vdxpump",
+   "calledAt": "2026-11-17T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.0002531,
+   "mcapAtCall": 248774,
+   "narrative": "持币即玩的gamefi叙事，CHAR铸1个英雄NFT，组队打怪掉souls，souls直接兑换奖池里的 CHAR。风险点就是dev发过很多代币成功率低，gamefi成功率低",
+   "thesis": "持币即玩的gamefi叙事，CHAR铸1个英雄NFT，组队打怪掉souls，souls直接兑换奖池里的 CHAR。风险点就是dev发过很多代币成功率低，gamefi成功率低",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "sold",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-17-char",
+    "at": "2026-11-18T00:00",
+    "type": "closed",
+    "content": "取消关注，并没被炒作起来",
+    "priceAt": 0.00008094,
+    "positionAction": "exit"
+   }
+  ],
+  "outcome": {
+   "callId": "2026-11-17-char",
+   "closedAt": "2026-11-18T00:00",
+   "verdict": "wrong",
+   "priceAtClose": 0.00008094,
+   "mcapAtClose": 79557,
+   "maxMcapAfterCall": 115938,
+   "minMcapAfterCall": 27683,
+   "returnAtClose": -68.02,
+   "maxDrawdown": 76.12,
+   "invalidationTriggered": false,
+   "lessons": "历史迁移记录，未填写复盘。",
+   "priceSource": "auto"
+  }
+ },
+ {
+  "call": {
+   "id": "2026-11-13-3",
+   "chain": "solana",
+   "tokenName": ":3",
+   "symbol": ":3",
+   "contractAddress": "FSkyjfqB26u6c2GSgpACrjbxp9yQAR8rutxprVNppump",
+   "calledAt": "2026-11-13T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.0003679,
+   "mcapAtCall": 351078,
+   "narrative": "mihao 是否能带来cat 季不好说，但是 :3 的形象比较被大家所熟知，且在受到了一些从目前和巨鲸的支持，小仓位试探",
+   "thesis": "mihao 是否能带来cat 季不好说，但是 :3 的形象比较被大家所熟知，且在受到了一些从目前和巨鲸的支持，小仓位试探",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "meme-culture",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "sold",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [
+    "animals"
+   ],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-13-3",
+    "at": "2026-11-18T00:00",
+    "type": "closed",
+    "content": "完成清仓，原因是当前市场比较弱，:3 的ticker 传播性上弱了一些，虽然形象上人尽皆知。",
+    "priceAt": 0.001175,
+    "positionAction": "exit"
+   },
+   {
+    "callId": "2026-11-13-3",
+    "at": "2026-11-18T00:00",
+    "type": "closed",
+    "content": "已经获利了结",
+    "priceAt": 0.000743,
+    "positionAction": "exit"
+   }
+  ],
+  "outcome": {
+   "callId": "2026-11-13-3",
+   "closedAt": "2026-11-18T00:00",
+   "verdict": "correct",
+   "priceAtClose": 0.001175,
+   "mcapAtClose": 1121274,
+   "maxMcapAfterCall": 699728,
+   "minMcapAfterCall": 2105,
+   "returnAtClose": 219.38,
+   "maxDrawdown": 99.7,
+   "invalidationTriggered": false,
+   "lessons": "历史迁移记录，未填写复盘。",
+   "priceSource": "auto"
+  }
+ },
+ {
+  "call": {
+   "id": "2026-11-13-jacket",
+   "chain": "bsc",
+   "tokenName": "Just a jacket",
+   "symbol": "Jacket",
+   "contractAddress": "0xb82535e74b03ffe4910efea1c759b6bbbf0a7777",
+   "calledAt": "2026-11-13T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.0007656,
+   "mcapAtCall": 765617,
+   "narrative": "何一推文，我穿皮衣，我不同意，引爆 Jacket，叠加黄仁勋热度，短时从70k上涨至2M",
+   "thesis": "何一推文，我穿皮衣，我不同意，引爆 Jacket，叠加黄仁勋热度，短时从70k上涨至2M",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "sold",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-13-jacket",
+    "at": "2026-11-17T00:00",
+    "type": "closed",
+    "content": "主要又何一推文驱动，而非黄仁勋驱动上涨，动力已经不足，没有把叙事与黄结合到一起，不看好后续",
+    "priceAt": 0.0007385,
+    "positionAction": "exit"
+   }
+  ],
+  "outcome": {
+   "callId": "2026-11-13-jacket",
+   "closedAt": "2026-11-17T00:00",
+   "verdict": "partly",
+   "priceAtClose": 0.0007385,
+   "mcapAtClose": 738516,
+   "maxMcapAfterCall": 240651222908,
+   "minMcapAfterCall": 142062167329,
+   "returnAtClose": -3.54,
+   "maxDrawdown": 40.97,
+   "invalidationTriggered": false,
+   "lessons": "历史迁移记录，未填写复盘。",
+   "priceSource": "auto"
+  }
+ },
+ {
+  "call": {
+   "id": "2026-11-13-nio",
+   "chain": "solana",
+   "tokenName": "Nigga Its Over",
+   "symbol": "NIO",
+   "contractAddress": "7SL2VnfYsChvog5oQY9Nmtqu1wceaMiQzWoqoLQpump",
+   "calledAt": "2026-11-13T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.001383,
+   "mcapAtCall": 1318170,
+   "narrative": "视觉载体是一个经典的 meme 图像：一个笑容灿烂的白人男子，额头上写着“NIGGA”，下方写着“IT’S OVER”。这个图像在“normie Twitter”（主流 Twitter）上广泛传播，后来被引入加密货币领域。极端幽默吸引注意力，等待下一个事件的爆发",
+   "thesis": "视觉载体是一个经典的 meme 图像：一个笑容灿烂的白人男子，额头上写着“NIGGA”，下方写着“IT’S OVER”。这个图像在“normie Twitter”（主流 Twitter）上广泛传播，后来被引入加密货币领域。极端幽默吸引注意力，等待下一个事件的爆发",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "unknown",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [
+    "og_meme",
+    "thesis"
+   ],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-13-nio",
+    "at": "2026-11-20T00:00",
+    "type": "position-change",
+    "content": "加密市场越熊，越有话题",
+    "priceAt": 0.001369,
+    "positionAction": "add"
+   },
+   {
+    "callId": "2026-11-13-nio",
+    "at": "2026-11-20T00:00",
+    "type": "note",
+    "content": "frank买入 NIO，另外 NIO 可以蹭上任何互联网热点"
+   }
+  ],
+  "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-12-updog",
+   "chain": "solana",
+   "tokenName": "whatsup dog",
+   "symbol": "updog",
+   "contractAddress": "77HqxiDCgYfXUsDXDD6YVefPhTTz1Z2n8jX4gTxipump",
+   "calledAt": "2026-11-12T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.0001347,
+   "mcapAtCall": 131194,
+   "narrative": "源自Solana官方系账号meme，与 mihao 配对，当前最好的mihao的beta",
+   "thesis": "源自Solana官方系账号meme，与 mihao 配对，当前最好的mihao的beta",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "sold",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-12-updog",
+    "at": "2026-11-17T00:00",
+    "type": "closed",
+    "content": "没有因为mihao的爆发带来增长，叙事只能长期持有龙一，β标的只能做短期操作",
+    "priceAt": 0.00009705,
+    "positionAction": "exit"
+   }
+  ],
+  "outcome": {
+   "callId": "2026-11-12-updog",
+   "closedAt": "2026-11-17T00:00",
+   "verdict": "wrong",
+   "priceAtClose": 0.00009705,
+   "mcapAtClose": 94524,
+   "maxMcapAfterCall": 443310,
+   "minMcapAfterCall": 33977,
+   "returnAtClose": -27.95,
+   "maxDrawdown": 92.34,
+   "invalidationTriggered": false,
+   "lessons": "历史迁移记录，未填写复盘。",
+   "priceSource": "auto"
+  }
+ },
+ {
+  "call": {
+   "id": "2026-11-12-mihao",
+   "chain": "solana",
+   "tokenName": "ni hao cat",
+   "symbol": "mihao",
+   "contractAddress": "4CxjZyMNoF1p6eXHXHv1TWpS2X47CuUmLwtGe18spump",
+   "calledAt": "2026-11-12T00:00",
+   "stance": "watch",
+   "priceAtCall": 0.01347,
+   "mcapAtCall": 12679471,
+   "narrative": "PFP 项目已经形成大规模社区及 UGC 内容创作，大量 KOL 换头像支持。日成交量巨大。",
+   "thesis": "PFP 项目已经形成大规模社区及 UGC 内容创作，大量 KOL 换头像支持。日成交量巨大。",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "历史记录，未事前设定",
+   "disclosure": {
+    "position": "unknown",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [
+    "ai-report-mihao-mwlwjlnc"
+   ],
+   "tags": [],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [
+   {
+    "callId": "2026-11-12-mihao",
+    "at": "2026-11-18T00:00",
+    "type": "note",
+    "content": "「26a1 AI 快速研报：mihao」 > ⚠️ 本文由 Grok（X 实时数据）+ DeepSeek 双模型基于公开信息自动生成（2026-11-18），叙事部分来自社区讨论、未经证实；非投资建议，请自行 DYOR。 # $mihao（ni hao cat）研报 > 数据快照时间：以提供数据为准｜链：Solana｜发射平台：pump.swap ## 1. 项目概述 **核心叙事**：以\"ni hao cat\"（你好猫）为名的中文问候系 Meme 代币，走的是\"中文梗 + 猫咪\"的轻叙事路线。 **发射背景与时间线**：部署于 Solana 的 pump.fun 生态，当前交易对在 PumpSwap。具体发射时间暂无数据，但从\"近 7 日 -58.7%\"的跌幅结构看，代币大概率已过发射初期的高波动阶段，处于回调/降温期。 **当前市场定位**：市值约 848 万美元、流动性约 34.4 万美元，属于中小市值 Meme 标的；24H 成交 393 万美元，换手率相对市值偏高（约 46%），说明交易仍活跃但以短线资金为主。 ## 2. 叙事与 Meme 来源 **叙事起源**：\"ni hao cat\"属于典型的中文问候语 + 猫咪形象组合梗，此类叙事在 Solana Meme 生态中常见于\"中文社区情绪符号\"或\"跨文化打招呼\"类轻梗，缺乏明确的单一事件或人物锚点。具体原始梗图/出处暂无数据。 **与当前热门叙事的契合度**：猫咪题材与中文梗在 Meme 市场长期有受众基础，但\"ni hao\"本身并非当前强势热门叙事（如 AI、政治、动物类头部 IP）的核心分支，契合度中等偏弱。 **叙事强度与可持续性**：叙事强度偏弱——缺少可延展的故事线、角色设定或社区共创素材。此类\"问候语 + 动物\"梗的可持续性通常依赖社区二次创作能力，目前看支撑不足，属于易衰减型叙事。 ## 3. 社区氛围与情绪分析（重点） **X 讨论热度**：根据提供的 Grok 实时素材，**讨论极少**。这意味着代币在 X 上尚未形成有效的话题声量，缺乏自然传播。 **多空观点分布**：因讨论样本极少，无法统计多空比例，暂无数据。从价格行为（24H -24%、7D -58.7%）推断，持有者情绪偏悲观或观望。 **关键 KOL 态度与参与度**：暂无数据。未观察到有影响力的 KOL 公开讨论或背书。 **TG/Discord 氛围**：暂无数据。无法确认是否存在活跃社群及其情绪状态。 **情绪变化趋势**：结合\"讨论极少 + 连续下跌\"，情绪趋势判断为**冷淡—降温**，未见反弹性的情绪修复信号。 **代表性高赞讨论**：暂无数据（无足够讨论样本可提炼）。 **小结**：社区维度是本项目最明显的短板——不是\"负面情绪集中\"，而是\"没有情绪\"，即注意力缺失。对 Meme 币而言，这比短期 FUD 更值得警惕。 ## 4. 链上与市场数据观察 **持仓集中度与大户行为**：暂无数据（未提供持币分布）。建议自行在 Solscan / Bubblemaps 核查前 10 地址占比及是否存在关联钱包。 **交易活跃度与资金流向**：24H 成交 393 万美元，相对 848 万市值换手偏高，说明短线博弈资金仍在，但价格下跌伴随高成交，通常指向**净流出/派发**特征，需结合链上转账进一步确认。 **流动性与发射状态**：流动性 34.4 万美元，流动性/市值比约 4%，处于偏低水平，大额买卖易产生明显滑点。代币已在 PumpSwap 建立交易对，属于\"已毕业/迁移\"状态的 pump 系代币（具体毕业时间暂无数据）。 **异常交易或关键地址动向**：暂无数据。建议重点监控：部署者钱包、早期狙击地址、流动性池变动。 ## 5. 风险与机会 **主要风险点** - **注意力风险**：社交讨论近乎为零，Meme 币失去注意力即失去生命线。 - **趋势风险**：7 日 -58.7%，处于明确下跌趋势，未见企稳信号。 - **流动性风险**：34 万美元流动性偏薄，退出成本高。 - **叙事风险**：梗本身缺乏延展性，难以形成持续话题。 - **信息风险**：持币集中度、团队背景、社群情况均无数据，透明度低。 **潜在催化剂** - 猫咪/中文梗若被头部 KOL 或中文社区大 V 意外带火； - pump 系生态整体回暖带来的板块性资金回流； - 社区自发组织二创或活动（目前无迹象）。 **短期 vs 中期观察重点** - 短期：能否止跌企稳、成交量是否萎缩（缩量止跌 vs 放量下跌含义不同）、是否出现首批 KOL 讨论。 - 中期：持币地址数是否增长、社群是否从\"无\"到\"有\"、叙事是否出现二次创作延展。 ## 6. 综合评估 | 维度 | 评分 | 理由 | |---|---|---| | 社区氛围 | **2/10** | X 讨论极少，无 KOL 参与，社群数据缺失，注意力近乎为零 | | 叙事强度 | **3/10** | 猫咪 + 中文问候梗有基础受众，但缺乏锚点事件与延展性 | | 风险等级 | **高** | 下跌趋势 + 薄流动性 + 注意力缺失 + 信息不透明，多重叠加 | **一句话总结**：$mihao 是一个叙事轻、声量弱、处于回调期的中小市值猫咪梗代币，当前最大问题不是被看空，而是被忽视——在缺乏社区注意力与明确催化剂的情况下，风险显著高于机会。 --- 以上内容仅供参考，不构成任何投资建议，请自行 DYOR。"
+   },
+   {
+    "callId": "2026-11-12-mihao",
+    "at": "2026-11-18T00:00",
+    "type": "note",
+    "content": "「ansem 持续加仓，但未缓解下跌」 KOL blknoiz06 11月17日21点51分以 934 万美元市值的价格购买了价值 9.99K 美元的，今日市值已经来到 700万左右。当前要看前期暴涨形成的高位筹码，是否已经完成出清，以及 700万市值附近能否形成新的底部。"
+   },
+   {
+    "callId": "2026-11-12-mihao",
+    "at": "2026-11-20T00:00",
+    "type": "note",
+    "content": "「KFC 换头像」 KFC 换头像是市值暴涨，目前已经又回调回来，但从pfp叙事 的项目来说，可能会有下一个玩梗！关注7m守不守的住"
+   }
+  ],
+  "outcome": null
+ }
+]
