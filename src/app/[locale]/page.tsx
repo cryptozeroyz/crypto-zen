@@ -1,22 +1,21 @@
 /**
  * [locale]/page.tsx —— 首页（sabanna 手绘风单页）
- * 打字机 Hero → 方程式跑马灯 → 01/Track Record 关注卡 → 02/Writing 文章
- * → 03/Resources 推荐 → 好运签 CTA → 理念区。
+ * 打字机 Hero → 方程式跑马灯 → 01/Track Record（calls 数据源） → 02/Writing 文章
+ * → 03/Resources 推荐 → 理念区。
  */
 
 import Link from "next/link";
 import Image from "next/image";
 import Container from "@/components/Container";
 import NewsMarquee from "@/components/NewsMarquee";
-import HomeWatchlist from "@/components/dashboard/HomeWatchlist";
+import HomeTrackRecord from "@/components/dashboard/HomeTrackRecord";
 import ArticlesSection from "@/components/ArticlesSection";
 import TypewriterHero from "@/components/TypewriterHero";
 import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
-import { fetchWatchlistWithData } from "@/lib/watchlist";
-import { getJournal } from "@/lib/journal";
+import { readCallRecords } from "@/lib/calls-store";
+import { fetchCoinData } from "@/lib/watchlist";
 import { fetchEqnNews } from "@/lib/eqn";
-import { fetchGeckoOhlcv } from "@/lib/gecko";
 import { HERO_LOGOS } from "@/lib/coin-images";
 import { siteConfig } from "@/lib/siteConfig";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
@@ -33,65 +32,26 @@ export default async function HomePage({
 
   const posts = getAllPosts(locale);
   const links = getLinks();
-  const [wl, news] = await Promise.all([
-    fetchWatchlistWithData(),
+  const [callRecords, news] = await Promise.all([
+    readCallRecords(),
     fetchEqnNews(3),
   ]);
-  const coins = wl.coins;
 
-  /* 投研活跃度：日志 + 关联研报 + 时间线后续事件（首页优先展示有动态更新的币） */
-  const journal = getJournal();
-  const allPosts = getAllPosts(locale);
-  const activities: Record<string, { latest: string; newCount: number }> = {};
-  /** 每个币最新一条研究日志（卡片上展示） */
-  const logs: Record<string, { date: string; title: string; body: string } | null> = {};
-  const matchTokens = (c: (typeof coins)[number], tks: string[]) =>
-    tks.some((t) => {
-      const s = t.trim().toLowerCase();
-      return (
-        s.length > 0 &&
-        (s === (c.symbol ?? "").toLowerCase() || s === c.address.toLowerCase())
-      );
-    });
-  for (const c of coins) {
-    if (c.status === "exited") continue;
-    const j = journal.filter((e) => matchTokens(c, e.tokens));
-    const p = allPosts.filter((pt) => matchTokens(c, pt.tokens ?? []));
-    const laterEvents = (c.events ?? []).slice(1);
-    const newCount = j.length + p.length + laterEvents.length;
-    /* 最近动态日期：建立关注本身就是一次动态，新币据此优先展示 */
-    const latest = [
-      c.addedAt,
-      ...j.map((x) => x.date),
-      ...p.map((x) => x.date),
-      ...laterEvents.map((e) => e.date),
-    ].sort().pop() as string;
-    activities[c.address] = { latest, newCount };
-    const newest = j[0] ?? null; // journal 已按日期倒序
-    logs[c.address] = newest
-      ? { date: newest.date, title: newest.title, body: newest.body }
-      : null;
-  }
-
-  /* 首页只展示最近有动态的前 2 个币，并预取 24H 走势（收盘序列，时间正序） */
-  const topCoins = coins
-    .filter((c) => c.data)
-    .sort(
-      (a, b) =>
-        (activities[b.address]?.latest ?? "").localeCompare(
-          activities[a.address]?.latest ?? ""
-        )
-    )
+  /* Track Record：最新 2 条判断，并预取现价（用于「判断以来表现」） */
+  const latestCalls = [...callRecords]
+    .sort((a, b) => b.call.calledAt.localeCompare(a.call.calledAt))
     .slice(0, 2);
-  const sparks: Record<string, number[]> = {};
+  const currentMap: Record<string, { priceUsd?: number; mcap?: number }> = {};
   await Promise.all(
-    topCoins.map(async (c) => {
-      if (!c.data?.pairAddress) return;
-      sparks[c.address] = await fetchGeckoOhlcv(
-        c.data.chainId,
-        c.data.pairAddress,
-        "24H"
-      ).catch(() => []);
+    latestCalls.map(async (r) => {
+      if (r.outcome) return; // 已复盘的不需要现价
+      const d = await fetchCoinData(r.call.contractAddress).catch(() => null);
+      if (d) {
+        currentMap[r.call.contractAddress] = {
+          priceUsd: d.priceUsd || undefined,
+          mcap: d.marketCap ?? d.fdv,
+        };
+      }
     })
   );
 
@@ -103,13 +63,19 @@ export default async function HomePage({
           <NewsMarquee items={news} href={`/${locale}/news`} />
         </Container>
 
-      {/* ============ Track Record（最近 2 个关注 + 看板入口，完整看板见 /dashboard） ============ */}
-      {topCoins.length > 0 && (
+      {/* ============ Track Record（最近 2 条判断 + 看板入口，完整看板见 /dashboard） ============ */}
+      {latestCalls.length > 0 && (
         <section id="watchlist" className="scroll-mt-24">
           <Container className="py-7 sm:py-8">
             <div className="home-sh"><span className="no">01 / </span>Track Record</div>
             <div className="mt-5">
-              <HomeWatchlist coins={topCoins} locale={locale} t={t} activities={activities} logs={logs} sparks={sparks} />
+              <HomeTrackRecord
+                records={latestCalls}
+                locale={locale}
+                currentMap={currentMap}
+                viewAllHref={`/${locale}/dashboard`}
+                boardTitle={t.dashboard.title}
+              />
             </div>
           </Container>
         </section>

@@ -17,7 +17,7 @@ import { NextResponse } from "next/server";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
 import { getAllPosts } from "@/lib/posts";
 import { getJournal } from "@/lib/journal";
-import { fetchGeckoOhlcv, fetchGeckoSpark } from "@/lib/gecko";
+import { fetchGeckoOhlcv, fetchGeckoOhlcvSeries, fetchGeckoSpark } from "@/lib/gecko";
 
 export const revalidate = 60;
 
@@ -342,6 +342,14 @@ export async function GET(req: Request) {
     if (!/^[a-z0-9]{2,20}$/.test(chain) || !/^[0-9a-zA-Z]{20,80}$/.test(pair))
       return NextResponse.json({ error: "bad params" }, { status: 400 });
     try {
+      /* withTs=1 时返回带时间戳序列（详情页图表标点）；默认保持 closes 兼容旧客户端 */
+      if (searchParams.get("withTs") === "1") {
+        const series = await fetchGeckoOhlcvSeries(chain, pair, range);
+        return NextResponse.json(
+          { series },
+          { headers: { "Cache-Control": "s-maxage=1800, stale-while-revalidate=900" } }
+        );
+      }
       const closes = await fetchGeckoOhlcv(chain, pair, range);
       return NextResponse.json(
         { closes },
@@ -349,6 +357,50 @@ export async function GET(req: Request) {
       );
     } catch {
       return NextResponse.json({ closes: [] }, { status: 502 });
+    }
+  }
+
+  /* ---------- Track Record 批量现价（最多 30 个 CA 一次 DexScreener 请求） ---------- */
+  if (type === "prices") {
+    const cas = (searchParams.get("cas") ?? "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => /^[0-9a-zA-Z]{20,80}$/.test(s))
+      .slice(0, 30);
+    if (cas.length === 0)
+      return NextResponse.json({ prices: {} }, { status: 400 });
+    try {
+      const res = await fetch(
+        `https://api.dexscreener.com/latest/dex/tokens/${cas.join(",")}`,
+        { next: { revalidate: 120 } }
+      );
+      if (!res.ok) return NextResponse.json({ prices: {} }, { status: 502 });
+      const json = await res.json();
+      const prices: Record<
+        string,
+        { priceUsd: number; mcap: number; change24h: number }
+      > = {};
+      for (const ca of cas) {
+        const pairs = (json?.pairs ?? []).filter(
+          (p: { baseToken?: { address?: string } }) =>
+            (p?.baseToken?.address ?? "").toLowerCase() === ca.toLowerCase()
+        );
+        const best =
+          pairs.find((p: { chainId?: string }) => p.chainId === "solana") ?? pairs[0];
+        if (best?.priceUsd) {
+          prices[ca] = {
+            priceUsd: Number(best.priceUsd),
+            mcap: Number(best.marketCap ?? best.fdv ?? 0),
+            change24h: Number(best.priceChange?.h24 ?? 0),
+          };
+        }
+      }
+      return NextResponse.json(
+        { prices },
+        { headers: { "Cache-Control": "s-maxage=120, stale-while-revalidate=60" } }
+      );
+    } catch {
+      return NextResponse.json({ prices: {} }, { status: 502 });
     }
   }
 
