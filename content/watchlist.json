@@ -2,7 +2,7 @@
   {
     "address": "CUg7AzWL5p8imZVqqdjEPgRhUsXAkBMW5JxkSJ9fpump",
     "ca": "CUg7AzWL5p8imZVqqdjEPgRhUsXAkBMW5JxkSJ9fpump",
-    "status": "watching",
+    "status": "holding",
     "why": [
       "tiktok"
     ],
@@ -18,6 +18,12 @@
           "tiktok"
         ],
         "price": 0.000439
+      },
+      {
+        "type": "open_position",
+        "date": "2026-11-20",
+        "price": 0.0004185,
+        "note": "现在得到交易量和持币量都不多，相对于其他代币，24h只有500K 只能博弈一下"
       }
     ],
     "followPrice": 0.000439,
