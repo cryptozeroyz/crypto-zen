@@ -29,8 +29,8 @@
     "name": "DacityCoin",
     "dex": "pumpswap",
     "pairAddress": "DChXQ4qFPpNPEDfZLNiwvPhrVuuFGfqEDLAAZbiZHUWf",
-    "pairLiquidity": 578083.94,
-    "pairVolume24h": 55108751.86
+    "pairLiquidity": 379042.26,
+    "pairVolume24h": 28169489.49
   },
   {
     "address": "EadD2LMp6EbH9PrbXUFWcrZKMhoKVrZN1gpwRhH5pump",
@@ -105,8 +105,8 @@
     "name": "Mori Finance",
     "dex": "metadao",
     "pairAddress": "HByWtFDYwGw45A69cg4jwZFt78kmnD9q4kvKACUSdwB8",
-    "pairLiquidity": 167140.55,
-    "pairVolume24h": 74190.75
+    "pairLiquidity": 133700.21,
+    "pairVolume24h": 43867.77
   },
   {
     "chain": "solana",
@@ -297,7 +297,7 @@
     "name": "ni hao cat",
     "dex": "pumpswap",
     "pairAddress": "Ho1aSG6WGH1FfXdEHrK2f4Ggt1Hoxo9s5jcLMDqeyeBz",
-    "pairLiquidity": 367540.89,
-    "pairVolume24h": 2824301.59
+    "pairLiquidity": 328378.36,
+    "pairVolume24h": 7223812.52
   }
 ]
