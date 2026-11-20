@@ -1,5 +1,36 @@
 [
   {
+    "address": "CUg7AzWL5p8imZVqqdjEPgRhUsXAkBMW5JxkSJ9fpump",
+    "ca": "CUg7AzWL5p8imZVqqdjEPgRhUsXAkBMW5JxkSJ9fpump",
+    "status": "watching",
+    "why": [
+      "tiktok"
+    ],
+    "comment": "tiktok新梗，Huss Huss Huss",
+    "addedAt": "2026-11-20",
+    "holding": false,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-20",
+        "note": "tiktok新梗，Huss Huss Huss",
+        "why": [
+          "tiktok"
+        ],
+        "price": 0.000439
+      }
+    ],
+    "followPrice": 0.000439,
+    "followMcap": 418898,
+    "chain": "solana",
+    "symbol": "Huss",
+    "name": "Huss",
+    "dex": "pumpswap",
+    "pairAddress": "GkHcYZeXDi2SveqNaGSg3qxrkzShDr5Dxrd482kM2hXx",
+    "pairLiquidity": 49589.09,
+    "pairVolume24h": 514680.71
+  },
+  {
     "address": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
     "ca": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
     "status": "watching",
