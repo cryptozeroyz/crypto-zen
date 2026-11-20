@@ -12,24 +12,6 @@
     "updatedAt": "2026-11-20T02:19:11.295Z"
   },
   {
-    "id": "j-20261120-gta-dcty",
-    "date": "2026-11-20",
-    "tokens": [
-      "DCTY"
-    ],
-    "tags": [
-      "GTA VI",
-      "选币",
-      "复盘"
-    ],
-    "title": "GTA VI 发售次日：$DCTY 兑现卖新闻",
-    "body": "GTA VI 已在 11 月 19 日发售。$DCTY 仍是游戏内 ticker 最清晰的那条主线，但我 19 号在约 1866 万美元市值关注后，20 日上午约 09:40（Asia/Shanghai）DexScreener 主池看到约 770 万美元，24 小时跌约 46%，属于典型的 sell the news。\n\n主池 PumpSwap DCTY/TTWO 现价约 $0.008144，流动性约 $379,042，24h 成交约 $28.17M；Meteora DCTY/SOL 另有约 $25.30M 成交。Rugcheck 显示 mint / freeze 已关闭，税为 0，持有地址约 66,765，最大非池子地址约 1.96%。合约不是今天的核心问题，定价权要重新观察 $7M–$8M 附近能否站住。暂不加仓，也不改为持仓。\n\n同赛道噪音很多。仿盘 AudaCity（符号也写成 DacityCoin）合约为 DKYcjobF7HPtL9RyQBRdeRQ2iWvizpfbgWwPWNXdpump，市值约 $38 万，不要买错。$TTWO 是 Backpack 上的 Take-Two 代币化股票，常被用来做交易对，本身不是 meme。$Leonida、$GTA6 等名字盘更弱，不纳入关注。\n\n持仓更新：$mihao 现价约 $0.007619、市值约 $7.17M，24h +16.8%，但 6h -18.7%，短线催化正在退潮，暂不加仓。$MORI 现价约 $0.04468，相对 11 月 18 日开仓价 $0.04642 大约 -3.7%，24h 成交仅约 $4.4 万；Rugcheck 仍提示 mint 权限未关，且地址 GsqDHftrDn6dR4rskjN62frkomgu56o3r1veUMNUgGF2 持有约 50% 供给、页面未标注身份，需继续核实是不是协议金库。\n\n今早还有 $FIONA（B34nXKzCgsJb9ChLuSHPRpXLE3WFSWyeT8Cqkzzmpump）蹭 Fiona 河马去世的新闻拉升，04:53 开盘后数小时涨幅极大，关联地址一组仍持有约 16% 供给，官方链接也不正经，已标避开，不加入关注列表。",
-    "thesis": "$DCTY 仍是最清晰的游戏内 ticker，但发售次日要重新观察 700-800 万市值是否站得住",
-    "risks": "GTA 主题仿盘极多；DCTY 高波动；mihao 短线催化可能已兑现；MORI mint 权限仍在且存在约 50% 集中持仓",
-    "createdAt": "2026-11-20T01:45:00.000Z",
-    "updatedAt": "2026-11-20T02:49:47.309Z"
-  },
-  {
     "id": "j-mwnoaomy-0k07",
     "date": "2026-11-19",
     "tokens": [
