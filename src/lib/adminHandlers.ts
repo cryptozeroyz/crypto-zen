@@ -965,3 +965,82 @@ ${narrative}
     return NextResponse.json({ ok: false, message: `AI 生成失败：${e instanceof Error ? e.message : e}` }, { status: 502 });
   }
 }
+
+/* ==================== Track Record（calls）管理 ==================== */
+
+import {
+  readCallRecords,
+  createCall,
+  appendUpdate,
+  closeCall,
+  ImmutableCallError,
+  DuplicateCallError,
+  CallNotFoundError,
+  CallAlreadyClosedError,
+} from "@/lib/calls-store";
+import { CallSchema, UpdateSchema, type Outcome } from "@/lib/calls";
+
+/** GET /api/admin/calls —— 判断记录列表（录入界面用） */
+export async function callsGET() {
+  if (!isAuthed()) return unauthorized();
+  return NextResponse.json({ ok: true, records: await readCallRecords() });
+}
+
+/** POST /api/admin/calls —— 新建判断（schema 校验 + 不可变性由数据层保证） */
+export async function callsPOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  try {
+    const body = await req.json();
+    const call = CallSchema.parse(body.call ?? body);
+    await createCall(call);
+    return NextResponse.json({ ok: true, id: call.id });
+  } catch (e) {
+    if (e instanceof DuplicateCallError)
+      return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
+    if (e instanceof ImmutableCallError)
+      return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
+    return NextResponse.json(
+      { ok: false, message: e instanceof Error ? `校验失败：${e.message}` : "保存失败" },
+      { status: 400 }
+    );
+  }
+}
+
+/** POST /api/admin/calls/update —— 追加 Update（只追加；关闭后拒绝） */
+export async function callsUpdatePOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  try {
+    const body = await req.json();
+    const update = UpdateSchema.parse(body.update ?? body);
+    await appendUpdate(update);
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    if (e instanceof CallNotFoundError || e instanceof CallAlreadyClosedError)
+      return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
+    return NextResponse.json(
+      { ok: false, message: e instanceof Error ? `校验失败：${e.message}` : "保存失败" },
+      { status: 400 }
+    );
+  }
+}
+
+/** POST /api/admin/calls/close —— 复盘关闭（returnAtClose 由数据层计算，不可手填） */
+export async function callsClosePOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  try {
+    const body = await req.json();
+    const { returnAtClose: _omit, ...input } = (body.outcome ?? body) as Partial<Outcome> & {
+      callId: string;
+    };
+    if (!input.callId) throw new Error("缺少 callId");
+    await closeCall(input as Omit<Outcome, "returnAtClose">);
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    if (e instanceof CallNotFoundError || e instanceof CallAlreadyClosedError)
+      return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
+    return NextResponse.json(
+      { ok: false, message: e instanceof Error ? `校验失败：${e.message}` : "保存失败" },
+      { status: 400 }
+    );
+  }
+}

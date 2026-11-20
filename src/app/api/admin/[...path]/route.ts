@@ -26,6 +26,7 @@ export async function GET(_req: Request, { params }: Ctx) {
   if (a === "watchlist" && !b) return H.watchlistGET();
   if (a === "links" && !b) return H.linksGET();
   if (a === "journal" && !b) return H.journalGET();
+  if (a === "calls" && !b) return H.callsGET();
   return NOT_FOUND();
 }
 
@@ -46,6 +47,10 @@ export async function POST(req: Request, { params }: Ctx) {
       return H.watchlistPOST(req);
     case "journal":
       return H.journalPOST(req);
+    case "calls":
+      if (b === "update") return H.callsUpdatePOST(req);
+      if (b === "close") return H.callsClosePOST(req);
+      return H.callsPOST(req);
     case "ai-report":
       return H.aiReportPOST(req);
     case "links":

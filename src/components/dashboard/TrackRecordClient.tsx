@@ -164,7 +164,7 @@ export default function TrackRecordClient({
           >
             {tr.prev}
           </button>
-          <span className="text-xs tabular-nums text-muted">{tr.page(page, totalPages)}</span>
+          <span className="text-xs tabular-nums text-muted">{tr.page.replace("{n}", String(page)).replace("{t}", String(totalPages))}</span>
           <button
             type="button"
             disabled={page >= totalPages}

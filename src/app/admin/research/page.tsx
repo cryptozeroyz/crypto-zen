@@ -9,10 +9,12 @@ import Link from "next/link";
 import Container from "@/components/Container";
 import WatchlistManager from "@/components/admin/WatchlistManager";
 import JournalManager from "@/components/admin/JournalManager";
+import CallsManager from "@/components/admin/CallsManager";
 import { requireAdmin } from "@/lib/adminGuard";
 import { readTextFile, WATCHLIST_PATH } from "@/lib/storage";
 import { fetchCoinData, getWhyTags, getWatchlist, type WatchCoin } from "@/lib/watchlist";
 import { getJournal } from "@/lib/journal";
+import { readCallRecords } from "@/lib/calls-store";
 
 export const metadata: Metadata = { title: "投研管理" };
 
@@ -21,6 +23,7 @@ export const dynamic = "force-dynamic";
 const TABS = [
   { key: "watchlist", label: "关注列表", sub: "添加合约地址（CA）与评价；新增时自动记录关注时价格/市值，前台看板实时展示行情、关注以来涨跌幅与持仓盈亏。" },
   { key: "journal", label: "研究日志", sub: "碎片研究记录（观察/假设/数据速记）。关联代币后会出现在看板该币的时间线里。" },
+  { key: "calls", label: "判断记录", sub: "Track Record：判断发布后锁定不可改写，只能追加更新或关闭复盘；披露与证伪条件必填。" },
 ] as const;
 
 export default async function AdminResearchPage({
@@ -30,7 +33,12 @@ export default async function AdminResearchPage({
 }) {
   requireAdmin();
 
-  const active = searchParams.tab === "journal" ? "journal" : "watchlist";
+  const active =
+    searchParams.tab === "journal"
+      ? "journal"
+      : searchParams.tab === "calls"
+        ? "calls"
+        : "watchlist";
   const meta = TABS.find((t) => t.key === active)!;
 
   return (
@@ -59,7 +67,13 @@ export default async function AdminResearchPage({
       <p className="mt-4 text-xs text-muted">{meta.sub}</p>
 
       <div className="mt-6">
-        {active === "watchlist" ? <WatchlistTab /> : <JournalTab />}
+        {active === "watchlist" ? (
+          <WatchlistTab />
+        ) : active === "calls" ? (
+          <CallsTab />
+        ) : (
+          <JournalTab />
+        )}
       </div>
     </Container>
   );
@@ -106,6 +120,12 @@ async function WatchlistTab() {
   );
 
   return <WatchlistManager coins={rows} tags={getWhyTags()} />;
+}
+
+/** 判断记录：Track Record（calls.json） */
+async function CallsTab() {
+  const records = await readCallRecords();
+  return <CallsManager initialRecords={records} />;
 }
 
 /** 研究日志：journal.json + 关注币下拉 */

@@ -18,6 +18,7 @@ import { fetchWatchlistWithData } from "@/lib/watchlist";
 import { getAllPosts } from "@/lib/posts";
 import { getJournal } from "@/lib/journal";
 import { fetchGeckoOhlcv, fetchGeckoOhlcvSeries, fetchGeckoSpark } from "@/lib/gecko";
+import { RateLimiter } from "@/lib/rate-limit";
 
 export const revalidate = 60;
 
@@ -129,9 +130,27 @@ const TICKER_URL =
   TICKER_IDS +
   "&price_change_percentage=24h";
 
+/** 公开读取限流：每 IP 60 桶、每秒回 1（本地开发不限制） */
+const publicLimiter = new RateLimiter(60, 1);
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type");
+
+  /* ---------- 公开读取限流（后台/admin 接口另行鉴权，不在此处） ---------- */
+  if (process.env.NODE_ENV === "production") {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      req.headers.get("x-real-ip") ??
+      "unknown";
+    const retryAfter = publicLimiter.check(ip);
+    if (retryAfter !== null) {
+      return NextResponse.json(
+        { error: "rate limited" },
+        { status: 429, headers: { "Retry-After": String(retryAfter) } }
+      );
+    }
+  }
 
   /* ---------- 行情代理 ---------- */
   if (type === "ticker") {

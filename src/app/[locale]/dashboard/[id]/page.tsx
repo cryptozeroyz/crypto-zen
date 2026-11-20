@@ -261,7 +261,7 @@ export default async function CallDetailPage({
                 <div className="flex justify-between"><dt className="text-muted">{tr.entryPrice}</dt><dd className="font-mono tabular-nums">{formatPrice(call.disclosure.entryPrice)}</dd></div>
               )}
               {call.disclosure.sizeTier && (
-                <div className="flex justify-between"><dt className="text-muted">Size</dt><dd>{tr.sizeTier(call.disclosure.sizeTier)}</dd></div>
+                <div className="flex justify-between"><dt className="text-muted">Size</dt><dd>{{ small: tr.sizeSmall, medium: tr.sizeMedium, large: tr.sizeLarge }[call.disclosure.sizeTier]}</dd></div>
               )}
               {call.disclosure.sourceOfIdea && (
                 <div className="flex justify-between gap-2"><dt className="text-muted">来源</dt><dd className="text-right">{call.disclosure.sourceOfIdea}</dd></div>

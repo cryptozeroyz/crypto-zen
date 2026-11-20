@@ -71,7 +71,7 @@ export default async function DashboardPage({
         <StatCard label={tr.statMedianDD} value={stats.medianMaxDrawdown === null ? "—" : `-${stats.medianMaxDrawdown}%`} />
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted">
-        {stats.since && <span>{tr.since(stats.since)}</span>}
+        {stats.since && <span>{tr.since.replace("{d}", stats.since)}</span>}
         {stats.smallSample && (
           <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-px text-amber-700 dark:text-amber-400">
             ⚠ {tr.smallSample}
