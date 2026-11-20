@@ -48,5 +48,10 @@
     "id": "news",
     "zh": "news",
     "en": "news"
+  },
+  {
+    "id": "tiktok",
+    "zh": "tiktok",
+    "en": "tiktok"
   }
 ]
