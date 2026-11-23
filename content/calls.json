@@ -95,7 +95,21 @@
     "content": "叙事已经从“预告片名字炒作”升级为“游戏内精确确认的正主”，这是市值能够快速抬升并维持在千万美元级别的关键。热度消退后可能出现 “sell the news”。"
    }
   ],
-  "outcome": null
+  "outcome": {
+   "callId": "2026-11-19-dcty",
+   "closedAt": "2026-11-23T08:32:00",
+   "verdict": "wrong",
+   "priceAtClose": 0.002505,
+   "mcapAtClose": 2368885,
+   "maxMcapAfterCall": 8394498,
+   "minMcapAfterCall": 1765317,
+   "returnAtClose": -87.3,
+   "maxDrawdown": 0,
+   "invalidationTriggered": false,
+   "lessons": "gta热度太多了，其实没必要盯着，要么快速结束，没有可以长期的标",
+   "mistakeType": "other",
+   "priceSource": "auto"
+  }
  },
  {
   "call": {
