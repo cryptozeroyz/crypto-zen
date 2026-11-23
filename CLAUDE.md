@@ -33,10 +33,12 @@ npx tsx scripts/migrate-calls.ts --execute # 迁移执行（按 call.id 幂等 u
 
 ## 录入流程（后台）
 
-`/admin` → 投研 →「判断记录」tab：
-1. **新建判断**：填 CA 后点「⚡ 自动抓取」取价（勾「价格手填」则标 manual）；invalidation 与披露必填；发布后锁定。
-2. **+更新**：追加 Update（论点修正/仓位变动/笔记）。
-3. **复盘**：verdict + 结束价（⚡现价）+ max/min 市值（⚡从 K 线计算）+ 经验教训；确认后冻结。
+`/admin` → 投研工作台（关注/日志/判断三页合一，以币为中心）：
+1. **定位/新建**：顶部粘 CA 回车——已有则定位，没有则带行情打开「新建判断」（⚡ 自动抓取记 pool 与 priceSource）。
+2. **判断子面板**：快照只读 + 证伪条件常显；「追加更新」（note/thesis-change/position-change/closed）；「复盘关闭」（⚡ 现价 + ⚡ 从 K 线计算 max/min 市值）；复盘后冻结。
+3. **快记子面板**：即写即存，自动关联当前币（tokens 写 symbol+CA），会出现在前台该币时间线。
+4. **持仓子面板**：改披露（position/entryPrice/sizeTier/sponsored/referral）→ `/api/admin/calls/disclosure`（锁定字段原样校验）；持仓变动留 position-change 更新。
+5. **未关联日志**：列表底部入口，游离日志可「挂到某币」（journal upsert by id）或删除。
 
 ## 关键约定
 
