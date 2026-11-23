@@ -160,11 +160,18 @@ describe("activityAt", () => {
 describe("浮点噪声", () => {
   it("偶数中位数出口保留两位小数（-88.39500000000001 → -88.4）", async () => {
     const { computeStats } = await import("@/lib/calls-stats");
-    const records = [
-      closedRecord(call({ id: "2026-11-01-a" }), "wrong", 10, 88.39),
-      closedRecord(call({ id: "2026-11-02-b" }), "wrong", -20, 88.4),
-    ];
-    const s = computeStats(records, NOW);
+    const mk = (id: string, dd: number) => ({
+      call: { ...call({ id }), id },
+      updates: [],
+      outcome: {
+        callId: id, closedAt: "2026-11-10T10:00", verdict: "wrong" as const,
+        priceAtClose: 0.008, mcapAtClose: 800_000,
+        maxMcapAfterCall: 1_600_000, minMcapAfterCall: 400_000,
+        returnAtClose: -20, maxDrawdown: dd,
+        invalidationTriggered: true, lessons: "l", priceSource: "auto" as const,
+      },
+    });
+    const s = computeStats([mk("2026-11-01-a", 88.39), mk("2026-11-02-b", 88.4)], NOW);
     expect(s.medianMaxDrawdown).toBe(88.4);
     expect(String(s.medianMaxDrawdown)).not.toContain("0000000");
   });
