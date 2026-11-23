@@ -1,7 +1,7 @@
 ---
 title: "Singularity（SINGULARITY）项目简研报告"
 date: "2026-11-23"
-category: "essay"
+category: "research"
 excerpt: "Singularity 是一个\"AI 约会世界\"社会实验项目：人类把自己的 AI agent 送进一个虚拟空间，agent 们自主写资料、搭讪、约会、分手，人类只能围观"
 tags:
   - "研究报告"
