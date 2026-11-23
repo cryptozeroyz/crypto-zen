@@ -70,7 +70,7 @@
   {
     "address": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
     "ca": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
-    "status": "watching",
+    "status": "exited",
     "why": [
       "event",
       "news"
@@ -88,6 +88,12 @@
           "news"
         ],
         "price": 0.01973
+      },
+      {
+        "type": "unfollow",
+        "date": "2026-11-23",
+        "price": 0.002694,
+        "note": "gta叙事告一段落"
       }
     ],
     "followPrice": 0.01973,
