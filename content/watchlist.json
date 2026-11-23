@@ -1,5 +1,36 @@
 [
   {
+    "address": "65iH8k736QNhuUHm1tt8X7yJXpJ517HPPq8BrVdwring",
+    "ca": "65iH8k736QNhuUHm1tt8X7yJXpJ517HPPq8BrVdwring",
+    "status": "watching",
+    "why": [
+      "private"
+    ],
+    "comment": "Rings 是 Solana 上的隐私交易应用层产品矩阵——私密 OTC 大宗交易台、匿名发币 Launchpad、私密 DEX 与交易终端——于 2026 年 11 月 10 日上线主网，全部结算在 Helius 当日同步主网上线的「Solana Privacy Rings」协议之上",
+    "addedAt": "2026-11-23",
+    "holding": false,
+    "events": [
+      {
+        "type": "follow",
+        "date": "2026-11-23",
+        "note": "Rings 是 Solana 上的隐私交易应用层产品矩阵——私密 OTC 大宗交易台、匿名发币 Launchpad、私密 DEX 与交易终端——于 2026 年 11 月 10 日上线主网，全部结算在 Helius 当日同步主网上线的「Solana Privacy Rings」协议之上",
+        "why": [
+          "private"
+        ],
+        "price": 0.003731
+      }
+    ],
+    "followPrice": 0.003731,
+    "followMcap": 3602280,
+    "chain": "solana",
+    "symbol": "Rings",
+    "name": "Rings",
+    "dex": "meteora",
+    "pairAddress": "8fSUYVnTy4r5fZUksjzKexLq2Tx96K3UPdYRvW5XWJ9t",
+    "pairLiquidity": 180354.1,
+    "pairVolume24h": 392316.13
+  },
+  {
     "address": "CUg7AzWL5p8imZVqqdjEPgRhUsXAkBMW5JxkSJ9fpump",
     "ca": "CUg7AzWL5p8imZVqqdjEPgRhUsXAkBMW5JxkSJ9fpump",
     "status": "holding",
