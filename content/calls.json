@@ -603,7 +603,7 @@
    "invalidation": "dev不在更新产品",
    "disclosure": {
     "position": "holding",
-    "entryPrice": 0.0002,
+    "entryPrice": 0.0004,
     "sizeTier": "small",
     "sponsored": false,
     "referral": false
