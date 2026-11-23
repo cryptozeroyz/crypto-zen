@@ -44,12 +44,20 @@ function matchJournal(record: CallRecord, j: JournalEntry): boolean {
   });
 }
 
+export interface RelatedReport {
+  slug: string;
+  title: string;
+}
+
 export default function ResearchHub({
   initialRecords,
   initialJournals,
+  relatedMap = {},
 }: {
   initialRecords: CallRecord[];
   initialJournals: JournalEntry[];
+  /** callId → 关联研报（服务端按 tokens 匹配好） */
+  relatedMap?: Record<string, RelatedReport[]>;
 }) {
   const [records, setRecords] = useState<CallRecord[]>(initialRecords);
   const [journals, setJournals] = useState<JournalEntry[]>(initialJournals);
@@ -206,6 +214,7 @@ export default function ResearchHub({
               record={selected}
               journals={journals.filter((j) => matchJournal(selected, j))}
               price={prices[selected.call.contractAddress]}
+              related={relatedMap[selected.call.id] ?? []}
               onChanged={ok}
               onError={bad}
             />
@@ -278,11 +287,12 @@ function QuickBar({
 /* ==================== 币工作台 ==================== */
 
 function CoinWorkspace({
-  record, journals, price, onChanged, onError,
+  record, journals, price, related, onChanged, onError,
 }: {
   record: CallRecord;
   journals: JournalEntry[];
   price?: Prices[string];
+  related: RelatedReport[];
   onChanged: (m: string) => void;
   onError: (m: string) => void;
 }) {
@@ -336,7 +346,7 @@ function CoinWorkspace({
       </div>
 
       {sub === "call" && (
-        <CallPane record={record} onChanged={onChanged} onError={onError} />
+        <CallPane record={record} related={related} onChanged={onChanged} onError={onError} />
       )}
       {sub === "journal" && (
         <JournalPane record={record} journals={journals} onChanged={onChanged} onError={onError} />
@@ -350,7 +360,7 @@ function CoinWorkspace({
 
 /* ---------- 子面板 1：判断 ---------- */
 
-function CallPane({ record, onChanged, onError }: { record: CallRecord; onChanged: (m: string) => void; onError: (m: string) => void }) {
+function CallPane({ record, related, onChanged, onError }: { record: CallRecord; related: RelatedReport[]; onChanged: (m: string) => void; onError: (m: string) => void }) {
   const [mode, setMode] = useState<"none" | "update" | "close">("none");
   const { call, updates, outcome } = record;
 
@@ -389,6 +399,23 @@ function CallPane({ record, onChanged, onError }: { record: CallRecord; onChange
             {call.targetMcap && <span className="text-muted">🎯 目标 <b className="text-heading">${(call.targetMcap / 1e6).toFixed(1)}M</b></span>}
             {call.stopMcap && <span className="text-muted">🛑 止损 <b className="text-heading">${(call.stopMcap / 1e6).toFixed(1)}M</b></span>}
           </div>
+        </div>
+      )}
+
+      {/* 关联研报（按 tokens 自动匹配） */}
+      {related.length > 0 && (
+        <div className="rounded-xl border border-line bg-white px-4 py-3">
+          <h4 className="text-[11px] font-semibold tracking-wider text-muted">📄 关联研报（{related.length}）</h4>
+          <ul className="mt-2 space-y-1.5 text-xs">
+            {related.map((r) => (
+              <li key={r.slug}>
+                <a href={`/zh/writing/${r.slug}`} target="_blank" rel="noopener noreferrer"
+                  className="text-accent underline-offset-2 hover:underline dark:text-accent-mint">
+                  {r.title}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
