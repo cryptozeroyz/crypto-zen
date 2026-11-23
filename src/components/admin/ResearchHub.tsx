@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Call, CallRecord, CallUpdate } from "@/lib/calls";
 import { makeCallId } from "@/lib/calls";
 import { statusOf } from "@/lib/calls-stats";
-import { fmtCalledAt } from "@/components/dashboard/tr";
+import { fmtCalledAt, posActionLabel, getTr } from "@/components/dashboard/tr";
 
 /* ---------- 常量 ---------- */
 const STANCES = ["watch", "bullish", "bearish", "avoid"] as const;
@@ -363,6 +363,7 @@ function CoinWorkspace({
 function CallPane({ record, related, onChanged, onError }: { record: CallRecord; related: RelatedReport[]; onChanged: (m: string) => void; onError: (m: string) => void }) {
   const [mode, setMode] = useState<"none" | "update" | "close">("none");
   const { call, updates, outcome } = record;
+  const tr = getTr("zh");
 
   return (
     <div className="mt-4 space-y-4">
@@ -451,7 +452,7 @@ function CallPane({ record, related, onChanged, onError }: { record: CallRecord;
           </TlEvent>
           {[...updates].sort((a, b) => b.at.localeCompare(a.at)).map((u, i) => (
             <TlEvent key={i}
-              kind={u.type === "thesis-change" ? "↺ 论点修正" : u.type === "position-change" ? "⇄ 仓位变动" : u.type === "closed" ? "■ 结束" : "✎ 笔记"}
+              kind={u.type === "thesis-change" ? "↺ 论点修正" : u.type === "position-change" ? `⇄ 仓位变动${u.positionAction ? ` · ${posActionLabel(u.positionAction, tr)}` : ""}` : u.type === "closed" ? "■ 结束" : "✎ 笔记"}
               at={fmtCalledAt(u.at)} price={u.priceAt}>
               {u.content}
             </TlEvent>
@@ -569,6 +570,7 @@ function JournalPane({ record, journals, onChanged, onError }: { record: CallRec
 
 function PositionPane({ record, price, onChanged, onError }: { record: CallRecord; price?: Prices[string]; onChanged: (m: string) => void; onError: (m: string) => void }) {
   const d = record.call.disclosure;
+  const tr = getTr("zh");
   const [position, setPosition] = useState(d.position);
   const [entryPrice, setEntryPrice] = useState(d.entryPrice ? String(d.entryPrice) : "");
   const [sizeTier, setSizeTier] = useState(d.sizeTier ?? "");
@@ -665,7 +667,7 @@ function PositionPane({ record, price, onChanged, onError }: { record: CallRecor
           <div className="relative mt-3 space-y-3 pl-5">
             <span className="absolute bottom-2 left-[5px] top-2 w-0.5 bg-line" aria-hidden="true" />
             {[...posUpdates].sort((a, b) => b.at.localeCompare(a.at)).map((u, i) => (
-              <TlEvent key={i} kind={`⇄ ${u.positionAction ?? "变动"}`} at={fmtCalledAt(u.at)} price={u.priceAt}>
+              <TlEvent key={i} kind={`⇄ 仓位变动${u.positionAction ? ` · ${posActionLabel(u.positionAction, tr)}` : ""}`} at={fmtCalledAt(u.at)} price={u.priceAt}>
                 {u.content}
               </TlEvent>
             ))}

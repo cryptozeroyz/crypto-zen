@@ -11,7 +11,7 @@ import { notFound } from "next/navigation";
 import Container from "@/components/Container";
 import CallChart from "@/components/dashboard/CallChart";
 import { DisclosureBadges } from "@/components/dashboard/TrackRecordClient";
-import { disclosureLabelsOf, fmtCalledAt } from "@/components/dashboard/tr";
+import { disclosureLabelsOf, fmtCalledAt, posActionLabel } from "@/components/dashboard/tr";
 import {
   getTr,
   stanceLabel,
@@ -228,7 +228,7 @@ export default async function CallDetailPage({
                     <div className="rounded-xl border border-line bg-card px-3.5 py-2.5">
                       <div className="flex flex-wrap items-center gap-x-2 text-[11px] text-muted">
                         <span className="font-semibold text-heading">
-                          {u.type === "thesis-change" ? `↺ ${tr.thesisChanged}` : u.type === "position-change" ? `⇄ ${tr.positionChanged}` : u.type === "closed" ? `■ ${tr.closedNote}` : `✎ ${tr.note}`}
+                          {u.type === "thesis-change" ? `↺ ${tr.thesisChanged}` : u.type === "position-change" ? `⇄ ${tr.positionChanged}${u.positionAction ? ` · ${posActionLabel(u.positionAction, tr)}` : ""}` : u.type === "closed" ? `■ ${tr.closedNote}` : `✎ ${tr.note}`}
                         </span>
                         <span className="tabular-nums">{fmtCalledAt(u.at)}</span>
                         {u.priceAt && <span className="ml-auto font-mono tabular-nums">@{formatPrice(u.priceAt)}</span>}

@@ -50,6 +50,11 @@ export function ntLabel(n: string, tr: Tr): string {
   };
   return m[n] ?? n;
 }
+export function posActionLabel(a: string | undefined, tr: Tr): string {
+  if (!a) return "";
+  return ({ add: tr.actionAdd, reduce: tr.actionReduce, exit: tr.actionExit } as Record<string, string>)[a] ?? a;
+}
+
 export function posLabel(p: string, tr: Tr): string {
   return ({ holding: tr["pos.holding"], sold: tr["pos.sold"], none: tr["pos.none"], unknown: tr["pos.unknown"] } as Record<string, string>)[p] ?? p;
 }
