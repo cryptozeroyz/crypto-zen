@@ -72,7 +72,7 @@
    "horizon": "weeks",
    "invalidation": "历史记录，未事前设定",
    "disclosure": {
-    "position": "unknown",
+    "position": "sold",
     "sponsored": false,
     "referral": false
    },
