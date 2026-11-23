@@ -121,6 +121,7 @@ function NewCallForm({ onDone, onError }: { onDone: () => void; onError: (m: str
     horizon: "weeks",
     priceAtCall: "",
     mcapAtCall: "",
+    pairAddress: "",
     manualPrice: false,
     narrative: "",
     thesis: "",
@@ -152,7 +153,13 @@ function NewCallForm({ onDone, onError }: { onDone: () => void; onError: (m: str
       const j = await res.json();
       const p = j?.prices?.[f.ca];
       if (!p) return onError("抓不到行情（可手填并勾选「价格手填」）");
-      setF((s) => ({ ...s, priceAtCall: String(p.priceUsd), mcapAtCall: String(Math.round(p.mcap)), manualPrice: false }));
+      setF((s) => ({
+        ...s,
+        priceAtCall: String(p.priceUsd),
+        mcapAtCall: String(Math.round(p.mcap)),
+        pairAddress: p.pairAddress ?? s.pairAddress,
+        manualPrice: false,
+      }));
     } catch {
       onError("抓取失败");
     }
@@ -196,6 +203,7 @@ function NewCallForm({ onDone, onError }: { onDone: () => void; onError: (m: str
         tags: f.tags.split(",").map((s) => s.trim()).filter(Boolean),
         isHistorical: false,
         priceSource: f.manualPrice ? "manual" : "auto",
+        pairAddress: /^[0-9a-zA-Z]{20,80}$/.test(f.pairAddress) ? f.pairAddress : undefined,
       };
       const res = await fetch("/api/admin/calls", {
         method: "POST",

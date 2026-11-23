@@ -397,7 +397,7 @@ export async function GET(req: Request) {
       const json = await res.json();
       const prices: Record<
         string,
-        { priceUsd: number; mcap: number; change24h: number }
+        { priceUsd: number; mcap: number; change24h: number; pairAddress?: string; imageUrl?: string }
       > = {};
       for (const ca of cas) {
         const pairs = (json?.pairs ?? []).filter(
@@ -411,6 +411,8 @@ export async function GET(req: Request) {
             priceUsd: Number(best.priceUsd),
             mcap: Number(best.marketCap ?? best.fdv ?? 0),
             change24h: Number(best.priceChange?.h24 ?? 0),
+            pairAddress: best.pairAddress,
+            imageUrl: best.info?.imageUrl ?? undefined,
           };
         }
       }

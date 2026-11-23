@@ -41,15 +41,21 @@ export default async function HomePage({
   const latestCalls = [...callRecords]
     .sort((a, b) => b.call.calledAt.localeCompare(a.call.calledAt))
     .slice(0, 2);
-  const currentMap: Record<string, { priceUsd?: number; mcap?: number }> = {};
+  const currentMap: Record<
+    string,
+    { priceUsd?: number; mcap?: number; imageUrl?: string }
+  > = {};
   await Promise.all(
     latestCalls.map(async (r) => {
       if (r.outcome) return; // 已复盘的不需要现价
-      const d = await fetchCoinData(r.call.contractAddress).catch(() => null);
+      const d = await fetchCoinData(r.call.contractAddress, {
+        pairAddress: r.call.pairAddress,
+      }).catch(() => null);
       if (d) {
         currentMap[r.call.contractAddress] = {
           priceUsd: d.priceUsd || undefined,
           mcap: d.marketCap ?? d.fdv,
+          imageUrl: d.imageUrl,
         };
       }
     })

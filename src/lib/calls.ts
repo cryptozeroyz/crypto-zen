@@ -112,6 +112,11 @@ export const CallSchema = z
     tags: z.array(z.string().min(1).max(40)).max(10).default([]),
     isHistorical: z.boolean().default(false),
     priceSource: PriceSourceSchema.default("auto"),
+    /** 优选交易对（创建/迁移时记录，取价与 K 线优先用它，避免选到同名代币的池子） */
+    pairAddress: z
+      .string()
+      .regex(/^[0-9a-zA-Z]{20,80}$/)
+      .optional(),
   })
   .superRefine((call, ctx) => {
     /* 历史记录专属白名单：unknown 持仓状态 */

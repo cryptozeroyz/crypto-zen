@@ -67,7 +67,9 @@ export default async function CallDetailPage({
 
   const { call, updates, outcome } = record;
   const status = statusOf(record);
-  const data = await fetchCoinData(call.contractAddress).catch(() => null);
+  const data = await fetchCoinData(call.contractAddress, {
+    pairAddress: call.pairAddress,
+  }).catch(() => null);
 
   const calledAtTs = Date.parse(call.calledAt);
   const updateTs = updates.map((u) => Date.parse(u.at));
@@ -92,6 +94,10 @@ export default async function CallDetailPage({
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {data?.imageUrl ? (
+              <img src={data.imageUrl} alt="" className="h-9 w-9 rounded-full border border-line object-cover" />
+            ) : null}
             <h1 className="font-serif text-3xl font-bold text-[#5c2a52]">{call.tokenName}</h1>
             <span className={`rounded-full border px-2.5 py-0.5 text-xs font-bold ${STANCE_BADGE[call.stance]}`}>
               {stanceLabel(call.stance, tr)}

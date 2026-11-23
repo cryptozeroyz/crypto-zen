@@ -26,7 +26,7 @@ import type { Locale } from "@/lib/i18n";
 
 const PAGE_SIZE = 10;
 
-type Prices = Record<string, { priceUsd: number; mcap: number; change24h: number }>;
+type Prices = Record<string, { priceUsd: number; mcap: number; change24h: number; imageUrl?: string }>;
 
 export default function TrackRecordClient({
   records,
@@ -213,7 +213,7 @@ function CallRow({
   locale: Locale;
   tr: Tr;
   labels: DisclosureLabels;
-  price?: { priceUsd: number; mcap: number; change24h: number };
+  price?: { priceUsd: number; mcap: number; change24h: number; imageUrl?: string };
 }) {
   const { call, outcome } = record;
   const st = statusOf(record);
@@ -233,7 +233,7 @@ function CallRow({
         {/* 币种 */}
         <div className="flex min-w-[180px] flex-1 items-center gap-2.5">
           <CoinAvatar
-            imageUrl={undefined}
+            imageUrl={price?.imageUrl}
             symbol={call.symbol}
             hue={avatarHue(call.contractAddress)}
             size={36}

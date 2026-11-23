@@ -22,6 +22,7 @@ export interface CurrentPrice {
   priceUsd?: number;
   mcap?: number;
   change24h?: number;
+  imageUrl?: string;
 }
 
 /** 日志正文去 Markdown 记号的纯文本摘要 */
@@ -85,7 +86,7 @@ export default function HomeTrackRecord({
             {/* 头部：头像 + 名称 + stance */}
             <div className="flex items-center gap-3">
               <CoinAvatar
-                imageUrl={undefined}
+                imageUrl={cur?.imageUrl}
                 symbol={call.symbol}
                 hue={avatarHue(call.contractAddress)}
                 size={44}

@@ -27,7 +27,8 @@
     "tiktok"
    ],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "GkHcYZeXDi2SveqNaGSg3qxrkzShDr5Dxrd482kM2hXx"
   },
   "updates": [
    {
@@ -83,7 +84,8 @@
     "news"
    ],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "DChXQ4qFPpNPEDfZLNiwvPhrVuuFGfqEDLAAZbiZHUWf"
   },
   "updates": [
    {
@@ -123,7 +125,8 @@
     "event"
    ],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "CtbK3gTAFki1BfKQRbEa35MQ5TShnLC3G5DTBPMnWU7R"
   },
   "updates": [
    {
@@ -154,9 +157,9 @@
    "priceAtClose": 0.0001345,
    "mcapAtClose": 130711,
    "maxMcapAfterCall": 261783,
-   "minMcapAfterCall": 15668,
+   "minMcapAfterCall": 11232,
    "returnAtClose": -62.92,
-   "maxDrawdown": 94.01,
+   "maxDrawdown": 95.71,
    "invalidationTriggered": false,
    "lessons": "历史迁移记录，未填写复盘。",
    "priceSource": "auto"
@@ -193,7 +196,8 @@
     "utility_tokens"
    ],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "HByWtFDYwGw45A69cg4jwZFt78kmnD9q4kvKACUSdwB8"
   },
   "updates": [
    {
@@ -238,7 +242,8 @@
    "relatedReports": [],
    "tags": [],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "J5JQhQtLcLU24ZTbJ85oqgX2rSkv1BgS7Kteo8fLHtGU"
   },
   "updates": [
    {
@@ -257,9 +262,9 @@
    "priceAtClose": 0.00008094,
    "mcapAtClose": 79557,
    "maxMcapAfterCall": 115938,
-   "minMcapAfterCall": 27683,
+   "minMcapAfterCall": 19769,
    "returnAtClose": -68.02,
-   "maxDrawdown": 76.12,
+   "maxDrawdown": 82.95,
    "invalidationTriggered": false,
    "lessons": "历史迁移记录，未填写复盘。",
    "priceSource": "auto"
@@ -293,7 +298,8 @@
     "animals"
    ],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "GxYbNxjGR9mEuVzXsGBi2Y78RGkwBMRok4RS9sMUb8hE"
   },
   "updates": [
    {
@@ -354,7 +360,8 @@
    "relatedReports": [],
    "tags": [],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "0x29dcd29F4Ec9f08485F87e7777BC463f2B1E1Ebf"
   },
   "updates": [
    {
@@ -373,9 +380,9 @@
    "priceAtClose": 0.0007385,
    "mcapAtClose": 738516,
    "maxMcapAfterCall": 240651222908,
-   "minMcapAfterCall": 142062167329,
+   "minMcapAfterCall": 130016512348,
    "returnAtClose": -3.54,
-   "maxDrawdown": 40.97,
+   "maxDrawdown": 45.97,
    "invalidationTriggered": false,
    "lessons": "历史迁移记录，未填写复盘。",
    "priceSource": "auto"
@@ -410,7 +417,8 @@
     "thesis"
    ],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "B4Wmjc6PvjCtU3qSVS3eTT9Mr4M5V5jBkRQctWANTc71"
   },
   "updates": [
    {
@@ -456,7 +464,8 @@
    "relatedReports": [],
    "tags": [],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "GeQmNaXBb86uLLQr3EAEwoukxVqSh4qTm3uXvb3G7Mne"
   },
   "updates": [
    {
@@ -475,9 +484,9 @@
    "priceAtClose": 0.00009705,
    "mcapAtClose": 94524,
    "maxMcapAfterCall": 443310,
-   "minMcapAfterCall": 33977,
+   "minMcapAfterCall": 27299,
    "returnAtClose": -27.95,
-   "maxDrawdown": 92.34,
+   "maxDrawdown": 93.84,
    "invalidationTriggered": false,
    "lessons": "历史迁移记录，未填写复盘。",
    "priceSource": "auto"
@@ -511,7 +520,8 @@
    ],
    "tags": [],
    "isHistorical": true,
-   "priceSource": "auto"
+   "priceSource": "auto",
+   "pairAddress": "Ho1aSG6WGH1FfXdEHrK2f4Ggt1Hoxo9s5jcLMDqeyeBz"
   },
   "updates": [
    {

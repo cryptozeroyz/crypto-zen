@@ -176,6 +176,7 @@ async function migrateCoin(
     tags: coin.why ?? [],
     isHistorical: true,
     priceSource: "auto",
+    pairAddress: /^[0-9a-zA-Z]{20,80}$/.test(coin.pairAddress ?? "") ? coin.pairAddress : undefined,
   });
   if (call.disclosure.position === "unknown") flags.push("持仓状态未知 → disclosure.position=unknown");
   if (call.invalidation === "历史记录，未事前设定") flags.push("无 profile.invalidate → 兜底文案");
