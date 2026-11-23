@@ -251,7 +251,7 @@
     "at": "2026-11-18T00:00",
     "type": "closed",
     "content": "取消关注，并没被炒作起来",
-    "priceAt": 0.00008094,
+    "priceAt": 8.094e-05,
     "positionAction": "exit"
    }
   ],
@@ -259,7 +259,7 @@
    "callId": "2026-11-17-char",
    "closedAt": "2026-11-18T00:00",
    "verdict": "wrong",
-   "priceAtClose": 0.00008094,
+   "priceAtClose": 8.094e-05,
    "mcapAtClose": 79557,
    "maxMcapAfterCall": 115938,
    "minMcapAfterCall": 19769,
@@ -473,7 +473,7 @@
     "at": "2026-11-17T00:00",
     "type": "closed",
     "content": "没有因为mihao的爆发带来增长，叙事只能长期持有龙一，β标的只能做短期操作",
-    "priceAt": 0.00009705,
+    "priceAt": 9.705e-05,
     "positionAction": "exit"
    }
   ],
@@ -481,7 +481,7 @@
    "callId": "2026-11-12-updog",
    "closedAt": "2026-11-17T00:00",
    "verdict": "wrong",
-   "priceAtClose": 0.00009705,
+   "priceAtClose": 9.705e-05,
    "mcapAtClose": 94524,
    "maxMcapAfterCall": 443310,
    "minMcapAfterCall": 27299,
@@ -543,37 +543,6 @@
     "content": "「KFC 换头像」 KFC 换头像是市值暴涨，目前已经又回调回来，但从pfp叙事 的项目来说，可能会有下一个玩梗！关注7m守不守的住"
    }
   ],
-  "outcome": null
- },
- {
-  "call": {
-   "id": "2099-01-01-testnull",
-   "chain": "solana",
-   "tokenName": "Test",
-   "symbol": "TST",
-   "contractAddress": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
-   "calledAt": "2099-01-01T00:00:00",
-   "stance": "watch",
-   "priceAtCall": 0.01,
-   "mcapAtCall": 1000000,
-   "narrative": "����",
-   "thesis": "����",
-   "catalysts": [],
-   "risks": [],
-   "narrativeType": "other",
-   "horizon": "weeks",
-   "invalidation": "����֤α",
-   "disclosure": {
-    "position": "none",
-    "sponsored": false,
-    "referral": false
-   },
-   "relatedReports": [],
-   "tags": [],
-   "isHistorical": true,
-   "priceSource": "auto"
-  },
-  "updates": [],
   "outcome": null
  }
 ]
