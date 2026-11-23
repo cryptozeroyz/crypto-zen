@@ -13,6 +13,7 @@ import {
   CallSchema,
   UpdateSchema,
   OutcomeSchema,
+  DisclosureSchema,
   LOCKED_CALL_FIELDS,
   type Call,
   type CallRecord,
@@ -103,6 +104,22 @@ export function applyAppendUpdate(
   return next;
 }
 
+/** 更新利益披露（唯一允许的 Call 字段变更；锁定字段必须原样不动，否则拒绝） */
+export function applyUpdateDisclosure(
+  records: CallRecord[],
+  callId: string,
+  disclosure: Call["disclosure"]
+): CallRecord[] {
+  DisclosureSchema.parse(disclosure);
+  const idx = records.findIndex((r) => r.call.id === callId);
+  if (idx === -1) throw new CallNotFoundError(callId);
+  const nextCall = { ...records[idx].call, disclosure };
+  assertCallImmutable(records[idx].call, nextCall); // 兜底：锁定字段不可顺带篡改
+  const next = records.slice();
+  next[idx] = { ...records[idx], call: CallSchema.parse(nextCall) };
+  return next;
+}
+
 /** 关闭复盘：写入 Outcome。returnAtClose 由判断时/关闭时价格自动计算，不允许手填覆盖 */
 export function applyCloseCall(
   records: CallRecord[],
@@ -169,6 +186,16 @@ export async function closeCall(
 ): Promise<CallRecord[]> {
   const records = await readCallRecords();
   const next = applyCloseCall(records, input);
+  await saveCallRecords(next);
+  return next;
+}
+
+export async function updateCallDisclosure(
+  callId: string,
+  disclosure: Call["disclosure"]
+): Promise<CallRecord[]> {
+  const records = await readCallRecords();
+  const next = applyUpdateDisclosure(records, callId, disclosure);
   await saveCallRecords(next);
   return next;
 }

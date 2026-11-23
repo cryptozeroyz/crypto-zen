@@ -996,6 +996,7 @@ import {
   createCall,
   appendUpdate,
   closeCall,
+  updateCallDisclosure,
   ImmutableCallError,
   DuplicateCallError,
   CallNotFoundError,
@@ -1084,6 +1085,26 @@ export async function callsDELETE(req: Request) {
   } catch (e) {
     return NextResponse.json(
       { ok: false, message: e instanceof Error ? e.message : "删除失败" },
+      { status: 400 }
+    );
+  }
+}
+
+/** POST /api/admin/calls/disclosure —— 更新利益披露（锁定字段原样校验由数据层保证） */
+export async function callsDisclosurePOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  try {
+    const body = await req.json();
+    const id = String(body.id ?? "").trim();
+    if (!id) throw new Error("缺少 id");
+    const disclosure = stripNulls(body.disclosure ?? {});
+    await updateCallDisclosure(id, disclosure as Parameters<typeof updateCallDisclosure>[1]);
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    if (e instanceof ImmutableCallError || e instanceof CallNotFoundError)
+      return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
+    return NextResponse.json(
+      { ok: false, message: `校验失败：${schemaMessage(e)}` },
       { status: 400 }
     );
   }

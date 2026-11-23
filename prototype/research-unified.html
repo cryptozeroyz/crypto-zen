@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>投研统一工作台 · 原型 v1</title>
+<style>
+/* ===== 手绘风后台样式（与线上一致） ===== */
+:root{
+  --paper:#f6f3ee; --card:#ffffff; --ink:#2a2230; --purple:#5c2a52;
+  --coral:#ff5b3a; --muted:#857a8a; --line:rgba(42,34,48,.16);
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Songti SC","Noto Serif SC",serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font:14px/1.7 ui-sans-serif,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1280px;margin:0 auto;padding:28px 24px 80px}
+h1{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--purple)}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--coral);border:1.5px dashed var(--coral);border-radius:4px 10px 4px 10px;padding:1px 8px;margin-left:10px;vertical-align:2px}
+.sub{margin-top:6px;font-size:12.5px;color:var(--muted);max-width:760px}
+.sub b{color:var(--coral)}
+
+/* ===== 顶部快捷录入条 ===== */
+.quickbar{margin-top:22px;display:flex;gap:10px;align-items:stretch;background:var(--card);border:1.5px dashed var(--purple);border-radius:14px 18px 12px 20px;padding:12px 14px}
+.quickbar input{flex:1;border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;font-family:var(--mono);font-size:13px;color:var(--ink);background:#fff;outline:none}
+.quickbar input:focus{border-color:var(--coral)}
+.btn{border:0;cursor:pointer;border-radius:8px 12px 8px 14px;padding:10px 18px;font-size:13px;font-weight:600;transition:.2s}
+.btn-coral{background:var(--coral);color:#fff}
+.btn-coral:hover{transform:translateY(-1px)}
+.btn-ghost{background:#fff;border:1.5px solid var(--line);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+.btn[disabled]{opacity:.5;cursor:default}
+
+/* ===== 主体：左列表 + 右工作台 ===== */
+.main{margin-top:18px;display:grid;grid-template-columns:290px minmax(0,1fr);gap:18px;align-items:start}
+
+/* 左：币列表 */
+.coinlist{background:var(--card);border:1.5px dashed var(--ink);border-radius:14px 18px 12px 20px;overflow:hidden;position:sticky;top:16px}
+.coinlist .tools{padding:10px;border-bottom:1.5px dashed var(--line);display:flex;gap:8px}
+.coinlist .tools input{flex:1;border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;outline:none}
+.coinlist .tools input:focus{border-color:var(--coral)}
+.filternav{display:flex;gap:2px;padding:8px 10px;border-bottom:1.5px dashed var(--line);flex-wrap:wrap}
+.filternav button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:2px 10px;font-size:11px;color:var(--muted);cursor:pointer}
+.filternav button.on{border-color:var(--coral);color:var(--coral);font-weight:600}
+.coin{padding:10px 12px;display:flex;gap:10px;align-items:center;cursor:pointer;border-bottom:1px dashed var(--line);transition:.15s}
+.coin:hover{background:rgba(92,42,82,.04)}
+.coin.on{background:rgba(255,91,58,.06);box-shadow:inset 3px 0 0 var(--coral)}
+.coin .ava{width:34px;height:34px;border-radius:50%;flex-shrink:0;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.coin .nm{flex:1;min-width:0}
+.coin .nm b{font-size:13px;display:block}
+.coin .nm span{font-size:10.5px;color:var(--muted)}
+.coin .perf{font-family:var(--mono);font-size:12px;font-weight:700;text-align:right}
+.coin .perf small{display:block;font-size:9.5px;color:var(--muted);font-weight:400}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px}
+
+/* 右：工作台 */
+.workspace{background:var(--card);border:1.5px dashed var(--ink);border-radius:14px 18px 12px 20px;padding:18px 20px}
+.whead{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.whead .ava{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;color:#fff;flex-shrink:0}
+.whead h2{font-family:var(--serif);font-size:24px;color:var(--purple)}
+.whead .meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+.whead .bigperf{margin-left:auto;text-align:right}
+.whead .bigperf b{font-family:var(--mono);font-size:28px}
+.whead .bigperf small{display:block;font-size:10px;color:var(--muted)}
+.badge{display:inline-block;border:1px solid;border-radius:999px;padding:1px 9px;font-size:10.5px;font-weight:600;margin-left:6px;vertical-align:2px}
+.b-gray{border-color:#64748b66;color:#64748b;background:#64748b14}
+.b-green{border-color:#05966955;color:#059669;background:#05966912}
+.b-orange{border-color:#d9770655;color:#d97706;background:#d9770612}
+.b-red{border-color:#dc262655;color:#dc2626;background:#dc262612}
+.b-amber{border-color:#d9770655;color:#b45309;background:#f59e0b14}
+.b-purple{border-color:#5c2a5255;color:#5c2a52;background:#5c2a5210}
+
+/* 子 tab */
+.subtabs{display:flex;gap:2px;margin-top:16px;border-bottom:1.5px solid var(--line)}
+.subtabs button{border:0;background:none;padding:8px 16px;font-size:13px;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px}
+.subtabs button.on{color:var(--coral);font-weight:700;border-bottom-color:var(--coral)}
+.pane{margin-top:16px}
+
+/* 卡片区 */
+.card{border:1.5px dashed var(--line);border-radius:12px 16px 10px 18px;padding:14px 16px;margin-bottom:14px}
+.card h4{font-size:11px;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:8px}
+.card.readonly{background:#fff}
+.card.inval{border-color:#ff5b3a99}
+.card.inval h4{color:var(--coral)}
+.kv{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.kv div{background:#f6f3ee;border-radius:8px;padding:6px 10px}
+.kv small{display:block;font-size:9.5px;color:var(--muted)}
+.kv b{font-family:var(--mono);font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{border-radius:999px;padding:2px 10px;font-size:11px}
+textarea,input[type=text]{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;font-size:13px;color:var(--ink);background:#fff;outline:none}
+textarea:focus,input[type=text]:focus{border-color:var(--coral)}
+textarea{resize:vertical}
+label.f{display:block;font-size:11.5px;color:var(--muted);margin:10px 0 4px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+select{border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;background:#fff;color:var(--ink);outline:none}
+
+/* 时间线 */
+.tl{position:relative;padding-left:22px;margin-top:12px}
+.tl::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl .ev{position:relative;margin-bottom:12px}
+.tl .ev::before{content:"";position:absolute;left:-20px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--coral)}
+.tl .ev .box{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+.tl .ev .meta{font-size:10.5px;color:var(--muted);margin-bottom:3px}
+.tl .ev .meta b{color:var(--ink)}
+
+/* 原型标注 */
+.note{margin-top:26px;border:1.5px dashed var(--coral);border-radius:12px;padding:14px 18px;font-size:12.5px;color:var(--muted);background:#fff}
+.note b{color:var(--coral)}
+.note ol{margin:6px 0 0 18px}
+.note li{margin:3px 0}
+@media(max-width:900px){.main{grid-template-columns:1fr}.coinlist{position:static}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>投研工作台<span class="tag">UNIFIED · 原型 v1</span></h1>
+  <p class="sub">原来「关注列表 / 研究日志 / 判断记录」<b>三个 tab 合并为一个页面</b>：以「币」为中心，判断(Call)为主干，快记与持仓都挂在币下面。建立关注 = 新建一条 stance=watch 的判断。</p>
+
+  <!-- ============ 顶部快捷录入条 ============ -->
+  <div class="quickbar">
+    <input id="ca" type="text" placeholder="粘贴合约地址（CA）… 回车自动抓取行情并定位/新建" />
+    <button class="btn btn-ghost" onclick="alert('原型：抓取 name/symbol/price/mcap/logo\n→ 库中已有该币则右侧直接定位到它\n→ 没有则弹出「新建判断」表单（自动填好行情）')">⚡ 抓取并定位</button>
+    <button class="btn btn-coral" onclick="alert('原型：打开「新建判断」完整表单\n（= 原判断记录的新建，含披露必填）')">+ 新建判断</button>
+  </div>
+
+  <div class="main">
+
+    <!-- ============ 左：币列表 ============ -->
+    <aside class="coinlist">
+      <div class="tools">
+        <input type="text" placeholder="搜索 symbol / 名称 / CA…" />
+      </div>
+      <div class="filternav">
+        <button class="on">全部 11</button>
+        <button>进行中 5</button>
+        <button>待复盘 1</button>
+        <button>已复盘 5</button>
+      </div>
+
+      <div class="coin on">
+        <div class="ava" style="background:#5c2a52">R</div>
+        <div class="nm"><b>Rings</b><span>11-23 · <i class="dot" style="background:#d97706"></i>进行中</span></div>
+        <div class="perf" style="color:#dc2626">-8.3%<small>判断以来</small></div>
+      </div>
+      <div class="coin">
+        <div class="ava" style="background:#2563eb">H</div>
+        <div class="nm"><b>Huss</b><span>11-20 · <i class="dot" style="background:#d97706"></i>进行中 · 1更新</span></div>
+        <div class="perf" style="color:#059669">+12.2%<small>判断以来</small></div>
+      </div>
+      <div class="coin">
+        <div class="ava" style="background:#ff5b3a">D</div>
+        <div class="nm"><b>DacityCoin</b><span>11-19 · <i class="dot" style="background:#d97706"></i>进行中</span></div>
+        <div class="perf" style="color:#dc2626">-31.5%<small>判断以来</small></div>
+      </div>
+      <div class="coin">
+        <div class="ava" style="background:#059669">M</div>
+        <div class="nm"><b>Mori Finance</b><span>11-17 · <i class="dot" style="background:#d97706"></i>进行中 · 2更新</span></div>
+        <div class="perf" style="color:#059669">+6.7%<small>判断以来</small></div>
+      </div>
+      <div class="coin">
+        <div class="ava" style="background:#64748b">:</div>
+        <div class="nm"><b>:3</b><span>11-13 · <i class="dot" style="background:#64748b"></i>已复盘</span></div>
+        <div class="perf" style="color:#059669">+219%<small>判断以来</small></div>
+      </div>
+      <div class="coin">
+        <div class="ava" style="background:#94a3b8">J</div>
+        <div class="nm"><b>Jacket</b><span>11-13 · <i class="dot" style="background:#64748b"></i>已复盘</span></div>
+        <div class="perf" style="color:#dc2626">-3.5%<small>判断以来</small></div>
+      </div>
+    </aside>
+
+    <!-- ============ 右：工作台 ============ -->
+    <section class="workspace">
+
+      <div class="whead">
+        <div class="ava" style="background:#5c2a52">R</div>
+        <div>
+          <h2>Rings<span class="badge b-gray">观望</span><span class="badge b-amber">持仓未知</span></h2>
+          <div class="meta">$RINGS · solana · 判断于 2026-11-23 03:40 · ⚑ 历史记录，非事前判断</div>
+        </div>
+        <div class="bigperf"><b style="color:#dc2626">-8.3%</b><small>判断以来 · 现价 $0.00341</small></div>
+      </div>
+
+      <div class="subtabs">
+        <button class="on">判断 · Call</button>
+        <button>快记 · Journal</button>
+        <button>持仓 · Position</button>
+      </div>
+
+      <!-- 判断面板 -->
+      <div class="pane">
+        <!-- 只读快照 -->
+        <div class="card readonly">
+          <h4>◉ 判断快照（发布后锁定，不可改写）</h4>
+          <p style="font-size:13.5px"><b>Rings 是 Solana 上的隐私交易应用层产品矩阵——私密 OTC 大宗交易台、匿名发币 Launchpad、私密 DEX 与交易终端</b></p>
+          <p style="margin-top:6px;font-size:13px;color:#4b4252">与 Helius 协议主网上线同一天发布，是目前该协议上最完整的 C 端应用，吃「协议级首发生态位」。</p>
+          <div class="kv">
+            <div><small>判断时价格</small><b>$0.00372</b></div>
+            <div><small>判断时市值</small><b>$3.59M</b></div>
+            <div><small>周期</small><b>数周</b></div>
+            <div><small>叙事类型</small><b>其他</b></div>
+          </div>
+          <div class="chips">
+            <span class="chip" style="background:#05966914;color:#059669">🧨 与 Helius 主网上线同期</span>
+            <span class="chip" style="background:#dc262614;color:#dc2626">⚠️ 隐私赛道监管不确定性</span>
+          </div>
+        </div>
+
+        <!-- 证伪条件：始终醒目 -->
+        <div class="card inval">
+          <h4>⚠ 什么情况算我错（invalidation）</h4>
+          <p style="font-size:13px">Helius 上线后 7 日内 Rings 交易量未进协议前三，或团队停止更新。</p>
+        </div>
+
+        <!-- 操作区 -->
+        <div style="display:flex;gap:10px;margin:14px 0">
+          <button class="btn btn-coral" onclick="document.getElementById('upd').style.display='block'">✎ 追加更新</button>
+          <button class="btn btn-ghost" onclick="alert('原型：复盘表单（verdict/现价/经验教训）')">⚖ 复盘关闭</button>
+          <span style="margin-left:auto;font-size:11px;color:var(--muted);align-self:center">改错只能追加「论点修正」，不能改写原判断</span>
+        </div>
+
+        <!-- 追加更新（内联展开） -->
+        <div class="card" id="upd" style="display:none;border-color:var(--coral)">
+          <h4>✎ 追加更新（只增不改）</h4>
+          <div class="row">
+            <div>
+              <label class="f">类型</label>
+              <select><option>笔记</option><option>论点修正</option><option>仓位变动</option><option>结束</option></select>
+            </div>
+            <div><label class="f">当时价格（可选）</label><input type="text" placeholder="0.00341" /></div>
+          </div>
+          <label class="f">内容</label>
+          <textarea rows="2" placeholder="新的观察 / 数据 / 修正…"></textarea>
+          <div style="margin-top:10px;display:flex;gap:10px">
+            <button class="btn btn-coral">保存 Update</button>
+            <button class="btn btn-ghost" onclick="document.getElementById('upd').style.display='none'">取消</button>
+          </div>
+        </div>
+
+        <!-- 更新+复盘时间线 -->
+        <div class="card">
+          <h4>✎ 动态时间线（更新 + 复盘）</h4>
+          <div class="tl">
+            <div class="ev"><div class="box">
+              <div class="meta"><b>◉ 判断</b> · 2026-11-23 03:40 · @$0.00372</div>
+              与 Helius 协议主网上线同一天发布……（论点原文）
+            </div></div>
+            <div class="ev"><div class="box">
+              <div class="meta"><b>✎ 笔记</b> · 2026-11-23 14:10 · @$0.00341</div>
+              交易量 800K，买入大于卖出，净流入 12K；持币地址增长 20%。
+            </div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- （原型示意）快记面板：textarea 顶部即写即存，自动挂当前币 -->
+      <div class="pane" style="display:none">
+        <div class="card" style="border-color:var(--purple)">
+          <h4>⚡ 快记（自动关联 Rings）</h4>
+          <textarea rows="3" placeholder="碎片观察 / 假设 / 数据速记，回车 Ctrl+Enter 保存…"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+            <input type="text" placeholder="标签（逗号分隔，可选）" style="flex:1" />
+            <button class="btn btn-coral">保存快记</button>
+          </div>
+        </div>
+        <div class="tl">
+          <div class="ev"><div class="box">
+            <div class="meta"><b>✎ 快记</b> · 2026-11-23 14:10 · 筹码</div>
+            交易量 800K，买入大于卖出，净流入 12K……
+          </div></div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- 原型说明 -->
+  <div class="note">
+    <b>合并方案要点（对照现状三个 tab）：</b>
+    <ol>
+      <li><b>以币为中心</b>：左侧币列表 = 全部判断（按最近活跃排序），点选后右侧工作台展示该币的一切；不再按「关注/日志/判断」三种维度切来切去。</li>
+      <li><b>顶部 CA 快捷条</b>：粘 CA → 抓取行情 → 已有则定位、没有则新建判断（自动填价）；「+ 新建判断」= 原「建立关注」（stance 选 watch 即等同旧关注）。</li>
+      <li><b>「研究日志」不再独立维护</b>：快记直接写在对应币的「快记」子 tab 下（自动关联）；旧的游离日志归入列表底部「未关联」分组，可逐条认领。</li>
+      <li><b>持仓并入「持仓」子 tab</b>：持仓状态/成本价/仓位级别可改，每次变动自动留一条 position-change 更新；旧 watchlist 的「当前持仓」checklist 由这里接管。</li>
+      <li><b>不可变性不变</b>：判断快照只读、证伪条件常显、复盘后冻结——规则与线上一致。</li>
+      <li><b>旧「关注列表」页退役</b>：数据已全部迁移为历史判断；本页是投研的唯一入口。</li>
+    </ol>
+  </div>
+
+</div>
+</body>
+</html>

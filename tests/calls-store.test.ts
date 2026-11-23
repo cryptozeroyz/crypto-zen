@@ -148,3 +148,29 @@ describe("applyCloseCall", () => {
     expect(() => applyAppendUpdate(recs, note())).toThrow(CallAlreadyClosedError);
   });
 });
+
+describe("applyUpdateDisclosure", () => {
+  it("更新披露成功，锁定字段不变", async () => {
+    const { applyUpdateDisclosure } = await import("@/lib/calls-store");
+    const recs = applyCreateCall([], baseCall());
+    const next = applyUpdateDisclosure(recs, "2026-11-20-huss", {
+      position: "holding",
+      entryPrice: 0.018,
+      sizeTier: "small",
+      sponsored: false,
+      referral: false,
+    });
+    expect(next[0].call.disclosure.position).toBe("holding");
+    expect(next[0].call.thesis).toBe(baseCall().thesis);
+  });
+
+  it("不存在的 call 拒绝", async () => {
+    const { applyUpdateDisclosure } = await import("@/lib/calls-store");
+    const recs = applyCreateCall([], baseCall());
+    expect(() =>
+      applyUpdateDisclosure(recs, "2099-01-01-none", {
+        position: "none", sponsored: false, referral: false,
+      })
+    ).toThrow();
+  });
+});
