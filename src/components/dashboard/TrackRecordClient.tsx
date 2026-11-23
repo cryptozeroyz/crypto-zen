@@ -87,7 +87,7 @@ export default function TrackRecordClient({
   );
   const filtered = useMemo(
     () =>
-      records.filter((r) => {
+      sorted.filter((r) => {
         if (status !== "all" && statusOf(r) !== status) return false;
         if (verdict !== "all" && (r.outcome?.verdict ?? "none") !== verdict)
           return false;
@@ -95,7 +95,7 @@ export default function TrackRecordClient({
         if (chain !== "all" && r.call.chain !== chain) return false;
         return true;
       }),
-    [records, status, verdict, narrative, chain]
+    [sorted, status, verdict, narrative, chain]
   );
 
   useEffect(() => setPage(1), [status, verdict, narrative, chain]);
