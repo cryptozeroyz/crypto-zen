@@ -42,6 +42,11 @@ export function median(values: number[]): number | null {
     : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
+/** 出口统一两位小数，避免浮点噪声（如 -88.39500000000001） */
+function round2(v: number | null): number | null {
+  return v === null ? null : Math.round(v * 100) / 100;
+}
+
 export interface CallStats {
   /** 判断总数 */
   total: number;
@@ -108,8 +113,8 @@ export function computeStats(records: CallRecord[], now = Date.now()): CallStats
       resolved.length > 0
         ? Math.round((correct.length / resolved.length) * 1000) / 10
         : null,
-    medianReturn: median(returns.map((v) => Math.round(v * 100) / 100)),
-    medianMaxDrawdown: median(drawdowns),
+    medianReturn: round2(median(returns)),
+    medianMaxDrawdown: round2(median(drawdowns)),
     mistakeShare,
     since: times.length > 0 ? new Date(times[0]).toISOString().slice(0, 10) : null,
     smallSample: resolved.length < SMALL_SAMPLE_THRESHOLD,

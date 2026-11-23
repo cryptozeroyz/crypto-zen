@@ -156,3 +156,16 @@ describe("activityAt", () => {
     expect(activityAt(withUpd)).toBe("2026-11-23T07:40");
   });
 });
+
+describe("浮点噪声", () => {
+  it("偶数中位数出口保留两位小数（-88.39500000000001 → -88.4）", async () => {
+    const { computeStats } = await import("@/lib/calls-stats");
+    const records = [
+      closedRecord(call({ id: "2026-11-01-a" }), "wrong", 10, 88.39),
+      closedRecord(call({ id: "2026-11-02-b" }), "wrong", -20, 88.4),
+    ];
+    const s = computeStats(records, NOW);
+    expect(s.medianMaxDrawdown).toBe(88.4);
+    expect(String(s.medianMaxDrawdown)).not.toContain("0000000");
+  });
+});
