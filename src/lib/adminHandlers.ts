@@ -992,6 +992,7 @@ function schemaMessage(e: unknown): string {
 
 import {
   readCallRecords,
+  saveCallRecords,
   createCall,
   appendUpdate,
   closeCall,
@@ -1063,6 +1064,26 @@ export async function callsClosePOST(req: Request) {
       return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
     return NextResponse.json(
       { ok: false, message: `校验失败：${schemaMessage(e)}` },
+      { status: 400 }
+    );
+  }
+}
+
+/** DELETE /api/admin/calls —— 删除误建的判断（body: {id}；仅用于清理，非改写历史） */
+export async function callsDELETE(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  try {
+    const body = await req.json();
+    const id = String(body.id ?? "").trim();
+    if (!id) throw new Error("缺少 id");
+    const records = await readCallRecords();
+    if (!records.some((r) => r.call.id === id))
+      return NextResponse.json({ ok: false, message: "记录不存在" }, { status: 404 });
+    await saveCallRecords(records.filter((r) => r.call.id !== id));
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, message: e instanceof Error ? e.message : "删除失败" },
       { status: 400 }
     );
   }

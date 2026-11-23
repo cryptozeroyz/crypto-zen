@@ -328,6 +328,26 @@ function CallRow({
   onError: (msg: string) => void;
 }) {
   const [mode, setMode] = useState<"none" | "update" | "close">("none");
+  const [busyDel, setBusyDel] = useState(false);
+
+  const del = async () => {
+    if (!window.confirm(`删除判断「${record.call.id}」？仅用于清理误建记录。`)) return;
+    setBusyDel(true);
+    try {
+      const res = await fetch("/api/admin/calls", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: record.call.id }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j?.message ?? "删除失败");
+      onChanged("已删除");
+    } catch (e) {
+      onError(e instanceof Error ? e.message : "删除失败");
+    } finally {
+      setBusyDel(false);
+    }
+  };
   const status = statusOf(record);
   const closed = !!record.outcome;
 
@@ -351,6 +371,9 @@ function CallRow({
               <button type="button" onClick={() => setMode(mode === "close" ? "none" : "close")} className="text-accent hover:underline dark:text-accent-mint">复盘</button>
             </>
           )}
+          <button type="button" onClick={() => void del()} disabled={busyDel} className="text-red-600 hover:underline disabled:opacity-50 dark:text-red-400">
+            {busyDel ? "删除中…" : "删除"}
+          </button>
         </span>
       </div>
 

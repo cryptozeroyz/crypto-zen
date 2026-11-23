@@ -74,5 +74,6 @@ export async function DELETE(req: Request, { params }: Ctx) {
   if (a === "watchlist" && !b) return H.watchlistDELETE(req);
   if (a === "journal" && !b) return H.journalDELETE(req);
   if (a === "links" && !b) return H.linksDELETE(req);
+  if (a === "calls" && !b) return H.callsDELETE(req);
   return NOT_FOUND();
 }
