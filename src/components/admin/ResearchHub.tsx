@@ -321,7 +321,7 @@ function CoinWorkspace({
             )}
           </div>
           <p className="mt-0.5 text-[11px] text-muted">
-            <span className="font-mono uppercase">{call.symbol}</span> · {call.chain} · 判断于 {call.calledAt.slice(0, 16)}
+            <span className="font-mono uppercase">{call.symbol}</span> · {call.chain} · 判断于 {fmtCalledAt(call.calledAt)}
             {call.isHistorical && <span className="ml-1.5 text-amber-600 dark:text-amber-400">⚑ 历史记录，非事前判断</span>}
           </p>
         </div>
@@ -370,7 +370,9 @@ function CallPane({ record, related, onChanged, onError }: { record: CallRecord;
       {/* 快照（只读） */}
       <div className="rounded-xl border-[1.5px] border-dashed border-line bg-white p-4">
         <h4 className="text-[11px] font-semibold tracking-wider text-muted">◉ 判断快照（发布后锁定，不可改写）</h4>
-        <p className="mt-2 text-[13.5px] font-semibold text-heading">{call.narrative}</p>
+        {call.thesis !== call.narrative && (
+          <p className="mt-2 text-[13.5px] font-semibold text-heading">{call.narrative}</p>
+        )}
         <p className="mt-1.5 whitespace-pre-wrap text-[13px] leading-relaxed text-[#2a2230]/85">{call.thesis}</p>
         <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
           <KV k="判断时价格" v={`$${call.priceAtCall}`} />

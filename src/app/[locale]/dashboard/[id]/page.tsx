@@ -180,9 +180,11 @@ export default async function CallDetailPage({
             <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
               ◉ {tr.callSnapshot}
             </h2>
-            <p className="mt-2 text-[13px] leading-relaxed text-muted">
-              <span className="font-semibold text-heading">{call.narrative}</span>
-            </p>
+            {call.thesis !== call.narrative && (
+              <p className="mt-2 text-[13px] leading-relaxed text-muted">
+                <span className="font-semibold text-heading">{call.narrative}</span>
+              </p>
+            )}
             <p className="mt-2 text-sm leading-relaxed text-heading">{call.thesis}</p>
             <div className="mt-3 grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
               <Snapshot label={tr.atCall} value={formatPrice(call.priceAtCall)} />
