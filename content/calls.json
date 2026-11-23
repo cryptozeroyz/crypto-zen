@@ -457,6 +457,13 @@
     "at": "2026-11-20T00:00",
     "type": "note",
     "content": "frank买入 NIO，另外 NIO 可以蹭上任何互联网热点"
+   },
+   {
+    "callId": "2026-11-13-nio",
+    "at": "2026-11-23T08:35:00",
+    "type": "position-change",
+    "content": "我对于此代币的喜欢依然，虽然一直在100万上下波动，但其 tis over的梗，在熊市会更加加速传播",
+    "positionAction": "add"
    }
   ],
   "outcome": null
