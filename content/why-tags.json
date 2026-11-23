@@ -53,5 +53,10 @@
     "id": "tiktok",
     "zh": "tiktok",
     "en": "tiktok"
+  },
+  {
+    "id": "private",
+    "zh": "private",
+    "en": "private"
   }
 ]
