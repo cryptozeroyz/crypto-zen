@@ -582,5 +582,41 @@
   },
   "updates": [],
   "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-23-rings",
+   "chain": "solana",
+   "tokenName": "Rings",
+   "symbol": "RINGS",
+   "contractAddress": "65iH8k736QNhuUHm1tt8X7yJXpJ517HPPq8BrVdwring",
+   "calledAt": "2026-11-23T05:43:00",
+   "stance": "watch",
+   "priceAtCall": 0.003749,
+   "mcapAtCall": 3620147,
+   "narrative": "Rings 是 Solana 上的隐私交易应用层产品矩阵——私密 OTC 大宗交易台、匿名发币 Launchpad、私密 DEX 与交易终端",
+   "thesis": "1、首日卡位：与 Helius 协议主网上线同一天发布，是目前该协议上最完整的 C 端应用，吃「协议级首发生态位」\n2、用途：持有价值 ≥ 挂单费 80% 的 $RINGS 可免 OTC 挂单费，是直接的实用型需求钩子。\n3、Launchpad 费用定期（每 4 小时）在公开市场买入 $RINGS，一半销毁、一半注入 Meteora 上永久锁定的流动性池；",
+   "catalysts": [
+    "隐私＋衍生品是明显的产品空白点，若落地将是最大单一催化剂"
+   ],
+   "risks": [
+    "飞轮规则在两周内改了至少四版（销毁→锁池→各半→费用分配），经济模型尚未定型。"
+   ],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "dev rug",
+   "disclosure": {
+    "position": "none",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": false,
+   "priceSource": "auto",
+   "pairAddress": "8fSUYVnTy4r5fZUksjzKexLq2Tx96K3UPdYRvW5XWJ9t"
+  },
+  "updates": [],
+  "outcome": null
  }
 ]
