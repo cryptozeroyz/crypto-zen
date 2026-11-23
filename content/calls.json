@@ -544,5 +544,36 @@
    }
   ],
   "outcome": null
+ },
+ {
+  "call": {
+   "id": "2099-01-01-testnull",
+   "chain": "solana",
+   "tokenName": "Test",
+   "symbol": "TST",
+   "contractAddress": "9hjBLBrc7WZW2H8UQvBAvG5WiTZotXUv2Bdcn4f4pump",
+   "calledAt": "2099-01-01T00:00:00",
+   "stance": "watch",
+   "priceAtCall": 0.01,
+   "mcapAtCall": 1000000,
+   "narrative": "����",
+   "thesis": "����",
+   "catalysts": [],
+   "risks": [],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "����֤α",
+   "disclosure": {
+    "position": "none",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": true,
+   "priceSource": "auto"
+  },
+  "updates": [],
+  "outcome": null
  }
 ]
