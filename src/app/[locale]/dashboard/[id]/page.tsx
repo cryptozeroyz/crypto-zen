@@ -23,6 +23,7 @@ import {
 } from "@/components/dashboard/tr";
 import { readCallRecords } from "@/lib/calls-store";
 import { statusOf } from "@/lib/calls-stats";
+import { getAllPosts } from "@/lib/posts";
 import { fetchCoinData } from "@/lib/watchlist";
 import { formatMcap, formatPrice } from "@/lib/coin-format";
 import { isLocale, locales, type Locale } from "@/lib/i18n";
@@ -65,11 +66,30 @@ export default async function CallDetailPage({
   const record = records.find((r) => r.call.id === params.id);
   if (!record) notFound();
 
-  const { call, updates, outcome } = record;
+  const { call, outcome } = record;
+  /* 更新记录倒序（最新在前） */
+  const updates = [...record.updates].sort((a, b) => b.at.localeCompare(a.at));
   const status = statusOf(record);
   const data = await fetchCoinData(call.contractAddress, {
     pairAddress: call.pairAddress,
   }).catch(() => null);
+
+  /* 关联研报：存储的 relatedReports + 按 tokens 动态匹配（后台新发研报自动出现） */
+  const sym = call.symbol.toLowerCase();
+  const addr = call.contractAddress.toLowerCase();
+  const allPosts = getAllPosts(locale);
+  const matchedSlugs = allPosts
+    .filter((pt) =>
+      (pt.tokens ?? []).some((tk) => {
+        const t = tk.trim().toLowerCase();
+        return t.length > 0 && (t === sym || t === addr);
+      })
+    )
+    .map((pt) => pt.slug);
+  const relatedSlugs = [...new Set([...call.relatedReports, ...matchedSlugs])];
+  const relatedPosts = relatedSlugs
+    .map((slug) => allPosts.find((pt) => pt.slug === slug))
+    .filter((pt): pt is NonNullable<typeof pt> => Boolean(pt));
 
   const calledAtTs = Date.parse(call.calledAt);
   const updateTs = updates.map((u) => Date.parse(u.at));
@@ -210,7 +230,7 @@ export default async function CallDetailPage({
                         <span className="font-semibold text-heading">
                           {u.type === "thesis-change" ? `↺ ${tr.thesisChanged}` : u.type === "position-change" ? `⇄ ${tr.positionChanged}` : u.type === "closed" ? `■ ${tr.closedNote}` : `✎ ${tr.note}`}
                         </span>
-                        <span className="tabular-nums">{u.at.slice(0, 16)}</span>
+                        <span className="tabular-nums">{fmtCalledAt(u.at)}</span>
                         {u.priceAt && <span className="ml-auto font-mono tabular-nums">@{formatPrice(u.priceAt)}</span>}
                       </div>
                       <p className="mt-1 whitespace-pre-wrap text-[13px] leading-relaxed text-heading">{u.content}</p>
@@ -235,7 +255,7 @@ export default async function CallDetailPage({
                   {outcome.returnAtClose >= 0 ? "+" : ""}{outcome.returnAtClose}%
                 </span>
                 <span className="text-xs tabular-nums text-muted">
-                  {tr.closedAt}: {outcome.closedAt.slice(0, 16)}
+                  {tr.closedAt}: {fmtCalledAt(outcome.closedAt)}
                 </span>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
@@ -303,14 +323,14 @@ export default async function CallDetailPage({
             </a>
           )}
 
-          {call.relatedReports.length > 0 && (
+          {relatedPosts.length > 0 && (
             <div className="rounded-[14px_18px_12px_20px] border-[1.5px] border-dashed border-[#2a2230] bg-white p-4">
               <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted">📄 {tr.related}</h3>
               <ul className="mt-2 space-y-1.5 text-xs">
-                {call.relatedReports.map((slug) => (
-                  <li key={slug}>
-                    <Link href={`/${locale}/writing/${slug}`} className="text-accent underline-offset-2 hover:underline dark:text-accent-mint">
-                      {slug}
+                {relatedPosts.map((pt) => (
+                  <li key={pt.slug}>
+                    <Link href={`/${locale}/writing/${pt.slug}`} className="text-accent underline-offset-2 hover:underline dark:text-accent-mint">
+                      {pt.title}
                     </Link>
                   </li>
                 ))}

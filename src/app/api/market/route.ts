@@ -389,6 +389,20 @@ export async function GET(req: Request) {
     if (cas.length === 0)
       return NextResponse.json({ prices: {} }, { status: 400 });
     try {
+      const pick = (pairs: Array<Record<string, unknown>>, ca: string) => {
+        const own = pairs.filter(
+          (p) => String((p?.baseToken as { address?: string })?.address ?? "").toLowerCase() === ca.toLowerCase()
+        );
+        const best = own.find((p) => p.chainId === "solana") ?? own[0];
+        if (!best || !best.priceUsd) return null;
+        return {
+          priceUsd: Number(best.priceUsd),
+          mcap: Number((best.marketCap as number) ?? (best.fdv as number) ?? 0),
+          change24h: Number((best.priceChange as { h24?: number })?.h24 ?? 0),
+          pairAddress: best.pairAddress as string | undefined,
+          imageUrl: (best.info as { imageUrl?: string })?.imageUrl ?? undefined,
+        };
+      };
       const res = await fetch(
         `https://api.dexscreener.com/latest/dex/tokens/${cas.join(",")}`,
         { next: { revalidate: 120 } }
@@ -399,23 +413,29 @@ export async function GET(req: Request) {
         string,
         { priceUsd: number; mcap: number; change24h: number; pairAddress?: string; imageUrl?: string }
       > = {};
+      const missing: string[] = [];
       for (const ca of cas) {
-        const pairs = (json?.pairs ?? []).filter(
-          (p: { baseToken?: { address?: string } }) =>
-            (p?.baseToken?.address ?? "").toLowerCase() === ca.toLowerCase()
-        );
-        const best =
-          pairs.find((p: { chainId?: string }) => p.chainId === "solana") ?? pairs[0];
-        if (best?.priceUsd) {
-          prices[ca] = {
-            priceUsd: Number(best.priceUsd),
-            mcap: Number(best.marketCap ?? best.fdv ?? 0),
-            change24h: Number(best.priceChange?.h24 ?? 0),
-            pairAddress: best.pairAddress,
-            imageUrl: best.info?.imageUrl ?? undefined,
-          };
-        }
+        const hit = pick(json?.pairs ?? [], ca);
+        if (hit) prices[ca] = hit;
+        else missing.push(ca);
       }
+      /* 批量接口对个别 CA 偶发返回空：逐个单查兜底（不缓存进 s-maxage 的批量结果） */
+      await Promise.all(
+        missing.slice(0, 8).map(async (ca) => {
+          try {
+            const r = await fetch(
+              `https://api.dexscreener.com/latest/dex/tokens/${ca}`,
+              { next: { revalidate: 120 } }
+            );
+            if (!r.ok) return;
+            const j = await r.json();
+            const hit = pick(j?.pairs ?? [], ca);
+            if (hit) prices[ca] = hit;
+          } catch {
+            /* 单查也失败就留空 */
+          }
+        })
+      );
       return NextResponse.json(
         { prices },
         { headers: { "Cache-Control": "s-maxage=120, stale-while-revalidate=60" } }

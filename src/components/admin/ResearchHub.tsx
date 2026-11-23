@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { Call, CallRecord, CallUpdate } from "@/lib/calls";
 import { makeCallId } from "@/lib/calls";
 import { statusOf } from "@/lib/calls-stats";
+import { fmtCalledAt } from "@/components/dashboard/tr";
 
 /* ---------- 常量 ---------- */
 const STANCES = ["watch", "bullish", "bearish", "avoid"] as const;
@@ -418,18 +419,18 @@ function CallPane({ record, onChanged, onError }: { record: CallRecord; onChange
         <h4 className="text-[11px] font-semibold tracking-wider text-muted">✎ 动态时间线（{updates.length + 1 + (outcome ? 1 : 0)}）</h4>
         <div className="relative mt-3 space-y-3 pl-5">
           <span className="absolute bottom-2 left-[5px] top-2 w-0.5 bg-line" aria-hidden="true" />
-          <TlEvent kind="◉ 判断" at={call.calledAt} price={call.priceAtCall}>
+          <TlEvent kind="◉ 判断" at={fmtCalledAt(call.calledAt)} price={call.priceAtCall}>
             {call.thesis}
           </TlEvent>
-          {updates.map((u, i) => (
+          {[...updates].sort((a, b) => b.at.localeCompare(a.at)).map((u, i) => (
             <TlEvent key={i}
               kind={u.type === "thesis-change" ? "↺ 论点修正" : u.type === "position-change" ? "⇄ 仓位变动" : u.type === "closed" ? "■ 结束" : "✎ 笔记"}
-              at={u.at} price={u.priceAt}>
+              at={fmtCalledAt(u.at)} price={u.priceAt}>
               {u.content}
             </TlEvent>
           ))}
           {outcome && (
-            <TlEvent kind={`⚖ 复盘 · ${VERDICT_ZH[outcome.verdict]}`} at={outcome.closedAt} price={outcome.priceAtClose}>
+            <TlEvent kind={`⚖ 复盘 · ${VERDICT_ZH[outcome.verdict]}`} at={fmtCalledAt(outcome.closedAt)} price={outcome.priceAtClose}>
               {outcome.returnAtClose >= 0 ? "+" : ""}{outcome.returnAtClose}% · {outcome.lessons}
             </TlEvent>
           )}
@@ -449,6 +450,7 @@ function KV({ k, v }: { k: string; v: string }) {
 }
 
 function TlEvent({ kind, at, price, children }: { kind: string; at: string; price?: number; children: React.ReactNode }) {
+  // at 已用 fmtCalledAt 格式化
   return (
     <div className="relative">
       <span className="absolute -left-5 top-1.5 h-2.5 w-2.5 rounded-full bg-accent" aria-hidden="true" />
@@ -635,8 +637,8 @@ function PositionPane({ record, price, onChanged, onError }: { record: CallRecor
         ) : (
           <div className="relative mt-3 space-y-3 pl-5">
             <span className="absolute bottom-2 left-[5px] top-2 w-0.5 bg-line" aria-hidden="true" />
-            {posUpdates.map((u, i) => (
-              <TlEvent key={i} kind={`⇄ ${u.positionAction ?? "变动"}`} at={u.at} price={u.priceAt}>
+            {[...posUpdates].sort((a, b) => b.at.localeCompare(a.at)).map((u, i) => (
+              <TlEvent key={i} kind={`⇄ ${u.positionAction ?? "变动"}`} at={fmtCalledAt(u.at)} price={u.priceAt}>
                 {u.content}
               </TlEvent>
             ))}

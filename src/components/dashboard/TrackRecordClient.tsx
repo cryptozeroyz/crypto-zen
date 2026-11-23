@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import CoinAvatar from "@/components/CoinAvatar";
 import { avatarHue, formatMcap } from "@/lib/coin-format";
-import { statusOf, type CallStatus } from "@/lib/calls-stats";
+import { activityAt, statusOf, type CallStatus } from "@/lib/calls-stats";
 import {
   getTr,
   stanceLabel,
@@ -38,9 +38,9 @@ export default function TrackRecordClient({
 }) {
   const tr = getTr(locale);
   const [prices, setPrices] = useState<Prices>({});
-  /* 默认按判断时间倒序 */
+  /* 默认按最近活跃倒序（新判断或新更新都会顶上来） */
   const sorted = useMemo(
-    () => [...records].sort((a, b) => b.call.calledAt.localeCompare(a.call.calledAt)),
+    () => [...records].sort((a, b) => activityAt(b).localeCompare(activityAt(a))),
     [records]
   );
   const [status, setStatus] = useState<CallStatus | "all">("all");

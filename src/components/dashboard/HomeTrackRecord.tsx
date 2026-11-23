@@ -179,7 +179,7 @@ export default function HomeTrackRecord({
               {lastUpdate ? (
                 <>
                   <div className="text-[10px] tracking-wide text-muted">
-                    ✎ {tr.updates} · {lastUpdate.at.slice(0, 16)}
+                    ✎ {tr.updates} · {fmtCalledAt(lastUpdate.at)}
                   </div>
                   <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-[#2a2230]/85">
                     {lastUpdate.type === "thesis-change" ? `↺ ${tr.thesisChanged}：` : ""}

@@ -14,6 +14,7 @@ import TypewriterHero from "@/components/TypewriterHero";
 import { getAllPosts } from "@/lib/posts";
 import { getLinks } from "@/lib/links";
 import { readCallRecords } from "@/lib/calls-store";
+import { activityAt } from "@/lib/calls-stats";
 import { fetchCoinData } from "@/lib/watchlist";
 import { fetchEqnNews } from "@/lib/eqn";
 import { HERO_LOGOS } from "@/lib/coin-images";
@@ -37,9 +38,9 @@ export default async function HomePage({
     fetchEqnNews(3),
   ]);
 
-  /* Track Record：最新 2 条判断，并预取现价（用于「判断以来表现」） */
+  /* Track Record：最近最活跃的 2 条判断（更新会顶上来），并预取现价 */
   const latestCalls = [...callRecords]
-    .sort((a, b) => b.call.calledAt.localeCompare(a.call.calledAt))
+    .sort((a, b) => activityAt(b).localeCompare(activityAt(a)))
     .slice(0, 2);
   const currentMap: Record<
     string,

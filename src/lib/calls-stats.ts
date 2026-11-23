@@ -15,6 +15,15 @@ import {
 
 export type CallStatus = "open" | "closed" | "expired";
 
+/** 最近活跃时间：判断 / 任一 Update / 复盘 的最大时间（排序用） */
+export function activityAt(record: CallRecord): string {
+  return [
+    record.call.calledAt,
+    ...record.updates.map((u) => u.at),
+    record.outcome?.closedAt ?? "",
+  ].sort().pop() as string;
+}
+
 /** 单条记录的派生状态 */
 export function statusOf(record: CallRecord, now = Date.now()): CallStatus {
   if (record.outcome) return "closed";

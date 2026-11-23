@@ -140,3 +140,19 @@ describe("computeStats", () => {
     expect(s.smallSample).toBe(true);
   });
 });
+
+describe("activityAt", () => {
+  it("取 判断/更新/复盘 的最大时间", async () => {
+    const { activityAt } = await import("@/lib/calls-stats");
+    const r = record(call({ calledAt: "2026-11-17T10:00" }));
+    expect(activityAt(r)).toBe("2026-11-17T10:00");
+    const withUpd = {
+      ...r,
+      updates: [
+        { callId: "x", at: "2026-11-20T09:00", type: "note" as const, content: "a" },
+        { callId: "x", at: "2026-11-23T07:40", type: "position-change" as const, content: "b" },
+      ],
+    };
+    expect(activityAt(withUpd)).toBe("2026-11-23T07:40");
+  });
+});
