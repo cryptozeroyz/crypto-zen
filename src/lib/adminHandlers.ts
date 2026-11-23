@@ -966,6 +966,28 @@ ${narrative}
   }
 }
 
+
+/* ---------- Track Record 写入辅助 ---------- */
+
+/** 客户端可能把空可选字段序列化为 null；Zod optional 只认 undefined，统一剥离 */
+function stripNulls<T>(value: T): T {
+  return JSON.parse(
+    JSON.stringify(value, (_k, v) => (v === null ? undefined : v))
+  );
+}
+
+/** 把 ZodError 翻成可读中文（最多 3 条） */
+function schemaMessage(e: unknown): string {
+  if (e && typeof e === "object" && "issues" in e) {
+    const issues = (e as { issues: Array<{ path: PropertyKey[]; message: string }> }).issues;
+    return issues
+      .slice(0, 3)
+      .map((i) => `${i.path.join(".") || "(根)"}：${i.message}`)
+      .join("；");
+  }
+  return e instanceof Error ? e.message : "校验失败";
+}
+
 /* ==================== Track Record（calls）管理 ==================== */
 
 import {
@@ -991,7 +1013,7 @@ export async function callsPOST(req: Request) {
   if (!isAuthed()) return unauthorized();
   try {
     const body = await req.json();
-    const call = CallSchema.parse(body.call ?? body);
+    const call = CallSchema.parse(stripNulls(body.call ?? body));
     await createCall(call);
     return NextResponse.json({ ok: true, id: call.id });
   } catch (e) {
@@ -1000,7 +1022,7 @@ export async function callsPOST(req: Request) {
     if (e instanceof ImmutableCallError)
       return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
     return NextResponse.json(
-      { ok: false, message: e instanceof Error ? `校验失败：${e.message}` : "保存失败" },
+      { ok: false, message: `校验失败：${schemaMessage(e)}` },
       { status: 400 }
     );
   }
@@ -1011,14 +1033,14 @@ export async function callsUpdatePOST(req: Request) {
   if (!isAuthed()) return unauthorized();
   try {
     const body = await req.json();
-    const update = UpdateSchema.parse(body.update ?? body);
+    const update = UpdateSchema.parse(stripNulls(body.update ?? body));
     await appendUpdate(update);
     return NextResponse.json({ ok: true });
   } catch (e) {
     if (e instanceof CallNotFoundError || e instanceof CallAlreadyClosedError)
       return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
     return NextResponse.json(
-      { ok: false, message: e instanceof Error ? `校验失败：${e.message}` : "保存失败" },
+      { ok: false, message: `校验失败：${schemaMessage(e)}` },
       { status: 400 }
     );
   }
@@ -1029,17 +1051,18 @@ export async function callsClosePOST(req: Request) {
   if (!isAuthed()) return unauthorized();
   try {
     const body = await req.json();
-    const { returnAtClose: _omit, ...input } = (body.outcome ?? body) as Partial<Outcome> & {
+    const { returnAtClose: _omit, ...rest } = stripNulls(body.outcome ?? body) as Partial<Outcome> & {
       callId: string;
     };
-    if (!input.callId) throw new Error("缺少 callId");
-    await closeCall(input as Omit<Outcome, "returnAtClose">);
+    if (!rest.callId) throw new Error("缺少 callId");
+    const input = rest as Omit<Outcome, "returnAtClose">;
+    await closeCall(input);
     return NextResponse.json({ ok: true });
   } catch (e) {
     if (e instanceof CallNotFoundError || e instanceof CallAlreadyClosedError)
       return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
     return NextResponse.json(
-      { ok: false, message: e instanceof Error ? `校验失败：${e.message}` : "保存失败" },
+      { ok: false, message: `校验失败：${schemaMessage(e)}` },
       { status: 400 }
     );
   }
