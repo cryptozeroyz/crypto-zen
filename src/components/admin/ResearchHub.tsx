@@ -52,7 +52,12 @@ export default function ResearchHub({
 }) {
   const [records, setRecords] = useState<CallRecord[]>(initialRecords);
   const [journals, setJournals] = useState<JournalEntry[]>(initialJournals);
-  const [selectedId, setSelectedId] = useState<string>("orphans");
+  const [selectedId, setSelectedId] = useState<string>(() => {
+    const first = [...initialRecords].sort((a, b) =>
+      b.call.calledAt.localeCompare(a.call.calledAt)
+    )[0];
+    return first ? first.call.id : "orphans";
+  });
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "open" | "expired" | "closed">("all");
   const [prices, setPrices] = useState<Prices>({});
