@@ -251,7 +251,7 @@
     "at": "2026-11-18T00:00",
     "type": "closed",
     "content": "取消关注，并没被炒作起来",
-    "priceAt": 8.094e-05,
+    "priceAt": 0.00008094,
     "positionAction": "exit"
    }
   ],
@@ -259,7 +259,7 @@
    "callId": "2026-11-17-char",
    "closedAt": "2026-11-18T00:00",
    "verdict": "wrong",
-   "priceAtClose": 8.094e-05,
+   "priceAtClose": 0.00008094,
    "mcapAtClose": 79557,
    "maxMcapAfterCall": 115938,
    "minMcapAfterCall": 19769,
@@ -473,7 +473,7 @@
     "at": "2026-11-17T00:00",
     "type": "closed",
     "content": "没有因为mihao的爆发带来增长，叙事只能长期持有龙一，β标的只能做短期操作",
-    "priceAt": 9.705e-05,
+    "priceAt": 0.00009705,
     "positionAction": "exit"
    }
   ],
@@ -481,7 +481,7 @@
    "callId": "2026-11-12-updog",
    "closedAt": "2026-11-17T00:00",
    "verdict": "wrong",
-   "priceAtClose": 9.705e-05,
+   "priceAtClose": 0.00009705,
    "mcapAtClose": 94524,
    "maxMcapAfterCall": 443310,
    "minMcapAfterCall": 27299,
@@ -543,6 +543,43 @@
     "content": "「KFC 换头像」 KFC 换头像是市值暴涨，目前已经又回调回来，但从pfp叙事 的项目来说，可能会有下一个玩梗！关注7m守不守的住"
    }
   ],
+  "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-23-singularity",
+   "chain": "solana",
+   "tokenName": "Singularity",
+   "symbol": "SINGULARITY",
+   "contractAddress": "7R4MP6VX7n3RMNhL9zsk5Zu5ibZvwq8npUYnRq7epump",
+   "calledAt": "2026-11-23T13:28:00",
+   "stance": "bullish",
+   "priceAtCall": 0.0004829,
+   "mcapAtCall": 458976,
+   "narrative": "Singularity 是一个\"AI 约会世界\"社会实验项目：人类把自己的 AI agent 送进一个虚拟空间，agent 们自主写资料、搭讪、约会、分手，人类只能围观，灵感来源于Elon",
+   "thesis": "1，AI 约会+elon灵感，叙事好理解\n2，协议设计优雅，接入成本极低，契合\"agent 自主上网\"的叙事；\n3，24h交易量尚可，市值有回调",
+   "catalysts": [
+    "产品持续迭代，出圈，甚至是获得elon互动"
+   ],
+   "risks": [
+    "产品热度依赖新鲜感，agent 社交实验类项目生命周期普遍较短，叙事退潮后缺乏留存机制。"
+   ],
+   "narrativeType": "ai",
+   "horizon": "weeks",
+   "invalidation": "dev不在更新产品",
+   "disclosure": {
+    "position": "holding",
+    "sizeTier": "small",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": false,
+   "priceSource": "auto",
+   "pairAddress": "58XqWPXDGp3GfU9DAFxs8C1GJwTLdHdQhJRofAF5yWTV"
+  },
+  "updates": [],
   "outcome": null
  }
 ]
