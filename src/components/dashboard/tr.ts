@@ -54,6 +54,13 @@ export function posLabel(p: string, tr: Tr): string {
   return ({ holding: tr["pos.holding"], sold: tr["pos.sold"], none: tr["pos.none"], unknown: tr["pos.unknown"] } as Record<string, string>)[p] ?? p;
 }
 
+/** calledAt 显示：历史记录只有日期（T00:00 占位）时只显示日期，有真实时间则带 HH:mm */
+export function fmtCalledAt(iso: string): string {
+  const m = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/.exec(iso);
+  if (!m) return iso.slice(0, 10);
+  return m[2] === "00:00" ? m[1] : `${m[1]} ${m[2]}`;
+}
+
 /** mistakeType 翻译（枚举本身不在词典内，属逻辑映射） */
 export function mistakeLabel(m: string, locale: Locale): string {
   const map: Record<string, [string, string]> = {

@@ -12,7 +12,7 @@ import { useState } from "react";
 import CoinAvatar from "@/components/CoinAvatar";
 import { DisclosureBadges } from "@/components/dashboard/TrackRecordClient";
 import { disclosureLabelsOf } from "@/components/dashboard/tr";
-import { getTr, stanceLabel, verdictLabel, STANCE_BADGE, VERDICT_BADGE, type Tr } from "@/components/dashboard/tr";
+import { getTr, stanceLabel, verdictLabel, fmtCalledAt, STANCE_BADGE, VERDICT_BADGE, type Tr } from "@/components/dashboard/tr";
 import { avatarHue, formatMcap, formatPrice } from "@/lib/coin-format";
 import { statusOf } from "@/lib/calls-stats";
 import type { CallRecord } from "@/lib/calls";
@@ -113,7 +113,7 @@ export default function HomeTrackRecord({
               <div>
                 <div className="text-[10px] tracking-wide text-muted">{tr.calledAt}</div>
                 <div className="mt-0.5 text-sm font-semibold tabular-nums text-heading">
-                  {call.calledAt.slice(0, 16)}
+                  {fmtCalledAt(call.calledAt)}
                 </div>
                 <div className="mt-0.5 text-[11px] tabular-nums text-muted">
                   {formatPrice(call.priceAtCall)}

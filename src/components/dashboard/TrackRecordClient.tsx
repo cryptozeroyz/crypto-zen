@@ -15,6 +15,7 @@ import {
   getTr,
   stanceLabel,
   verdictLabel,
+  fmtCalledAt,
   disclosureLabelsOf,
   STANCE_BADGE,
   VERDICT_BADGE,
@@ -37,6 +38,11 @@ export default function TrackRecordClient({
 }) {
   const tr = getTr(locale);
   const [prices, setPrices] = useState<Prices>({});
+  /* 默认按判断时间倒序 */
+  const sorted = useMemo(
+    () => [...records].sort((a, b) => b.call.calledAt.localeCompare(a.call.calledAt)),
+    [records]
+  );
   const [status, setStatus] = useState<CallStatus | "all">("all");
   const [verdict, setVerdict] = useState<string>("all");
   const [narrative, setNarrative] = useState<string>("all");
@@ -251,7 +257,7 @@ function CallRow({
         {/* 判断时间 + stance */}
         <div className="w-[130px]">
           <div className="text-[10px] tracking-wide text-muted">{tr.calledAt}</div>
-          <div className="mt-0.5 text-xs tabular-nums text-heading">{call.calledAt.slice(0, 16)}</div>
+          <div className="mt-0.5 text-xs tabular-nums text-heading">{fmtCalledAt(call.calledAt)}</div>
           <span className={`mt-1 inline-block rounded-full border px-2 py-px text-[10.5px] font-semibold ${STANCE_BADGE[call.stance]}`}>
             {stanceLabel(call.stance, tr)}
           </span>

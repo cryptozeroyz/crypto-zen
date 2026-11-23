@@ -11,7 +11,7 @@ import { notFound } from "next/navigation";
 import Container from "@/components/Container";
 import CallChart from "@/components/dashboard/CallChart";
 import { DisclosureBadges } from "@/components/dashboard/TrackRecordClient";
-import { disclosureLabelsOf } from "@/components/dashboard/tr";
+import { disclosureLabelsOf, fmtCalledAt } from "@/components/dashboard/tr";
 import {
   getTr,
   stanceLabel,
@@ -115,7 +115,7 @@ export default async function CallDetailPage({
           <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
             <span className="font-mono font-semibold uppercase">{call.symbol}</span>
             <span className="rounded-full border border-line px-1.5 py-px font-mono text-[10px]">{call.chain}</span>
-            <span>{tr.calledAt}: <span className="tabular-nums text-heading">{call.calledAt.slice(0, 16)}</span></span>
+            <span>{tr.calledAt}: <span className="tabular-nums text-heading">{fmtCalledAt(call.calledAt)}</span></span>
             {call.isHistorical && (
               <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-px text-amber-700 dark:text-amber-400">
                 ⚑ {tr.historical}
