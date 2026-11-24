@@ -18,7 +18,9 @@
    "horizon": "weeks",
    "invalidation": "历史记录，未事前设定",
    "disclosure": {
-    "position": "unknown",
+    "position": "holding",
+    "entryPrice": 0.0004,
+    "sizeTier": "small",
     "sponsored": false,
     "referral": false
    },
