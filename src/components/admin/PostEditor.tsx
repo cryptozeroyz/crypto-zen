@@ -13,6 +13,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
+import { pinyin } from "pinyin-pro";
 import { useRouter } from "next/navigation";
 import {
   parseMarkdown,
@@ -71,6 +72,30 @@ export default function PostEditor({
   );
 
   const [slug, setSlug] = useState(initialSlug ?? "");
+  /** 用户手动改过 slug 后停止跟随标题自动更新 */
+  const [slugTouched, setSlugTouched] = useState(false);
+
+  /**
+   * 从标题自动生成 SEO 友好 slug：
+   * 1) 提取标题中的英文/数字词（研究对象名，如 Rings、Perp DEX）→ 小写连字符；
+   * 2) 纯中文标题回退为拼音（无声调）；
+   * 3) 都失败给时间戳兜底。用户可手动改。
+   */
+  const genSlug = (title: string): string => {
+    const latin = (title.match(/[a-zA-Z0-9]+/g) ?? [])
+      .map((w) => w.toLowerCase())
+      .filter((w) => w.length >= 2 || /[0-9]/.test(w));
+    const seen = new Set<string>();
+    const tokens = latin.filter((w) => !seen.has(w) && (seen.add(w), true));
+    if (tokens.length > 0) return tokens.slice(0, 6).join("-");
+    const py = pinyin(title.replace(/[「」『』"'']/g, " "), {
+      toneType: "none",
+      type: "array",
+    }) as string[];
+    const pyTokens = py.map((x) => x.trim()).filter(Boolean);
+    if (pyTokens.length > 0) return pyTokens.slice(0, 6).join("-");
+    return `post-${Date.now().toString(36)}`;
+  };
   const [fields, setFields] = useState<FrontmatterFields>(
     initial?.fields ?? {
       title: "",
@@ -217,17 +242,40 @@ export default function PostEditor({
       <div>
         <label htmlFor="pe-slug" className={labelClass}>
           Slug（文件名，创建后不可修改）
+          {!isEdit && (
+            <span className="ml-1 text-[11px] font-normal text-muted">
+              · 已根据标题自动生成，可手动修改
+            </span>
+          )}
         </label>
-        <input
-          id="pe-slug"
-          type="text"
-          required
-          disabled={isEdit}
-          value={slug}
-          onChange={(e) => setSlug(e.target.value)}
-          placeholder="例如 pepe-holder-analysis"
-          className={`${inputClass} font-mono disabled:opacity-60`}
-        />
+        <div className="flex gap-2">
+          <input
+            id="pe-slug"
+            type="text"
+            required
+            disabled={isEdit}
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value);
+              setSlugTouched(true);
+            }}
+            placeholder="例如 pepe-holder-analysis"
+            className={`${inputClass} font-mono disabled:opacity-60`}
+          />
+          {!isEdit && (
+            <button
+              type="button"
+              title="根据标题重新生成"
+              onClick={() => {
+                setSlug(genSlug(fields.title));
+                setSlugTouched(false);
+              }}
+              className="shrink-0 rounded-lg border border-line px-3 text-sm text-muted transition-colors hover:border-accent hover:text-accent"
+            >
+              ↻
+            </button>
+          )}
+        </div>
       </div>
 
       <div>
@@ -239,7 +287,10 @@ export default function PostEditor({
           type="text"
           required
           value={fields.title}
-          onChange={(e) => set("title", e.target.value)}
+          onChange={(e) => {
+            set("title", e.target.value);
+            if (!isEdit && !slugTouched) setSlug(genSlug(e.target.value));
+          }}
           placeholder="文章标题"
           className={inputClass}
         />
