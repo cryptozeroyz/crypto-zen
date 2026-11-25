@@ -17,15 +17,21 @@ import { z } from "zod";
 export const STANCES = ["watch", "bullish", "bearish", "avoid"] as const;
 export const StanceSchema = z.enum(STANCES);
 
+/** 常用叙事类型（表单 datalist 建议项，允许输入任意 kebab-case 自定义值） */
 export const NARRATIVE_TYPES = [
   "meme-culture",
   "event-driven",
   "ip",
   "celebrity",
   "ai",
+  "utility",
+  "gaming",
+  "defi",
   "other",
 ] as const;
-export const NarrativeTypeSchema = z.enum(NARRATIVE_TYPES);
+export const NarrativeTypeSchema = z
+  .string()
+  .regex(/^[a-z0-9][a-z0-9-]{1,29}$/, "叙事类型为小写字母/数字/连字符（如 meme-culture）");
 
 export const HORIZONS = ["intraday", "days", "weeks", "months"] as const;
 export const HorizonSchema = z.enum(HORIZONS);

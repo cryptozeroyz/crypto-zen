@@ -15,6 +15,7 @@ import {
   getTr,
   stanceLabel,
   verdictLabel,
+  ntLabel,
   fmtCalledAt,
   disclosureLabelsOf,
   STANCE_BADGE,
@@ -85,6 +86,11 @@ export default function TrackRecordClient({
     () => [...new Set(records.map((r) => r.call.chain))].sort(),
     [records]
   );
+  /* 叙事类型选项从数据动态派生（含后台自定义类型） */
+  const narrativeTypes = useMemo(
+    () => [...new Set(records.map((r) => r.call.narrativeType))].sort(),
+    [records]
+  );
   const filtered = useMemo(
     () =>
       sorted.filter((r) => {
@@ -126,12 +132,7 @@ export default function TrackRecordClient({
         ]} sel={sel} />
         <Filter label={tr.filterNarrative} value={narrative} onChange={setNarrative} options={[
           ["all", tr.all],
-          ["meme-culture", tr["nt.meme-culture"]],
-          ["event-driven", tr["nt.event-driven"]],
-          ["ip", tr["nt.ip"]],
-          ["celebrity", tr["nt.celebrity"]],
-          ["ai", tr["nt.ai"]],
-          ["other", tr["nt.other"]],
+          ...narrativeTypes.map((n): [string, string] => [n, ntLabel(n, tr)]),
         ]} sel={sel} />
         <Filter label={tr.filterChain} value={chain} onChange={setChain} options={[
           ["all", tr.all],

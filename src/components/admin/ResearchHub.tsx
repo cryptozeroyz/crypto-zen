@@ -1051,10 +1051,18 @@ function NewCallForm({ initialCa = "", onDone, onError }: { initialCa?: string; 
           <select value={f.stance} onChange={(e) => set("stance", e.target.value)} className={input}>
             {STANCES.map((s) => <option key={s} value={s}>{STANCE_ZH[s]} {s}</option>)}
           </select></div>
-        <div><label className={label}>叙事类型 *</label>
-          <select value={f.narrativeType} onChange={(e) => set("narrativeType", e.target.value)} className={input}>
-            {NTS.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select></div>
+        <div><label className={label}>叙事类型 *（可选常用项，也可输入自定义）</label>
+          <input
+            value={f.narrativeType}
+            onChange={(e) => set("narrativeType", e.target.value.toLowerCase())}
+            list="nt-suggestions"
+            placeholder="如 meme-culture / utility / 自定义"
+            className={input}
+            required
+          />
+          <datalist id="nt-suggestions">
+            {NTS.map((s) => <option key={s} value={s} />)}
+          </datalist></div>
         <div><label className={label}>周期 *</label>
           <select value={f.horizon} onChange={(e) => set("horizon", e.target.value)} className={input}>
             {HORIZONS.map((s) => <option key={s} value={s}>{s}</option>)}

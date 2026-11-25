@@ -141,18 +141,23 @@ export default function ShareCallButton({
                   ✕
                 </button>
               </div>
+              {/* 固定比例容器：加载前后占位一致，图片不跳动 */}
               <div className="flex-1 overflow-y-auto p-4">
                 {error ? (
                   <p className="py-10 text-center text-xs text-red-600 dark:text-red-400">{error}</p>
-                ) : blobUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={blobUrl}
-                    alt={`${symbol} Track Record 分享图预览`}
-                    className="w-full rounded-lg border border-line"
-                  />
                 ) : (
-                  <div className="aspect-[1080/1350] w-full animate-pulse rounded-lg bg-codebg" aria-hidden="true" />
+                  <div className="relative aspect-[1080/1350] w-full overflow-hidden rounded-lg border border-line bg-codebg">
+                    {blobUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={blobUrl}
+                        alt={`${symbol} Track Record 分享图预览`}
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 animate-pulse" aria-hidden="true" />
+                    )}
+                  </div>
                 )}
               </div>
               <div className="flex gap-2 border-t border-line px-4 py-3">
