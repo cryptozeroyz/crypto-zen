@@ -631,7 +631,21 @@
    "pairAddress": "58XqWPXDGp3GfU9DAFxs8C1GJwTLdHdQhJRofAF5yWTV"
   },
   "updates": [],
-  "outcome": null
+  "outcome": {
+   "callId": "2026-11-23-singularity",
+   "closedAt": "2026-11-25T04:48:00",
+   "verdict": "wrong",
+   "priceAtClose": 0.0001235,
+   "mcapAtClose": 117382,
+   "maxMcapAfterCall": 148758,
+   "minMcapAfterCall": 117086,
+   "returnAtClose": -74.43,
+   "maxDrawdown": 0,
+   "invalidationTriggered": false,
+   "lessons": "ai互动叙事过多，社区已经审美疲劳了！",
+   "mistakeType": "narrative-fade",
+   "priceSource": "auto"
+  }
  },
  {
   "call": {
