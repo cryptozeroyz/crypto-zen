@@ -10,7 +10,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createChart, type IChartApi, type ISeriesApi, type UTCTimestamp } from "lightweight-charts";
 
-type Range = "24H" | "7D" | "30D" | "ALL";
+type Range = "5m" | "15m" | "30m" | "24H" | "7D" | "30D" | "ALL";
 interface Candle {
   t: number; o: number; h: number; l: number; c: number; v?: number;
 }
@@ -188,7 +188,7 @@ export default function CallKline({
       {/* 周期切换 */}
       <div className="mb-2 flex items-center justify-between">
         <div className="flex gap-1">
-          {(["24H", "7D", "30D", "ALL"] as Range[]).map((r) => (
+          {(["5m", "15m", "30m", "24H", "7D", "30D", "ALL"] as Range[]).map((r) => (
             <button
               key={r}
               type="button"

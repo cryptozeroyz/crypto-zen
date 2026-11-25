@@ -54,6 +54,9 @@ export async function fetchGeckoOhlcvCandles(
   const net = GECKO_NET[chainId];
   if (!net) return [];
   const conf: Record<string, [string, number, number]> = {
+    "5m": ["minute", 5, 288], // 24 小时
+    "15m": ["minute", 15, 192], // 48 小时
+    "30m": ["minute", 30, 336], // 7 天
     "24H": ["hour", 1, 24],
     "7D": ["hour", 4, 42],
     "30D": ["day", 1, 30],
@@ -62,7 +65,7 @@ export async function fetchGeckoOhlcvCandles(
   const [tf, agg, limit] = conf[range] ?? conf["7D"];
   const res = await fetch(
     `https://api.geckoterminal.com/api/v2/networks/${net}/pools/${pair}/ohlcv/${tf}?aggregate=${agg}&limit=${limit}`,
-    { next: { revalidate: 1800 }, headers: { Accept: "application/json" } }
+    { next: { revalidate: range === "5m" ? 120 : 1800 }, headers: { Accept: "application/json" } }
   );
   if (!res.ok) return [];
   const json = await res.json();
