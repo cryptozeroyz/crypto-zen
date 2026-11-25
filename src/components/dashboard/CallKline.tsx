@@ -15,6 +15,24 @@ interface Candle {
   t: number; o: number; h: number; l: number; c: number; v?: number;
 }
 
+/** 小周期蜡烛合成大周期（如 15m→30m）：按桶取首开盘/最高/最低/末收盘/量和 */
+export function aggregateCandles(candles: Candle[], bucketSec: number): Candle[] {
+  const buckets = new Map<number, Candle>();
+  for (const c of [...candles].sort((a, b) => a.t - b.t)) {
+    const key = Math.floor(c.t / bucketSec) * bucketSec;
+    const cur = buckets.get(key);
+    if (!cur) {
+      buckets.set(key, { t: key, o: c.o, h: c.h, l: c.l, c: c.c, v: c.v ?? 0 });
+    } else {
+      cur.h = Math.max(cur.h, c.h);
+      cur.l = Math.min(cur.l, c.l);
+      cur.c = c.c;
+      cur.v = (cur.v ?? 0) + (c.v ?? 0);
+    }
+  }
+  return [...buckets.values()].sort((a, b) => a.t - b.t);
+}
+
 /** 按价格量级给价格轴设置精度，避免小价格币显示成 0.00 */
 function priceFormatFor(prices: number[]): { precision: number; minMove: number } {
   const max = Math.max(...prices.map((p) => Math.abs(p)));
@@ -67,7 +85,10 @@ export default function CallKline({
       .then((r) => r.json())
       .then((j: { candles?: Candle[] }) => {
         if (cancelled) return;
-        if (j.candles && j.candles.length >= 2) setCandles(j.candles);
+        let list = j.candles ?? [];
+        /* 30m：GeckoTerminal 无此聚合，用 15m 合成 */
+        if (range === "30m") list = aggregateCandles(list, 1800);
+        if (list.length >= 2) setCandles(list);
         else setFailed(true);
       })
       .catch(() => !cancelled && setFailed(true));

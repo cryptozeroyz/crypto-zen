@@ -56,7 +56,8 @@ export async function fetchGeckoOhlcvCandles(
   const conf: Record<string, [string, number, number]> = {
     "5m": ["minute", 5, 288], // 24 小时
     "15m": ["minute", 15, 192], // 48 小时
-    "30m": ["minute", 30, 336], // 7 天
+    /* GeckoTerminal 不支持 30 分钟聚合（400），用 15m 数据由前端自行合成 30m */
+    "30m": ["minute", 15, 192], // 48 小时（合成后 96 根 30m）
     "24H": ["hour", 1, 24],
     "7D": ["hour", 4, 42],
     "30D": ["day", 1, 30],
