@@ -14,11 +14,15 @@
  */
 
 import { NextResponse } from "next/server";
-import { fetchWatchlistWithData } from "@/lib/watchlist";
+import { fetchCoinData, fetchWatchlistWithData } from "@/lib/watchlist";
 import { getAllPosts } from "@/lib/posts";
 import { getJournal } from "@/lib/journal";
 import { fetchGeckoOhlcv, fetchGeckoOhlcvCandles, fetchGeckoOhlcvSeries, fetchGeckoSpark } from "@/lib/gecko";
 import { RateLimiter } from "@/lib/rate-limit";
+import { renderShareSvg, SHARE_SIZE } from "@/lib/share-template";
+import { readCallRecords } from "@/lib/calls-store";
+import { getTr } from "@/components/dashboard/tr";
+import { Resvg } from "@resvg/resvg-js";
 
 export const revalidate = 60;
 
@@ -376,6 +380,58 @@ export async function GET(req: Request) {
       );
     } catch {
       return NextResponse.json({ closes: [] }, { status: 502 });
+    }
+  }
+
+  /* ---------- Track Record 分享卡 PNG（1080×1350，含实时价） ---------- */
+  if (type === "share") {
+    const id = searchParams.get("id") ?? "";
+    if (!id) return NextResponse.json({ error: "bad id" }, { status: 400 });
+    try {
+      const records = await readCallRecords();
+      const record = records.find((r) => r.call.id === id);
+      if (!record) return NextResponse.json({ error: "not found" }, { status: 404 });
+      const { call, outcome } = record;
+      const locale = searchParams.get("locale") === "en" ? "en" : "zh";
+      const tr = getTr(locale);
+
+      const data = await fetchCoinData(call.contractAddress, {
+        pairAddress: call.pairAddress,
+      }).catch(() => null);
+
+      const priceNow = outcome ? outcome.priceAtClose : (data?.priceUsd || call.priceAtCall);
+      const changePct = outcome
+        ? outcome.returnAtClose
+        : (priceNow / call.priceAtCall - 1) * 100;
+      const calledAt = call.calledAt.slice(0, 16).replace("T", " ");
+      const historical = call.isHistorical ? tr.historical : undefined;
+
+      const svg = await renderShareSvg({
+        tokenName: call.tokenName,
+        symbol: call.symbol,
+        chain: call.chain,
+        stance: call.stance,
+        stanceLabel: tr[`stance.${call.stance}` as never] ?? call.stance,
+        priceNow,
+        changePct,
+        calledAt,
+        priceAtCall: call.priceAtCall,
+        thesis: call.thesis,
+        avatarUrl: data?.imageUrl,
+        historicalNote: historical,
+      });
+      const png = new Resvg(svg, { fitTo: { mode: "width", value: SHARE_SIZE.width } })
+        .render()
+        .asPng();
+      return new Response(new Uint8Array(png), {
+        headers: {
+          "Content-Type": "image/png",
+          "Cache-Control": "s-maxage=120, stale-while-revalidate=60",
+        },
+      });
+    } catch (e) {
+      console.error("[share] 生成失败:", e);
+      return NextResponse.json({ error: "share failed" }, { status: 500 });
     }
   }
 

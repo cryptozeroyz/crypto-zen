@@ -127,6 +127,18 @@ export default function PostPage({
               >
                 {t.post.back}
               </Link>
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  `【${post.title}】`
+                )}&url=${encodeURIComponent(
+                  `${siteConfig.url}/${locale}/writing/${post.slug}`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-muted underline-offset-4 transition-colors hover:text-accent hover:underline dark:hover:text-accent-mint"
+              >
+                分享到 X ↗
+              </a>
               <RandomPostButton
                 slugs={getAllPosts(locale).map((p) => p.slug)}
                 locale={locale}

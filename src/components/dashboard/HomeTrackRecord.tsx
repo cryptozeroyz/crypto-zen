@@ -13,6 +13,7 @@ import CoinAvatar from "@/components/CoinAvatar";
 import { DisclosureBadges } from "@/components/dashboard/TrackRecordClient";
 import { disclosureLabelsOf } from "@/components/dashboard/tr";
 import { getTr, stanceLabel, verdictLabel, fmtCalledAt, STANCE_BADGE, VERDICT_BADGE, type Tr } from "@/components/dashboard/tr";
+import ShareCallButton from "@/components/dashboard/ShareCallButton";
 import { avatarHue, formatMcap, formatPrice } from "@/lib/coin-format";
 import { statusOf } from "@/lib/calls-stats";
 import type { CallRecord } from "@/lib/calls";
@@ -200,7 +201,10 @@ export default function HomeTrackRecord({
             {/* 弹性占位 + 底部操作 */}
             <div className="min-h-4 flex-1" aria-hidden="true" />
             <div className="flex items-center justify-between gap-2 border-t border-dashed border-[#2a2230]/25 pt-3">
-              <CopyCa address={call.contractAddress} />
+              <span className="flex items-center gap-2">
+                <CopyCa address={call.contractAddress} />
+                <ShareCallButton id={call.id} symbol={call.symbol} compact />
+              </span>
               <Link
                 href={detailHref}
                 className="font-mono text-[11px] text-[#2a2230]/70 underline-offset-4 transition-colors hover:text-[#ff5b3a] hover:underline"
