@@ -136,8 +136,15 @@ export default function CallKline({
     if (!series || !chart) return;
     if (!candles) return;
 
-    /* 价格轴精度：按量级自适应，修小价格币显示 0.00 的问题 */
-    series.applyOptions({ priceFormat: { type: "price", ...priceFormatFor(candles.flatMap((c) => [c.h, c.l])) } });
+    /* 价格轴：按量级自适应精度（修小价格币显示 0.00）；负值刻度留白（启动期长下影线会把轴拉到 0 以下） */
+    const pf = priceFormatFor(candles.flatMap((c) => [c.h, c.l]));
+    series.applyOptions({
+      priceFormat: {
+        type: "custom",
+        minMove: pf.minMove,
+        formatter: (p: number) => (p < 0 ? "" : p.toFixed(pf.precision)),
+      },
+    });
 
     series.setData(
       candles.map((c) => ({
