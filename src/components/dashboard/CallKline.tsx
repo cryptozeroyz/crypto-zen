@@ -113,6 +113,8 @@ export default function CallKline({
       wickUpColor: "#059669",
       wickDownColor: "#ff5b3a",
     });
+    /* 预留上下边距给标记文字，避免价格轴被拉伸出 0 以下/最高值以上的刻度 */
+    series.priceScale().applyOptions({ scaleMargins: { top: 0.12, bottom: 0.15 } });
     chartRef.current = chart;
     seriesRef.current = series;
 
