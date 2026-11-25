@@ -165,13 +165,16 @@ export default function CallKline({
       }))
     );
 
-    /* 成交量柱 */
+    /* 成交量柱：归一化到 [0, priceMin*0.95] 区间，视觉上占据 K 线下方 */
     const volume = volumeRef.current;
     if (volume) {
+      const priceMin = Math.min(...candles.map((c) => c.l));
+      const volMax = Math.max(...candles.map((c) => c.v ?? 0), 0);
+      const cap = priceMin > 0 ? priceMin * 0.95 : Math.max(...candles.map((c) => c.h)) * 0.2;
       volume.setData(
         candles.map((c) => ({
           time: c.t as UTCTimestamp,
-          value: c.v ?? 0,
+          value: volMax > 0 ? ((c.v ?? 0) / volMax) * cap : 0,
           color: c.c >= c.o ? "rgba(5,150,105,.35)" : "rgba(255,91,58,.35)",
         }))
       );
