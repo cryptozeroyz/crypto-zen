@@ -126,8 +126,7 @@ export default function CallKline({
       scaleMargins: { top: 0.82, bottom: 0 },
       visible: false,
       borderVisible: false,
-      drawTicks: false,
-    } as never);
+    });
     series.priceScale().applyOptions({ scaleMargins: { top: 0.06, bottom: 0.22 } });
     chartRef.current = chart;
     seriesRef.current = series;
