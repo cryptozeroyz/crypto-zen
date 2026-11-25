@@ -618,7 +618,7 @@
    "horizon": "weeks",
    "invalidation": "dev不在更新产品",
    "disclosure": {
-    "position": "holding",
+    "position": "sold",
     "entryPrice": 0.0004,
     "sizeTier": "small",
     "sponsored": false,
