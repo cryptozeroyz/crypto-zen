@@ -46,7 +46,7 @@ export function generateMetadata({
     description: post.excerpt,
     alternates: {
       canonical: `/${locale}/writing/${post.slug}`,
-      languages: { zh: zhUrl, en: enUrl },
+      languages: { zh: zhUrl, en: enUrl, "x-default": zhUrl },
     },
     openGraph: {
       title: post.title,
