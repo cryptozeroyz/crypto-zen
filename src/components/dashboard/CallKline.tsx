@@ -121,7 +121,13 @@ export default function CallKline({
       lastValueVisible: false,
       priceLineVisible: false,
     });
-    chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
+    /* 成交量刻度隐藏（只留柱子，避免和主价格轴两套刻度重叠） */
+    chart.priceScale("vol").applyOptions({
+      scaleMargins: { top: 0.82, bottom: 0 },
+      visible: false,
+      borderVisible: false,
+      drawTicks: false,
+    } as never);
     series.priceScale().applyOptions({ scaleMargins: { top: 0.06, bottom: 0.22 } });
     chartRef.current = chart;
     seriesRef.current = series;
