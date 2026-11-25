@@ -10,6 +10,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Container from "@/components/Container";
 import CallKline from "@/components/dashboard/CallKline";
+import CopyCaButton from "@/components/dashboard/CopyCaButton";
 import { DisclosureBadges } from "@/components/dashboard/TrackRecordClient";
 import { disclosureLabelsOf, fmtCalledAt, posActionLabel } from "@/components/dashboard/tr";
 import {
@@ -129,6 +130,7 @@ export default async function CallDetailPage({
               <img src={data.imageUrl} alt={`${call.tokenName} logo`} className="h-9 w-9 rounded-full border border-line object-cover" />
             ) : null}
             <h1 className="font-serif text-3xl font-bold text-[#5c2a52]">{call.tokenName}</h1>
+            <CopyCaButton address={call.contractAddress} />
             <span className={`rounded-full border px-2.5 py-0.5 text-xs font-bold ${STANCE_BADGE[call.stance]}`}>
               {stanceLabel(call.stance, tr)}
             </span>

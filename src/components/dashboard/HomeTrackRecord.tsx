@@ -52,8 +52,9 @@ export default function HomeTrackRecord({
 }) {
   const tr: Tr = getTr(locale);
 
+  /* 5 币 + 1 看板入口：桌面两排三个（3+3），卡片紧凑 */
   return (
-    <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
+    <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
       {records.map(({ call, updates, outcome }) => {
         const cur = currentMap[call.contractAddress];
         const curPrice = outcome ? outcome.priceAtClose : cur?.priceUsd;
@@ -81,7 +82,7 @@ export default function HomeTrackRecord({
               if ((e.target as HTMLElement).closest("a,button")) return;
               window.location.href = detailHref;
             }}
-            className={`${card} cursor-pointer`}
+            className={`${card} cursor-pointer !p-4`}
           >
             {/* 头部：头像 + 名称 + stance */}
             <div className="flex items-center gap-3">
@@ -89,7 +90,7 @@ export default function HomeTrackRecord({
                 imageUrl={cur?.imageUrl}
                 symbol={call.symbol}
                 hue={avatarHue(call.contractAddress)}
-                size={44}
+                size={36}
               />
               <div className="min-w-0 flex-1">
                 <Link
@@ -109,13 +110,13 @@ export default function HomeTrackRecord({
             </div>
 
             {/* 判断时间 + 判断以来表现（最醒目） */}
-            <div className="mt-4 flex items-end justify-between gap-2">
+            <div className="mt-3 flex items-end justify-between gap-2">
               <div>
                 <div className="text-[10px] tracking-wide text-muted">{tr.calledAt}</div>
-                <div className="mt-0.5 text-sm font-semibold tabular-nums text-heading">
+                <div className="mt-0.5 text-[13px] font-semibold tabular-nums text-heading">
                   {fmtCalledAt(call.calledAt)}
                 </div>
-                <div className="mt-0.5 text-[11px] tabular-nums text-muted">
+                <div className="mt-0.5 text-[10.5px] tabular-nums text-muted">
                   {formatPrice(call.priceAtCall)}
                   <span aria-hidden="true"> · </span>M{formatMcap(call.mcapAtCall)}
                 </div>
@@ -123,7 +124,7 @@ export default function HomeTrackRecord({
               <div className="text-right">
                 {perf !== null ? (
                   <div
-                    className={`text-[22px] font-bold leading-none tabular-nums ${
+                    className={`text-[19px] font-bold leading-none tabular-nums ${
                       perf >= 0
                         ? "text-emerald-600 dark:text-emerald-400"
                         : "text-red-600 dark:text-red-400"
@@ -170,7 +171,7 @@ export default function HomeTrackRecord({
                 href={detailHref}
                 className="mt-1 block text-[12.5px] leading-relaxed text-[#2a2230]/85 transition-colors hover:text-[#ff5b3a]"
               >
-                {call.thesis}
+                <span className="line-clamp-2">{call.thesis}</span>
               </Link>
             </div>
 
@@ -214,7 +215,7 @@ export default function HomeTrackRecord({
       {/* 看板入口卡片 */}
       <Link
         href={viewAllHref}
-        className="group flex min-h-[280px] flex-col rounded-[16px_20px_14px_22px] border-[1.5px] border-dashed border-[#5c2a52] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]"
+        className="group flex min-h-[220px] flex-col rounded-[16px_20px_14px_22px] border-[1.5px] border-dashed border-[#5c2a52] bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]"
       >
         <div>
           <div className="font-serif text-[17px] font-bold text-[#5c2a52]">{boardTitle}</div>

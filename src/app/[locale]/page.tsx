@@ -53,10 +53,10 @@ export default async function HomePage({
     fetchEqnNews(3),
   ]);
 
-  /* Track Record：最近最活跃的 2 条判断（更新会顶上来），并预取现价 */
+  /* Track Record：最近最活跃的 5 条判断（更新会顶上来），并预取现价 */
   const latestCalls = [...callRecords]
     .sort((a, b) => activityAt(b).localeCompare(activityAt(a)))
-    .slice(0, 2);
+    .slice(0, 5);
   const currentMap: Record<
     string,
     { priceUsd?: number; mcap?: number; imageUrl?: string }

@@ -875,23 +875,61 @@ function NewCallForm({ initialCa = "", onDone, onError }: { initialCa?: string; 
     position: "none", entryPrice: "", sizeTier: "", sponsored: false, referral: false, sourceOfIdea: "",
   });
   const [busy, setBusy] = useState(false);
+  /** 代币名/symbol/链 是否被用户手动改过（手改后自动识别不再覆盖） */
+  const [infoTouched, setInfoTouched] = useState(false);
   const set = (k: string, v: unknown) => setF((s) => ({ ...s, [k]: v }));
-  const id = makeCallId(`${f.date}:00`, f.slug || f.symbol || "call");
+  /** 短名自动生成：symbol → 代币名英数词 → CA 前缀 */
+  const autoSlug =
+    f.symbol.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 24) ||
+    (f.tokenName.trim().match(/[a-zA-Z0-9]+/g) ?? []).join("-").toLowerCase().slice(0, 24) ||
+    f.ca.trim().toLowerCase().slice(0, 8) ||
+    "call";
+  const id = makeCallId(`${f.date}:00`, autoSlug);
 
-  const fetchPrice = async () => {
-    if (!f.ca) return onError("先填合约地址");
+  /** 输入 CA 后自动识别：代币名 / symbol / 链 / 价格 / 市值 / 池子 */
+  const fetchInfo = async (opts?: { silent?: boolean }) => {
+    const ca = f.ca.trim();
+    if (!/^[0-9a-zA-Z]{20,80}$/.test(ca)) return;
     try {
-      const res = await fetch(`/api/market?type=prices&cas=${encodeURIComponent(f.ca)}`);
+      const res = await fetch(`/api/market?type=token&ca=${encodeURIComponent(ca)}`);
       const j = await res.json();
-      const p = j?.prices?.[f.ca];
-      if (!p) return onError("抓不到行情（可手填并勾选「价格手填」）");
-      setF((s) => ({
-        ...s,
-        priceAtCall: String(p.priceUsd), mcapAtCall: String(Math.round(p.mcap)),
-        pairAddress: p.pairAddress ?? s.pairAddress, manualPrice: false,
+      const pairs: Array<{
+        baseToken?: { name?: string; symbol?: string; address?: string };
+        chainId?: string; priceUsd?: string; marketCap?: number; fdv?: number;
+        pairAddress?: string;
+      }> = j?.pairs ?? [];
+      const own = pairs.filter(
+        (pp) => (pp?.baseToken?.address ?? "").toLowerCase() === ca.toLowerCase()
+      );
+      const best = (own.length ? own : pairs)
+        .filter((pp) => pp.pairAddress)
+        .sort((a, b) => Number(b.marketCap ?? b.fdv ?? 0) - Number(a.marketCap ?? a.fdv ?? 0))[0];
+      if (!best?.priceUsd) {
+        if (!opts?.silent) onError("抓不到该币信息（可手填，价格勾选手填）");
+        return;
+      }
+      setF((prev) => ({
+        ...prev,
+        tokenName: infoTouched ? prev.tokenName : best.baseToken?.name || prev.tokenName,
+        symbol: infoTouched ? prev.symbol : (best.baseToken?.symbol || prev.symbol).toUpperCase(),
+        chain: infoTouched ? prev.chain : best.chainId || prev.chain,
+        priceAtCall: String(Number(best.priceUsd)),
+        mcapAtCall: String(Math.round(Number(best.marketCap ?? best.fdv ?? 0))),
+        pairAddress: best.pairAddress ?? prev.pairAddress,
+        manualPrice: false,
       }));
-    } catch { onError("抓取失败"); }
+    } catch {
+      if (!opts?.silent) onError("识别失败，请检查合约地址");
+    }
   };
+
+  /* 输入 CA 防抖自动识别（1 秒），手填字段不覆盖 */
+  useEffect(() => {
+    if (!/^[0-9a-zA-Z]{20,80}$/.test(f.ca.trim())) return;
+    const t = setTimeout(() => void fetchInfo({ silent: true }), 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [f.ca]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -954,15 +992,16 @@ function NewCallForm({ initialCa = "", onDone, onError }: { initialCa?: string; 
       <div className="grid gap-3 sm:grid-cols-3">
         <div><label className={label}>判断时间 *</label>
           <input type="datetime-local" value={f.date} onChange={(e) => set("date", e.target.value)} className={input} required /></div>
-        <div><label className={label}>短名（生成 id）*</label>
-          <input value={f.slug} onChange={(e) => set("slug", e.target.value)} placeholder="如 rings" className={input} required />
-          <p className="mt-0.5 font-mono text-[10px] text-muted">{id}</p></div>
+        <div>
+          <label className={label}>记录 ID（自动生成）</label>
+          <input value={id} readOnly className={`${input} font-mono opacity-70`} />
+        </div>
         <div><label className={label}>链 *</label>
-          <input value={f.chain} onChange={(e) => set("chain", e.target.value)} className={input} required /></div>
+          <input value={f.chain} onChange={(e) => { set("chain", e.target.value); setInfoTouched(true); }} className={input} required /></div>
         <div><label className={label}>代币名 *</label>
-          <input value={f.tokenName} onChange={(e) => set("tokenName", e.target.value)} className={input} required /></div>
+          <input value={f.tokenName} onChange={(e) => { set("tokenName", e.target.value); setInfoTouched(true); }} className={input} required /></div>
         <div><label className={label}>Symbol *</label>
-          <input value={f.symbol} onChange={(e) => set("symbol", e.target.value)} className={input} required /></div>
+          <input value={f.symbol} onChange={(e) => { set("symbol", e.target.value); setInfoTouched(true); }} className={input} required /></div>
         <div><label className={label}>合约地址 *</label>
           <input id="newcall-ca" value={f.ca} onChange={(e) => set("ca", e.target.value)} className={`${input} font-mono`} required /></div>
         <div><label className={label}>立场 *</label>
@@ -982,7 +1021,7 @@ function NewCallForm({ initialCa = "", onDone, onError }: { initialCa?: string; 
         <div><label className={label}>判断时市值 *</label>
           <input value={f.mcapAtCall} onChange={(e) => set("mcapAtCall", e.target.value)} className={`${input} font-mono`} required /></div>
         <div className="flex items-end gap-2 pb-0.5">
-          <button type="button" onClick={() => void fetchPrice()} className="rounded-lg border border-line px-3 py-2 text-xs text-muted hover:border-accent hover:text-accent">⚡ 自动抓取</button>
+          <button type="button" onClick={() => void fetchInfo()} className="rounded-lg border border-line px-3 py-2 text-xs text-muted hover:border-accent hover:text-accent">⚡ 重新识别</button>
           <label className="flex items-center gap-1 text-xs text-muted">
             <input type="checkbox" checked={f.manualPrice} onChange={(e) => set("manualPrice", e.target.checked)} /> 价格手填
           </label>
