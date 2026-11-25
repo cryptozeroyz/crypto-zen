@@ -737,5 +737,42 @@
    }
   ],
   "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-25-basket",
+   "chain": "solana",
+   "tokenName": "Basket",
+   "symbol": "BASKET",
+   "contractAddress": "3Tg6YnNrfPdFfsY14MaNsDMWLseAyrUDS3myJtbaJN6f",
+   "calledAt": "2026-11-25T10:35:00",
+   "stance": "bullish",
+   "priceAtCall": 0.00239,
+   "mcapAtCall": 2390362,
+   "narrative": "Basket 是launchpad，每个币都可以与真实的代币化股票（NVDA、TSLA、MCD 及另外 130 只）配对，也支持自定义交易对，以多种股票作为奖励，基于 Raydium 构建。",
+   "thesis": "1、基于 Raydium LaunchLab 的 Solana 发币平台\n2、每铸造一个 Basket NFT 需销毁 100,000 $BASKET；NFT 总量 1,000 个，理论上最多通过该渠道销毁总供应量的 10%",
+   "catalysts": [
+    "被采用，生态项目有好的表现"
+   ],
+   "risks": [
+    "1价值高度依赖发射台实际使用量和持续分红能力。如果没人持续用平台发币/交易，叙事会迅速冷却。",
+    "2、竞争激烈：Solana发射台赛道拥挤（pump.fun等），新平台存活率低。"
+   ],
+   "narrativeType": "other",
+   "horizon": "days",
+   "invalidation": "无任何采用，代币无炒作",
+   "disclosure": {
+    "position": "none",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": false,
+   "priceSource": "auto",
+   "pairAddress": "CixcofsPwHnYWjsoDxXxvLd6uM5fH7w8MFPL9mpQpqtX"
+  },
+  "updates": [],
+  "outcome": null
  }
 ]
