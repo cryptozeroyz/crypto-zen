@@ -11,6 +11,7 @@ import type { Call, CallRecord, CallUpdate } from "@/lib/calls";
 import { makeCallId } from "@/lib/calls";
 import { statusOf } from "@/lib/calls-stats";
 import { fmtCalledAt, posActionLabel, getTr } from "@/components/dashboard/tr";
+import { buildMarkdown } from "@/lib/frontmatter";
 
 /* ---------- 常量 ---------- */
 const STANCES = ["watch", "bullish", "bearish", "avoid"] as const;
@@ -364,6 +365,82 @@ function CallPane({ record, related, onChanged, onError }: { record: CallRecord;
   const [mode, setMode] = useState<"none" | "update" | "close">("none");
   const { call, updates, outcome } = record;
   const tr = getTr("zh");
+  /* AI 快速研报：Grok 搜 X 讨论 + DeepSeek 六维成文 */
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiMd, setAiMd] = useState("");
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiSaving, setAiSaving] = useState(false);
+
+  const genAi = async () => {
+    setAiBusy(true);
+    onError("");
+    try {
+      const res = await fetch("/api/admin/ai-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ca: call.contractAddress }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.message ?? "生成失败");
+      setAiMd(data.markdown ?? "");
+      setAiOpen(true);
+    } catch (e) {
+      onError(e instanceof Error ? e.message : "生成失败");
+    } finally {
+      setAiBusy(false);
+    }
+  };
+
+  const saveAi = async () => {
+    if (!aiMd.trim()) return;
+    setAiSaving(true);
+    try {
+      /* 1) 存为快记（挂到当前币，出现在投研时间线） */
+      const jRes = await fetch("/api/admin/journal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: new Date().toISOString().slice(0, 10),
+          tokens: [call.symbol, call.contractAddress],
+          tags: ["快速研报", "AI"],
+          title: `AI 快速研报：${call.tokenName || call.symbol}`.trim(),
+          body: aiMd,
+        }),
+      });
+      if (!jRes.ok) throw new Error((await jRes.json().catch(() => null))?.message ?? "快记保存失败");
+      /* 2) 同步生成文章草稿（AI 标注 + 默认草稿态，后台审核后发布） */
+      try {
+        const slug = `ai-report-${(call.symbol || "token").toLowerCase().replace(/[^a-z0-9]/g, "-")}-${Date.now().toString(36)}`;
+        const md = buildMarkdown(
+          {
+            title: `AI 快速研报：${call.tokenName || call.symbol || ""}`,
+            date: new Date().toISOString().slice(0, 10),
+            updated: "",
+            category: "research",
+            excerpt: `AI 双模型自动生成的 ${call.symbol || ""} 客观研报，含社区氛围评分与 DYOR 检查项。`,
+            tags: ["AI", "快速研报", call.symbol || ""],
+            tokens: [call.symbol || ""],
+            cover: "",
+            dexScreener: "",
+            draft: true,
+          },
+          aiMd
+        );
+        await fetch("/api/admin/posts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slug, markdown: md }),
+        });
+      } catch { /* 文章同步失败不阻塞 */ }
+      setAiMd("");
+      setAiOpen(false);
+      onChanged("AI 研报已保存（快记 + 文章草稿）");
+    } catch (e) {
+      onError(e instanceof Error ? e.message : "保存失败");
+    } finally {
+      setAiSaving(false);
+    }
+  };
 
   return (
     <div className="mt-4 space-y-4">
@@ -423,17 +500,51 @@ function CallPane({ record, related, onChanged, onError }: { record: CallRecord;
       )}
 
       {/* 操作 */}
-      {!outcome && (
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button type="button" onClick={() => setMode(mode === "update" ? "none" : "update")}
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:bg-accent-deep">
-            ✎ 追加更新
-          </button>
-          <button type="button" onClick={() => setMode(mode === "close" ? "none" : "close")}
-            className="rounded-lg border border-line px-4 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading">
-            ⚖ 复盘关闭
-          </button>
-          <span className="ml-auto text-[11px] text-muted">改错只能追加「论点修正」，不能改写原判断</span>
+      <div className="flex flex-wrap items-center gap-2.5">
+        {!outcome && (
+          <>
+            <button type="button" onClick={() => setMode(mode === "update" ? "none" : "update")}
+              className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition-all hover:-translate-y-px hover:bg-accent-deep">
+              ✎ 追加更新
+            </button>
+            <button type="button" onClick={() => setMode(mode === "close" ? "none" : "close")}
+              className="rounded-lg border border-line px-4 py-2 text-sm text-muted transition-colors hover:border-heading hover:text-heading">
+              ⚖ 复盘关闭
+            </button>
+          </>
+        )}
+        <button type="button" onClick={() => void genAi()} disabled={aiBusy}
+          className="rounded-lg border border-line px-4 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-accent disabled:opacity-50">
+          {aiBusy ? "⏳ 生成中（约 30 秒）…" : "⚡ AI 快速研报"}
+        </button>
+        {!outcome && <span className="ml-auto text-[11px] text-muted">改错只能追加「论点修正」，不能改写原判断</span>}
+      </div>
+
+      {/* AI 研报结果 */}
+      {aiOpen && (
+        <div className="space-y-2.5 rounded-xl border-[1.5px] border-dashed border-[#5c2a52] bg-white p-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-[11px] font-semibold tracking-wider text-[#5c2a52]">🤖 AI 快速研报（Grok 搜 X + DeepSeek 成文，未经人工核实）</h4>
+            <button type="button" onClick={() => { setAiOpen(false); setAiMd(""); }} className="text-xs text-muted hover:text-heading">✕ 关闭</button>
+          </div>
+          {aiMd ? (
+            <>
+              <textarea readOnly value={aiMd} rows={10}
+                className="w-full resize-y rounded-lg border border-line bg-card px-3 py-2 font-mono text-xs leading-relaxed text-heading outline-none" />
+              <div className="flex gap-2">
+                <button type="button" onClick={() => void saveAi()} disabled={aiSaving}
+                  className="rounded-lg bg-accent px-4 py-1.5 text-xs font-semibold text-white hover:bg-accent-deep disabled:opacity-50">
+                  {aiSaving ? "保存中…" : "💾 存为快记 + 文章草稿"}
+                </button>
+                <button type="button" onClick={() => void genAi()} disabled={aiBusy}
+                  className="rounded-lg border border-line px-4 py-1.5 text-xs text-muted hover:border-accent hover:text-accent">
+                  ↻ 重新生成
+                </button>
+              </div>
+            </>
+          ) : (
+            <p className="text-xs text-muted">{aiBusy ? "正在抓取 X 讨论并生成（约 30 秒）…" : "点击「⚡ AI 快速研报」生成"}</p>
+          )}
         </div>
       )}
 
