@@ -12,7 +12,17 @@ import { createChart, type IChartApi, type ISeriesApi, type UTCTimestamp } from 
 
 type Range = "24H" | "7D" | "30D" | "ALL";
 interface Candle {
-  t: number; o: number; h: number; l: number; c: number;
+  t: number; o: number; h: number; l: number; c: number; v?: number;
+}
+
+/** 按价格量级给价格轴设置精度，避免小价格币显示成 0.00 */
+function priceFormatFor(prices: number[]): { precision: number; minMove: number } {
+  const max = Math.max(...prices.map((p) => Math.abs(p)));
+  if (max >= 1000) return { precision: 2, minMove: 0.01 };
+  if (max >= 1) return { precision: 4, minMove: 0.0001 };
+  if (max >= 0.01) return { precision: 6, minMove: 0.000001 };
+  if (max >= 0.0001) return { precision: 8, minMove: 0.00000001 };
+  return { precision: 10, minMove: 0.0000000001 };
 }
 interface Mark {
   time: number;
@@ -42,6 +52,7 @@ export default function CallKline({
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
+  const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
   const [range, setRange] = useState<Range>("7D");
   const [candles, setCandles] = useState<Candle[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -103,8 +114,18 @@ export default function CallKline({
       wickUpColor: "#059669",
       wickDownColor: "#ff5b3a",
     });
+    /* 成交量柱（底部 20% 区域） */
+    const volume = chart.addHistogramSeries({
+      priceFormat: { type: "volume" },
+      priceScaleId: "vol",
+      lastValueVisible: false,
+      priceLineVisible: false,
+    });
+    chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
+    series.priceScale().applyOptions({ scaleMargins: { top: 0.06, bottom: 0.22 } });
     chartRef.current = chart;
     seriesRef.current = series;
+    volumeRef.current = volume;
 
     const ro = new ResizeObserver(() => {
       chart.applyOptions({ width: el.clientWidth });
@@ -115,6 +136,7 @@ export default function CallKline({
       chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
+      volumeRef.current = null;
     };
   }, []);
 
@@ -125,6 +147,9 @@ export default function CallKline({
     if (!series || !chart) return;
     if (!candles) return;
 
+    /* 价格轴精度：按量级自适应，修小价格币显示 0.00 的问题 */
+    series.applyOptions({ priceFormat: { type: "price", ...priceFormatFor(candles.flatMap((c) => [c.h, c.l])) } });
+
     series.setData(
       candles.map((c) => ({
         time: c.t as UTCTimestamp,
@@ -134,6 +159,18 @@ export default function CallKline({
         close: c.c,
       }))
     );
+
+    /* 成交量柱 */
+    const volume = volumeRef.current;
+    if (volume) {
+      volume.setData(
+        candles.map((c) => ({
+          time: c.t as UTCTimestamp,
+          value: c.v ?? 0,
+          color: c.c >= c.o ? "rgba(5,150,105,.35)" : "rgba(255,91,58,.35)",
+        }))
+      );
+    }
 
     /* 标记对齐到最近一根蜡烛的时间（lightweight-charts 要求 marker.time 命中数据点） */
     const times = candles.map((c) => c.t);

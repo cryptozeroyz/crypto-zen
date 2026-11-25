@@ -43,6 +43,7 @@ export interface Candle {
   h: number;
   l: number;
   c: number;
+  v?: number; // 成交量（USD）
 }
 
 export async function fetchGeckoOhlcvCandles(
@@ -70,7 +71,14 @@ export async function fetchGeckoOhlcvCandles(
   return list
     .map(
       (c: number[]) =>
-        ({ t: Number(c[0]), o: Number(c[1]), h: Number(c[2]), l: Number(c[3]), c: Number(c[4]) }) as Candle
+        ({
+          t: Number(c[0]),
+          o: Number(c[1]),
+          h: Number(c[2]),
+          l: Number(c[3]),
+          c: Number(c[4]),
+          v: Number(c[5]) || 0,
+        }) as Candle
     )
     .reverse();
 }
