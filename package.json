@@ -13,6 +13,7 @@
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "gray-matter": "^4.0.3",
+    "lightweight-charts": "^4.2.3",
     "mammoth": "^1.13.0",
     "marked": "^12.0.2",
     "next": "^14.2.5",

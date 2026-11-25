@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Container from "@/components/Container";
-import CallChart from "@/components/dashboard/CallChart";
+import CallKline from "@/components/dashboard/CallKline";
 import { DisclosureBadges } from "@/components/dashboard/TrackRecordClient";
 import { disclosureLabelsOf, fmtCalledAt, posActionLabel } from "@/components/dashboard/tr";
 import {
@@ -92,7 +92,6 @@ export default async function CallDetailPage({
     .filter((pt): pt is NonNullable<typeof pt> => Boolean(pt));
 
   const calledAtTs = Date.parse(call.calledAt);
-  const updateTs = updates.map((u) => Date.parse(u.at));
   const curPrice = outcome ? outcome.priceAtClose : data?.priceUsd;
   const perf =
     curPrice !== null && curPrice !== undefined
@@ -155,19 +154,28 @@ export default async function CallDetailPage({
         </div>
       </div>
 
-      {/* 图表：标出判断时间 + 各 Update */}
+      {/* K 线：DexScreener 同款内核，标出判断与每次更新的时间点 */}
       {data?.pairAddress && data.chainId && (
         <div className="mt-6 rounded-2xl border border-line bg-card p-4">
-          <CallChart
+          <CallKline
             chain={data.chainId}
             pair={data.pairAddress}
-            calledAtTs={calledAtTs}
-            markerTs={updateTs}
+            marks={[
+              { time: Math.floor(calledAtTs / 1000), kind: "call" },
+              ...updates.map((u) => ({
+                time: Math.floor(Date.parse(u.at) / 1000),
+                kind:
+                  u.type === "thesis-change" ? ("thesis" as const)
+                  : u.type === "position-change" ? u.positionAction === "add" ? ("add" as const) : u.positionAction === "exit" ? ("exit" as const) : ("reduce" as const)
+                  : u.type === "closed" ? ("outcome" as const)
+                  : ("note" as const),
+              })),
+              ...(outcome ? [{ time: Math.floor(Date.parse(outcome.closedAt) / 1000), kind: "outcome" as const }] : []),
+            ]}
           />
-          <div className="mt-2 flex items-center gap-4 text-[10px] text-muted">
-            <span className="flex items-center gap-1"><i className="inline-block h-2.5 w-0.5 bg-[#ff5b3a]" /> {tr.calledAt}</span>
-            <span className="flex items-center gap-1"><i className="inline-block h-2.5 w-px border-l border-dashed border-[#2a2230]" /> {tr.updates}</span>
-          </div>
+          <p className="mt-2 text-[10px] text-muted">
+            K 线数据来自 GeckoTerminal · 标记已对齐到最近时间粒度
+          </p>
         </div>
       )}
 

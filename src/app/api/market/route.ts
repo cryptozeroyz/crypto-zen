@@ -17,7 +17,7 @@ import { NextResponse } from "next/server";
 import { fetchWatchlistWithData } from "@/lib/watchlist";
 import { getAllPosts } from "@/lib/posts";
 import { getJournal } from "@/lib/journal";
-import { fetchGeckoOhlcv, fetchGeckoOhlcvSeries, fetchGeckoSpark } from "@/lib/gecko";
+import { fetchGeckoOhlcv, fetchGeckoOhlcvCandles, fetchGeckoOhlcvSeries, fetchGeckoSpark } from "@/lib/gecko";
 import { RateLimiter } from "@/lib/rate-limit";
 
 export const revalidate = 60;
@@ -361,11 +361,11 @@ export async function GET(req: Request) {
     if (!/^[a-z0-9]{2,20}$/.test(chain) || !/^[0-9a-zA-Z]{20,80}$/.test(pair))
       return NextResponse.json({ error: "bad params" }, { status: 400 });
     try {
-      /* withTs=1 时返回带时间戳序列（详情页图表标点）；默认保持 closes 兼容旧客户端 */
+      /* withTs=1 时返回完整蜡烛序列（详情页 K 线 + 标点）；默认保持 closes 兼容旧客户端 */
       if (searchParams.get("withTs") === "1") {
-        const series = await fetchGeckoOhlcvSeries(chain, pair, range);
+        const candles = await fetchGeckoOhlcvCandles(chain, pair, range);
         return NextResponse.json(
-          { series },
+          { candles },
           { headers: { "Cache-Control": "s-maxage=1800, stale-while-revalidate=900" } }
         );
       }
