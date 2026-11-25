@@ -114,20 +114,14 @@ export default function CallKline({
       wickUpColor: "#059669",
       wickDownColor: "#ff5b3a",
     });
-    /* 成交量柱（底部 20% 区域） */
+    /* 成交量柱：overlay 序列（不挂任何价格轴，手动归一化到底部区域，杜绝双轴刻度问题） */
     const volume = chart.addHistogramSeries({
       priceFormat: { type: "volume" },
-      priceScaleId: "vol",
+      priceScaleId: "",
       lastValueVisible: false,
       priceLineVisible: false,
     });
-    /* 成交量刻度隐藏（只留柱子，避免和主价格轴两套刻度重叠） */
-    chart.priceScale("vol").applyOptions({
-      scaleMargins: { top: 0.82, bottom: 0 },
-      visible: false,
-      borderVisible: false,
-    });
-    series.priceScale().applyOptions({ scaleMargins: { top: 0.06, bottom: 0.22 } });
+    series.priceScale().applyOptions({ scaleMargins: { top: 0.06, bottom: 0.06 } });
     chartRef.current = chart;
     seriesRef.current = series;
     volumeRef.current = volume;
