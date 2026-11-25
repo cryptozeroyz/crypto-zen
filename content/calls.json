@@ -668,5 +668,47 @@
   },
   "updates": [],
   "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-25-jimmyrustles",
+   "chain": "solana",
+   "tokenName": "Jimmy Rustles",
+   "symbol": "JIMMY",
+   "contractAddress": "38M2z4UCfZEkUHFzD48vhKQhFhNyRGto8pZbLjNipump",
+   "calledAt": "2026-11-25T03:55:00",
+   "proofUrl": "https://x.com/JimmyRustlesSOL",
+   "stance": "bullish",
+   "priceAtCall": 0.001704,
+   "mcapAtCall": 1591338,
+   "narrative": "核心梗是2010年左右在FunnyJunk起源、后在4chan（尤其是/r9k/）爆火的“That really rustled my jimmies”",
+   "thesis": "早期4chan “Zoo”成员（和Pepe、Wojak、Doge等同辈），但当年没跑起来的“被遗忘的大猩猩”，典型的怀旧+识别度高+低门槛的纯梗币，没有复杂叙事，靠经典形象本身吸流量。官方账号@JimmyRustlesSOL已建立，活跃发帖。",
+   "catalysts": [
+    "整体属于有识别度的经典梗 + 当前Solana memecoin情绪支撑的早期热度币，不是完全冷门，但还没到顶级出圈阶段。"
+   ],
+   "risks": [
+    "常见风险：高波动、流动性突然撤离、叙事疲劳。"
+   ],
+   "narrativeType": "meme-culture",
+   "horizon": "weeks",
+   "invalidation": "纯正的早期互联网反应梗复刻，但社区对此叙事已经疲劳",
+   "successCriteria": "讨论度扩大",
+   "disclosure": {
+    "position": "holding",
+    "entryPrice": 0.0012,
+    "sizeTier": "medium",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [
+    "4CHAN"
+   ],
+   "isHistorical": false,
+   "priceSource": "auto",
+   "pairAddress": "FnHWfV49ywCtGCDTyf34AVN8BiXxcgXUKqLctkrkP1gQ"
+  },
+  "updates": [],
+  "outcome": null
  }
 ]
