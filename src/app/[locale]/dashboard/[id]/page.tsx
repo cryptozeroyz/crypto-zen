@@ -50,7 +50,18 @@ export function generateMetadata({
 }): Metadata {
   const locale: Locale = isLocale(params.locale) ? params.locale : "zh";
   const t = getTr(locale);
-  return { title: `${t.title} · ${params.id}` };
+  return {
+    title: `${t.title} · ${params.id}`,
+    alternates: {
+      canonical: `/${locale}/dashboard/${params.id}`,
+      languages: {
+        zh: `/zh/dashboard/${params.id}`,
+        en: `/en/dashboard/${params.id}`,
+        "x-default": `/zh/dashboard/${params.id}`,
+      },
+    },
+    twitter: { card: "summary_large_image" },
+  };
 }
 
 export default async function CallDetailPage({
@@ -115,7 +126,7 @@ export default async function CallDetailPage({
           <div className="flex flex-wrap items-center gap-2.5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {data?.imageUrl ? (
-              <img src={data.imageUrl} alt="" className="h-9 w-9 rounded-full border border-line object-cover" />
+              <img src={data.imageUrl} alt={`${call.tokenName} logo`} className="h-9 w-9 rounded-full border border-line object-cover" />
             ) : null}
             <h1 className="font-serif text-3xl font-bold text-[#5c2a52]">{call.tokenName}</h1>
             <span className={`rounded-full border px-2.5 py-0.5 text-xs font-bold ${STANCE_BADGE[call.stance]}`}>

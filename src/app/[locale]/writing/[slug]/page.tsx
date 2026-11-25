@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts, getPostBySlug, getAdjacentPosts } from "@/lib/posts";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
+import { siteConfig } from "@/lib/siteConfig";
 import { formatDate } from "@/lib/utils";
 import Container from "@/components/Container";
 import DexChart from "@/components/DexChart";
@@ -54,6 +55,7 @@ export function generateMetadata({
       publishedTime: post.date,
       tags: post.tags,
     },
+    twitter: { card: "summary_large_image" },
   };
 }
 
@@ -95,6 +97,7 @@ export default function PostPage({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
+    image: `${siteConfig.url}/${locale}/writing/${post.slug}/opengraph-image`,
     description: post.excerpt,
     datePublished: post.date,
     ...(post.updated ? { dateModified: post.updated } : {}),

@@ -29,7 +29,6 @@ export function generateMetadata({
       template: t.meta.titleTemplate,
     },
     description: t.meta.description,
-    keywords: ["Crypto", "Memecoin", "On-chain", "DYOR", "Web3"],
     openGraph: {
       type: "website",
       locale: locale === "en" ? "en_US" : "zh_CN",
@@ -39,7 +38,7 @@ export function generateMetadata({
       description: t.meta.description,
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: t.meta.defaultTitle,
       description: t.meta.description,
       creator: siteConfig.social.twitterHandle,

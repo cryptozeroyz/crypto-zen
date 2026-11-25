@@ -27,7 +27,11 @@ export function generateMetadata({
   return {
     title: t.dashboard.title,
     description: t.dashboard.sub,
-    alternates: { canonical: `/${locale}/dashboard` },
+    alternates: {
+      canonical: `/${locale}/dashboard`,
+      languages: { zh: "/zh/dashboard", en: "/en/dashboard", "x-default": "/zh/dashboard" },
+    },
+    twitter: { card: "summary_large_image" },
   };
 }
 

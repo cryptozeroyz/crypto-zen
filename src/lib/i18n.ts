@@ -15,9 +15,9 @@ export function isLocale(value: string): value is Locale {
 const zh = {
   meta: {
     description:
-      "Crypto Zen 的个人主页与写作空间：分享 Memecoin 研究报告、链上数据分析方法与 DYOR 心得。",
+      "Crypto Zen 的 Memecoin 研究与链上分析空间：投研日志（Track Record）、叙事研究、链上数据分析与 DYOR 笔记，判断留痕、复盘可查。",
     titleTemplate: "%s · Crypto Zen",
-    defaultTitle: "Crypto Zen",
+    defaultTitle: "Crypto Zen · Memecoin 研究与链上分析 | 投研日志",
   },
   nav: {
     articles: "文章",
@@ -387,9 +387,9 @@ const zh = {
 const en: typeof zh = {
   meta: {
     description:
-      "Crypto Zen's personal site and writing space: memecoin research reports, on-chain analysis, and DYOR notes.",
+      "Crypto Zen's memecoin research and on-chain analysis hub: track record of calls, narrative research, on-chain data breakdowns and DYOR notes — every judgment logged and reviewed.",
     titleTemplate: "%s · Crypto Zen",
-    defaultTitle: "Crypto Zen",
+    defaultTitle: "Crypto Zen · Memecoin Research & On-chain Analysis | Track Record",
   },
   nav: {
     articles: "Articles",

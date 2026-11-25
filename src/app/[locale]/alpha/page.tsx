@@ -20,7 +20,10 @@ export function generateMetadata({
   return {
     title: t.alpha.title,
     description: t.alpha.sub,
-    alternates: { canonical: `/${locale}/alpha` },
+    alternates: {
+      canonical: `/${locale}/alpha`,
+      languages: { zh: "/zh/alpha", en: "/en/alpha", "x-default": "/zh/alpha" },
+    },
   };
 }
 

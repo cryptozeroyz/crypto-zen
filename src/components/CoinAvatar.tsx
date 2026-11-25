@@ -44,7 +44,7 @@ export default function CoinAvatar({ imageUrl, symbol, hue, size = 48 }: CoinAva
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={proxied}
-          alt=""
+          alt={`${symbol} logo`}
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
           onError={() => setFailed(true)}

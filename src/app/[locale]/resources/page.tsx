@@ -19,7 +19,14 @@ export function generateMetadata({
   return {
     title: t.resources.title,
     description: t.resources.intro,
-    alternates: { canonical: `/${locale}/resources` },
+    alternates: {
+      canonical: `/${locale}/resources`,
+      languages: {
+        zh: `/zh/resources`,
+        en: `/en/resources`,
+        "x-default": `/zh/resources`,
+      },
+    },
   };
 }
 

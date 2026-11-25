@@ -23,6 +23,21 @@ import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 
 export const revalidate = 300;
 
+/** 首页 SEO：canonical + 中英 hreflang 互指 */
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): import("next").Metadata {
+  const locale: Locale = isLocale(params.locale) ? params.locale : "zh";
+  return {
+    alternates: {
+      canonical: `/${locale}`,
+      languages: { zh: "/zh", en: "/en", "x-default": "/zh" },
+    },
+  };
+}
+
 export default async function HomePage({
   params,
 }: {
@@ -62,8 +77,35 @@ export default async function HomePage({
     })
   );
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: "Crypto Zen",
+        url: siteConfig.url,
+        inLanguage: ["zh-CN", "en"],
+        description:
+          locale === "en"
+            ? "Memecoin research and on-chain analysis hub with a public track record."
+            : "Memecoin 研究与链上分析空间，公开投研 Track Record。",
+      },
+      {
+        "@type": "Person",
+        name: "Crypto Zen",
+        url: siteConfig.url,
+        sameAs: [siteConfig.social.twitter],
+        jobTitle: locale === "en" ? "Memecoin Researcher" : "Memecoin 研究员",
+      },
+    ],
+  };
+
   return (
     <div className="home-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <TypewriterHero locale={locale} />
         {/* 快讯跑马灯（点击进入 /news） */}
         <Container>

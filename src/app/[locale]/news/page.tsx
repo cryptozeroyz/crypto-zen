@@ -27,7 +27,10 @@ export function generateMetadata({
   return {
     title: t.news.title,
     description: t.news.intro,
-    alternates: { canonical: `/${locale}/news` },
+    alternates: {
+      canonical: `/${locale}/news`,
+      languages: { zh: "/zh/news", en: "/en/news", "x-default": "/zh/news" },
+    },
   };
 }
 
