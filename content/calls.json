@@ -728,7 +728,14 @@
    "priceSource": "auto",
    "pairAddress": "FnHWfV49ywCtGCDTyf34AVN8BiXxcgXUKqLctkrkP1gQ"
   },
-  "updates": [],
+  "updates": [
+   {
+    "callId": "2026-11-25-jimmyrustles",
+    "at": "2026-11-25T12:50:00",
+    "type": "note",
+    "content": "6000+holder，是不错的数据，需要进一步关注与同系高市值meme的对比，能否引发链上参与者的fomo"
+   }
+  ],
   "outcome": null
  }
 ]
