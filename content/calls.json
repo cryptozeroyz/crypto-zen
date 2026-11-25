@@ -282,7 +282,7 @@
     "at": "2026-11-18T00:00",
     "type": "closed",
     "content": "取消关注，并没被炒作起来",
-    "priceAt": 8.094e-05,
+    "priceAt": 0.00008094,
     "positionAction": "exit"
    }
   ],
@@ -290,7 +290,7 @@
    "callId": "2026-11-17-char",
    "closedAt": "2026-11-18T00:00",
    "verdict": "wrong",
-   "priceAtClose": 8.094e-05,
+   "priceAtClose": 0.00008094,
    "mcapAtClose": 79557,
    "maxMcapAfterCall": 115938,
    "minMcapAfterCall": 19769,
@@ -513,7 +513,7 @@
     "at": "2026-11-17T00:00",
     "type": "closed",
     "content": "没有因为mihao的爆发带来增长，叙事只能长期持有龙一，β标的只能做短期操作",
-    "priceAt": 9.705e-05,
+    "priceAt": 0.00009705,
     "positionAction": "exit"
    }
   ],
@@ -521,7 +521,7 @@
    "callId": "2026-11-12-updog",
    "closedAt": "2026-11-17T00:00",
    "verdict": "wrong",
-   "priceAtClose": 9.705e-05,
+   "priceAtClose": 0.00009705,
    "mcapAtClose": 94524,
    "maxMcapAfterCall": 443310,
    "minMcapAfterCall": 27299,
@@ -746,7 +746,7 @@
    "symbol": "BASKET",
    "contractAddress": "3Tg6YnNrfPdFfsY14MaNsDMWLseAyrUDS3myJtbaJN6f",
    "calledAt": "2026-11-25T10:35:00",
-   "stance": "bullish",
+   "stance": "watch",
    "priceAtCall": 0.00239,
    "mcapAtCall": 2390362,
    "narrative": "Basket 是launchpad，每个币都可以与真实的代币化股票（NVDA、TSLA、MCD 及另外 130 只）配对，也支持自定义交易对，以多种股票作为奖励，基于 Raydium 构建。",
@@ -772,7 +772,14 @@
    "priceSource": "auto",
    "pairAddress": "CixcofsPwHnYWjsoDxXxvLd6uM5fH7w8MFPL9mpQpqtX"
   },
-  "updates": [],
+  "updates": [
+   {
+    "callId": "2026-11-25-basket",
+    "at": "2026-11-25T14:46:00",
+    "type": "thesis-change",
+    "content": "立场调整 stance: bullish → watch"
+   }
+  ],
   "outcome": null
  }
 ]
