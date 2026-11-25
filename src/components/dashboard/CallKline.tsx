@@ -52,7 +52,6 @@ export default function CallKline({
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
-  const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
   const [range, setRange] = useState<Range>("7D");
   const [candles, setCandles] = useState<Candle[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -114,17 +113,8 @@ export default function CallKline({
       wickUpColor: "#059669",
       wickDownColor: "#ff5b3a",
     });
-    /* 成交量柱：overlay 序列（不挂任何价格轴，手动归一化到底部区域，杜绝双轴刻度问题） */
-    const volume = chart.addHistogramSeries({
-      priceFormat: { type: "volume" },
-      priceScaleId: "",
-      lastValueVisible: false,
-      priceLineVisible: false,
-    });
-    series.priceScale().applyOptions({ scaleMargins: { top: 0.06, bottom: 0.06 } });
     chartRef.current = chart;
     seriesRef.current = series;
-    volumeRef.current = volume;
 
     const ro = new ResizeObserver(() => {
       chart.applyOptions({ width: el.clientWidth });
@@ -135,7 +125,6 @@ export default function CallKline({
       chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
-      volumeRef.current = null;
     };
   }, []);
 
@@ -159,20 +148,6 @@ export default function CallKline({
       }))
     );
 
-    /* 成交量柱：归一化到 [0, priceMin*0.95] 区间，视觉上占据 K 线下方 */
-    const volume = volumeRef.current;
-    if (volume) {
-      const priceMin = Math.min(...candles.map((c) => c.l));
-      const volMax = Math.max(...candles.map((c) => c.v ?? 0), 0);
-      const cap = priceMin > 0 ? priceMin * 0.95 : Math.max(...candles.map((c) => c.h)) * 0.2;
-      volume.setData(
-        candles.map((c) => ({
-          time: c.t as UTCTimestamp,
-          value: volMax > 0 ? ((c.v ?? 0) / volMax) * cap : 0,
-          color: c.c >= c.o ? "rgba(5,150,105,.35)" : "rgba(255,91,58,.35)",
-        }))
-      );
-    }
 
     /* 标记对齐到最近一根蜡烛的时间（lightweight-charts 要求 marker.time 命中数据点） */
     const times = candles.map((c) => c.t);
