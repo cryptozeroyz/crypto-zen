@@ -29,14 +29,15 @@ interface Mark {
   kind: "call" | "note" | "thesis" | "add" | "reduce" | "exit" | "outcome";
 }
 
-const MARK_STYLE: Record<Mark["kind"], { color: string; shape: "arrowDown" | "arrowUp" | "circle"; text: string; position: "aboveBar" | "belowBar" }> = {
-  call: { color: "#ff5b3a", shape: "arrowDown", text: "判断", position: "aboveBar" },
-  note: { color: "#2a2230", shape: "circle", text: "记", position: "belowBar" },
-  thesis: { color: "#d97706", shape: "circle", text: "修", position: "belowBar" },
-  add: { color: "#059669", shape: "circle", text: "加", position: "belowBar" },
-  reduce: { color: "#d97706", shape: "circle", text: "减", position: "belowBar" },
-  exit: { color: "#dc2626", shape: "circle", text: "清", position: "belowBar" },
-  outcome: { color: "#5c2a52", shape: "arrowUp", text: "复盘", position: "belowBar" },
+/* 全部用 inBar：aboveBar/belowBar 会把价格轴拉伸出数据范围（产生负刻度），inBar 不会 */
+const MARK_STYLE: Record<Mark["kind"], { color: string; shape: "arrowDown" | "arrowUp" | "circle"; text: string; position: "inBar" }> = {
+  call: { color: "#ff5b3a", shape: "arrowDown", text: "判断", position: "inBar" },
+  note: { color: "#2a2230", shape: "circle", text: "记", position: "inBar" },
+  thesis: { color: "#d97706", shape: "circle", text: "修", position: "inBar" },
+  add: { color: "#059669", shape: "circle", text: "加", position: "inBar" },
+  reduce: { color: "#d97706", shape: "circle", text: "减", position: "inBar" },
+  exit: { color: "#dc2626", shape: "circle", text: "清", position: "inBar" },
+  outcome: { color: "#5c2a52", shape: "arrowUp", text: "复盘", position: "inBar" },
 };
 
 export default function CallKline({
@@ -113,8 +114,6 @@ export default function CallKline({
       wickUpColor: "#059669",
       wickDownColor: "#ff5b3a",
     });
-    /* 预留上下边距给标记文字，避免价格轴被拉伸出 0 以下/最高值以上的刻度 */
-    series.priceScale().applyOptions({ scaleMargins: { top: 0.12, bottom: 0.15 } });
     chartRef.current = chart;
     seriesRef.current = series;
 
