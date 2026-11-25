@@ -9,7 +9,7 @@ const c = (t: number, o: number, h: number, l: number, cl: number, v = 1) => ({ 
 describe("aggregateCandles", () => {
   it("两个 15m 桶合成一根 30m：首开/最高/最低/末收/量和", () => {
     const out = aggregateCandles(
-      [c(900, 1, 2, 0.5, 1.5, 10), c(1800, 1.5, 3, 1, 2.5, 20), c(2700, 2.5, 4, 2, 3, 5)],
+      [c(0, 1, 2, 0.5, 1.5, 10), c(900, 1.5, 3, 1, 2.5, 20), c(1800, 2.5, 4, 2, 3, 5)],
       1800
     );
     expect(out).toHaveLength(2);
