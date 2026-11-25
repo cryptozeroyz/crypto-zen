@@ -172,7 +172,8 @@ export const CallRecordSchema = z.object({
 });
 export type CallRecord = z.infer<typeof CallRecordSchema>;
 
-/** Call 中发布后锁定的字段（不可变性校验的清单依据） */
+/** Call 中发布后锁定的字段（不可变性校验的清单依据）。
+ *  stance（立场）不在此列：判断会随行情修正，经专门接口更新并自动留痕。 */
 export const LOCKED_CALL_FIELDS = [
   "id",
   "chain",
@@ -180,7 +181,6 @@ export const LOCKED_CALL_FIELDS = [
   "symbol",
   "contractAddress",
   "calledAt",
-  "stance",
   "priceAtCall",
   "mcapAtCall",
   "narrative",

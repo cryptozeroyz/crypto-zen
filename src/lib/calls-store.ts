@@ -14,6 +14,7 @@ import {
   UpdateSchema,
   OutcomeSchema,
   DisclosureSchema,
+  StanceSchema,
   LOCKED_CALL_FIELDS,
   type Call,
   type CallRecord,
@@ -120,6 +121,38 @@ export function applyUpdateDisclosure(
   return next;
 }
 
+/** 更新立场（唯一允许修正的判断字段；自动追加「立场调整」Update 留痕；关闭后拒绝） */
+export function applyUpdateStance(
+  records: CallRecord[],
+  callId: string,
+  stance: Call["stance"],
+  at: string
+): CallRecord[] {
+  StanceSchema.parse(stance);
+  const idx = records.findIndex((r) => r.call.id === callId);
+  if (idx === -1) throw new CallNotFoundError(callId);
+  if (records[idx].outcome) throw new CallAlreadyClosedError(callId);
+  const prev = records[idx].call.stance;
+  if (prev === stance) return records;
+  const nextCall = { ...records[idx].call, stance };
+  assertCallImmutable(records[idx].call, nextCall); // 兜底：只允许 stance 变
+  const next = records.slice();
+  next[idx] = {
+    ...records[idx],
+    call: CallSchema.parse(nextCall),
+    updates: [
+      ...records[idx].updates,
+      {
+        callId,
+        at,
+        type: "thesis-change",
+        content: `立场调整 stance: ${prev} → ${stance}`,
+      },
+    ],
+  };
+  return next;
+}
+
 /** 关闭复盘：写入 Outcome。returnAtClose 由判断时/关闭时价格自动计算，不允许手填覆盖 */
 export function applyCloseCall(
   records: CallRecord[],
@@ -186,6 +219,17 @@ export async function closeCall(
 ): Promise<CallRecord[]> {
   const records = await readCallRecords();
   const next = applyCloseCall(records, input);
+  await saveCallRecords(next);
+  return next;
+}
+
+export async function updateCallStance(
+  callId: string,
+  stance: Call["stance"],
+  at: string
+): Promise<CallRecord[]> {
+  const records = await readCallRecords();
+  const next = applyUpdateStance(records, callId, stance, at);
   await saveCallRecords(next);
   return next;
 }

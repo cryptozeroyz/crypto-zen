@@ -997,6 +997,7 @@ import {
   appendUpdate,
   closeCall,
   updateCallDisclosure,
+  updateCallStance,
   ImmutableCallError,
   DuplicateCallError,
   CallNotFoundError,
@@ -1062,6 +1063,29 @@ export async function callsClosePOST(req: Request) {
     return NextResponse.json({ ok: true });
   } catch (e) {
     if (e instanceof CallNotFoundError || e instanceof CallAlreadyClosedError)
+      return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
+    return NextResponse.json(
+      { ok: false, message: `校验失败：${schemaMessage(e)}` },
+      { status: 400 }
+    );
+  }
+}
+
+/** POST /api/admin/calls/stance —— 更新立场（判断随行情修正；自动追加立场调整留痕） */
+export async function callsStancePOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  try {
+    const body = await req.json();
+    const id = String(body.id ?? "").trim();
+    const stance = String(body.stance ?? "").trim();
+    if (!id) throw new Error("缺少 id");
+    const at = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(String(body.at ?? ""))
+      ? String(body.at)
+      : new Date().toISOString().slice(0, 16) + ":00";
+    await updateCallStance(id, stance as Parameters<typeof updateCallStance>[1], at);
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    if (e instanceof ImmutableCallError || e instanceof CallNotFoundError || e instanceof CallAlreadyClosedError)
       return NextResponse.json({ ok: false, message: e.message }, { status: 409 });
     return NextResponse.json(
       { ok: false, message: `校验失败：${schemaMessage(e)}` },

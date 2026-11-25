@@ -51,6 +51,7 @@ export async function POST(req: Request, { params }: Ctx) {
       if (b === "update") return H.callsUpdatePOST(req);
       if (b === "close") return H.callsClosePOST(req);
       if (b === "disclosure") return H.callsDisclosurePOST(req);
+      if (b === "stance") return H.callsStancePOST(req);
       return H.callsPOST(req);
     case "ai-report":
       return H.aiReportPOST(req);

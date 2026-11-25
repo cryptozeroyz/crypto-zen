@@ -365,6 +365,26 @@ function CallPane({ record, related, onChanged, onError }: { record: CallRecord;
   const [mode, setMode] = useState<"none" | "update" | "close">("none");
   const { call, updates, outcome } = record;
   const tr = getTr("zh");
+  /* 立场快捷修改（判断随行情修正，自动留痕） */
+  const [stanceBusy, setStanceBusy] = useState(false);
+  const saveStance = async (next: string) => {
+    setStanceBusy(true);
+    try {
+      const res = await fetch("/api/admin/calls/stance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: call.id, stance: next }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j?.message ?? "保存失败");
+      onChanged(`立场已更新为「${STANCE_ZH[next] ?? next}」，时间线已留痕`);
+    } catch (e) {
+      onError(e instanceof Error ? e.message : "保存失败");
+    } finally {
+      setStanceBusy(false);
+    }
+  };
+
   /* AI 快速研报：Grok 搜 X 讨论 + DeepSeek 六维成文 */
   const [aiOpen, setAiOpen] = useState(false);
   const [aiMd, setAiMd] = useState("");
@@ -501,6 +521,29 @@ function CallPane({ record, related, onChanged, onError }: { record: CallRecord;
 
       {/* 操作 */}
       <div className="flex flex-wrap items-center gap-2.5">
+        {!outcome && (
+          <label className="flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs text-muted">
+            立场
+            <select
+              value={call.stance}
+              disabled={stanceBusy}
+              onChange={(e) => {
+                const next = e.target.value;
+                if (next === call.stance) return;
+                if (!window.confirm(`立场改为「${STANCE_ZH[next] ?? next}」？将自动在时间线留痕`)) {
+                  e.target.value = call.stance;
+                  return;
+                }
+                void saveStance(next);
+              }}
+              className="bg-transparent font-semibold text-heading outline-none"
+            >
+              {STANCES.map((st) => (
+                <option key={st} value={st}>{STANCE_ZH[st]} {st}</option>
+              ))}
+            </select>
+          </label>
+        )}
         {!outcome && (
           <>
             <button type="button" onClick={() => setMode(mode === "update" ? "none" : "update")}

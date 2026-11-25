@@ -81,12 +81,12 @@ describe("不可变性：assertCallImmutable", () => {
     );
   });
 
-  it("修改锁定字段（stance / priceAtCall / calledAt）被拒绝", () => {
+  it("修改锁定字段（priceAtCall / calledAt）被拒绝", () => {
     for (const patch of [
-      { stance: "avoid" },
       { priceAtCall: 0.01 },
       { calledAt: "2026-11-21T14:30" },
       { invalidation: "换个证伪条件" },
+      { thesis: "改写后的论点" },
     ]) {
       expect(() => assertCallImmutable(call, patch)).toThrow(ImmutableCallError);
     }
@@ -172,5 +172,28 @@ describe("applyUpdateDisclosure", () => {
         position: "none", sponsored: false, referral: false,
       })
     ).toThrow();
+  });
+});
+
+describe("applyUpdateStance", () => {
+  it("立场可更新且自动追加立场调整留痕", async () => {
+    const { applyUpdateStance } = await import("@/lib/calls-store");
+    const recs = applyCreateCall([], baseCall());
+    const next = applyUpdateStance(recs, "2026-11-20-huss", "watch", "2026-11-25T20:00");
+    expect(next[0].call.stance).toBe("watch");
+    const last = next[0].updates[next[0].updates.length - 1];
+    expect(last.type).toBe("thesis-change");
+    expect(last.content).toContain("bullish");
+    expect(last.content).toContain("watch");
+    /* 锁定字段不受影响 */
+    expect(next[0].call.thesis).toBe(baseCall().thesis);
+  });
+
+  it("不存在的 call / 相同立场 / 已关闭 均拒绝或空操作", async () => {
+    const { applyUpdateStance } = await import("@/lib/calls-store");
+    const recs = applyCreateCall([], baseCall());
+    expect(() => applyUpdateStance(recs, "2099-01-01-none", "bullish", "2026-11-25T20:00")).toThrow();
+    /* 相同立场为空操作（fixture 立场是 bullish） */
+    expect(applyUpdateStance(recs, "2026-11-20-huss", "bullish", "2026-11-25T20:00")).toBe(recs);
   });
 });
