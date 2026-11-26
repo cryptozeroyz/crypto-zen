@@ -6,6 +6,7 @@ import fs from "fs";
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/siteConfig";
 import { getAllPosts } from "@/lib/posts";
+import { safeTokenSlug } from "@/lib/coin-format";
 
 const PAGES = ["", "/dashboard", "/writing", "/news", "/alpha", "/resources", "/about", "/bookmarks"];
 
@@ -15,7 +16,7 @@ function callMeta(): { symbols: string[]; topics: string[] } {
     const raw = fs.readFileSync("content/calls.json", "utf8");
     const list = JSON.parse(raw) as Array<{ call?: { symbol?: string; narrativeType?: string } }>;
     return {
-      symbols: [...new Set(list.map((r) => r?.call?.symbol?.toLowerCase()).filter((x): x is string => Boolean(x)))],
+      symbols: [...new Set(list.map((r) => (r?.call?.symbol ? safeTokenSlug(r.call.symbol) : null)).filter((x): x is string => Boolean(x)))],
       topics: [...new Set(list.map((r) => r?.call?.narrativeType).filter((x): x is string => Boolean(x)))],
     };
   } catch {
