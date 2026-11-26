@@ -65,6 +65,11 @@ export default function TypewriterHero({ locale }: { locale: Locale }) {
 
   return (
     <section className="tw-hero" aria-label="Intro">
+      {/* 无 JS 抓取/爬虫兜底：静态 H1 + 主题介绍（有 JS 时打字机 h1 呈现） */}
+      <noscript>
+        <h1>CryptoZen — Memecoin 研究与链上分析 | Memecoin Research & On-chain Analysis</h1>
+        <p>每一次判断、更新与复盘全部留痕，可查可验。Every call, update and post-mortem is on the record.</p>
+      </noscript>
       <style>{`
         .tw-hero{min-height:82vh;display:flex;align-items:center;background:#f6f3ee;border-bottom:2px solid #2a2230;position:relative;overflow:hidden}
         .tw-grid{display:grid;grid-template-columns:minmax(0,280px) minmax(0,1fr);gap:48px;align-items:center;max-width:860px;margin:0 auto;padding:0 40px;width:100%}
