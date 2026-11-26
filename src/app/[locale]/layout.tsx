@@ -32,8 +32,8 @@ export function generateMetadata({
     openGraph: {
       type: "website",
       locale: locale === "en" ? "en_US" : "zh_CN",
-      url: siteConfig.url,
-      siteName: siteConfig.title,
+      url: `/${locale}`,
+      siteName: "CryptoZen",
       title: t.meta.defaultTitle,
       description: t.meta.description,
     },

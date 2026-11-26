@@ -102,7 +102,7 @@ export default function PostPage({
     datePublished: post.date,
     ...(post.updated ? { dateModified: post.updated } : {}),
     inLanguage: locale === "en" ? "en" : "zh-CN",
-    author: { "@type": "Person", name: "Crypto Zen" },
+    author: { "@type": "Person", name: "CryptoZen" },
     keywords: post.tags.join(","),
   };
 
@@ -186,7 +186,7 @@ export default function PostPage({
                   </>
                 )}
                 <span aria-hidden="true"> · </span>
-                Crypto Zen
+                CryptoZen
               </p>
               <div className="mt-3">
                 <BookmarkButton

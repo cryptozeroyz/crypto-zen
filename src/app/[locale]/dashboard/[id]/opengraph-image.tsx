@@ -11,7 +11,7 @@ import { siteConfig } from "@/lib/siteConfig";
 import { loadOgFont, type OgFont } from "@/lib/og-fonts";
 
 export const runtime = "nodejs";
-export const alt = "Track Record · Crypto Zen";
+export const alt = "Track Record · CryptoZen";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

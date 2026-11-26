@@ -24,7 +24,7 @@ import {
   VERDICT_BADGE,
 } from "@/components/dashboard/tr";
 import { readCallRecords } from "@/lib/calls-store";
-import { statusOf } from "@/lib/calls-stats";
+import { activityAt, statusOf } from "@/lib/calls-stats";
 import { getAllPosts } from "@/lib/posts";
 import { fetchCoinData } from "@/lib/watchlist";
 import { formatMcap, formatPrice } from "@/lib/coin-format";
@@ -150,6 +150,7 @@ export default async function CallDetailPage({
             <span className="font-mono font-semibold uppercase">{call.symbol}</span>
             <span className="rounded-full border border-line px-1.5 py-px font-mono text-[10px]">{call.chain}</span>
             <span>{tr.calledAt}: <span className="tabular-nums text-heading">{fmtCalledAt(call.calledAt)}</span></span>
+            <span>{locale === "en" ? "Last updated" : "最近更新"}: <span className="tabular-nums text-heading">{fmtCalledAt(activityAt(record))}</span></span>
             {call.isHistorical && (
               <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-px text-amber-700 dark:text-amber-400">
                 ⚑ {tr.historical}

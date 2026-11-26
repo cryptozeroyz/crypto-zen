@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * AboutClient.tsx —— Crypto Zen 品牌定位页（v2）
+ * AboutClient.tsx —— CryptoZen 品牌定位页（v2）
  * Operator · Trader · Observer。交互：滚动进度条 / 逐词显现 / 视差光晕 /
  * 入场编排 / 幽灵序号 / 胶片颗粒，全部尊重 prefers-reduced-motion。
  */
@@ -12,8 +12,8 @@ import { siteConfig } from "@/lib/siteConfig";
 
 const COPY = {
   zh: {
-    eyebrow: "CRYPTO ZEN · PERSONAL BRAND",
-    title: "Crypto Zen.",
+    eyebrow: "CRYPTOZEN · PERSONAL BRAND",
+    title: "CryptoZen.",
     roles: ["An Operator.", "A Trader.", "An Observer."],
     zhLine: "一个建设过产品、参与过市场，也持续观察 Crypto 世界的人。",
     bio: "我参与过不同类型的 Web3 产品建设——钱包、稳定币、公链生态、DID、NFT 和 Memecoin 交易平台。做过产品运营、用户增长、社区建设、商业化，也经历过从 0 到 1 的创业过程。我习惯站在产品和市场两个角度看待 Crypto。",
@@ -30,6 +30,13 @@ const COPY = {
       { ico: "🧭", en: "Product & Growth", p: "Web3 产品、运营增长与商业模式" },
     ],
     wfoot: "有时也会写一些不那么严肃的想法和段子——毕竟 Crypto 已经够疯狂了。如果你不能笑着面对这个市场，你迟早会被它气死。",
+    secMethod: "Research Method & Disclosure",
+    method: [
+      { en: "Data First", zh: "数据优先", p: "先看链上数据与交易对数据（DexScreener / 链上浏览器），再看叙事；无数据支撑的判断不写。" },
+      { en: "On the Record", zh: "留痕可验", p: "每条判断发布后锁定，更新与复盘全部追加留痕（Track Record），判断错了也如实展示。" },
+      { en: "Disclosure", zh: "利益披露", p: "每条判断标注持仓状态、成本、仓位级别、是否有合作/返佣；信息不全时如实标注未知。" },
+      { en: "High Risk", zh: "风险提示", p: "Memecoin 为极高波动资产，以上均为个人研究记录，不构成投资建议。" },
+    ],
     philoEyebrow: "PHILOSOPHY",
     big: ["Stay curious.", "Stay skeptical."],
     bigZh: "保持好奇，保持怀疑。相信数据，但不迷信数据；尊重叙事，但不盲从叙事。",
@@ -42,12 +49,12 @@ const COPY = {
       { ok: true, b: "Independent Opinions", p: "所有内容仅代表个人观点" },
     ],
     motto: "Stay curious. Stay skeptical. Stay in the game.",
-    who: "— Crypto Zen",
+    who: "— CryptoZen",
     back: "← 返回首页",
   },
   en: {
-    eyebrow: "CRYPTO ZEN · PERSONAL BRAND",
-    title: "Crypto Zen.",
+    eyebrow: "CRYPTOZEN · PERSONAL BRAND",
+    title: "CryptoZen.",
     roles: ["An Operator.", "A Trader.", "An Observer."],
     zhLine: "Someone who has built products, traded the market, and keeps observing the crypto world.",
     bio: "I've helped build different kinds of Web3 products — wallets, stablecoins, layer-1 ecosystems, DID, NFTs and memecoin trading platforms. I've done product ops, growth, community and monetization, including 0-to-1 startups. I tend to look at crypto from both the product and the market side.",
@@ -64,6 +71,13 @@ const COPY = {
       { ico: "🧭", en: "Product & Growth", p: "Web3 products, growth and business models" },
     ],
     wfoot: "Sometimes I write less serious thoughts and jokes — crypto is crazy enough already. If you can't laugh at this market, it will eventually kill you.",
+    secMethod: "Research Method & Disclosure",
+    method: [
+      { en: "Data First", zh: "Data", p: "On-chain data and pair data (DexScreener / explorers) before narrative; no call without data." },
+      { en: "On the Record", zh: "Logged", p: "Every call is locked once published; updates and post-mortems are appended on the record." },
+      { en: "Disclosure", zh: "Disclosure", p: "Each call discloses position, entry, size tier, sponsorship/referral status; unknowns are marked as such." },
+      { en: "High Risk", zh: "Risk", p: "Memecoins are extremely volatile. All content is a personal research log, not financial advice." },
+    ],
     philoEyebrow: "PHILOSOPHY",
     big: ["Stay curious.", "Stay skeptical."],
     bigZh: "Trust data, but don't worship it. Respect narratives, but don't blindly follow them.",
@@ -76,7 +90,7 @@ const COPY = {
       { ok: true, b: "Independent Opinions", p: "All content is personal opinion only" },
     ],
     motto: "Stay curious. Stay skeptical. Stay in the game.",
-    who: "— Crypto Zen",
+    who: "— CryptoZen",
     back: "← Back to home",
   },
 };
@@ -206,6 +220,26 @@ export default function AboutClient({ locale }: { locale: Locale }) {
           ))}
         </div>
         <p data-rv style={rv(200)} className="mt-7 border-l-2 border-accent pl-4 text-[13.5px] text-muted dark:border-accent-mint">{c.wfoot}</p>
+      </section>
+
+      {/* 03.5 RESEARCH METHOD & DISCLOSURE（E-E-A-T） */}
+      <section className="mx-auto w-full max-w-[860px] border-t border-line px-6 py-20">
+        <div data-rv style={rv()} className="relative mb-10 flex items-baseline gap-4">
+          <span aria-hidden="true" className="font-serif pointer-events-none absolute -top-10 -left-2 select-none text-[110px] font-bold leading-none" style={{ color: "var(--heading)", opacity: 0.05 }}>02.5</span>
+          <h2 className="font-serif text-[clamp(24px,4vw,34px)] font-bold tracking-[-0.02em] text-heading">{c.secMethod}</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {c.method.map((m, i) => (
+            <div key={m.en} data-rv style={rv(i * 90)} className="group flex gap-4 rounded-2xl border border-line bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-lg">
+              <span className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent-mint text-[19px] text-white transition-transform duration-300 group-hover:scale-110">{["📊", "🧾", "🤝", "⚠️"][i]}</span>
+              <div>
+                <h3 className="font-serif text-[17px] font-bold text-heading">{m.en}</h3>
+                <div className="mt-0.5 text-[12px] font-semibold text-accent dark:text-accent-mint">{m.zh}</div>
+                <p className="mt-1.5 text-[13px] leading-[1.75] text-muted">{m.p}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* 04 PHILOSOPHY */}

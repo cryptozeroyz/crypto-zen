@@ -146,7 +146,7 @@ export default function Header({ locale, t }: HeaderProps) {
         >
           <Image
             src="/avatar.png"
-            alt="Crypto Zen avatar"
+            alt="CryptoZen avatar"
             width={32}
             height={32}
             priority

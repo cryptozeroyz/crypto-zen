@@ -7,7 +7,7 @@
 
 export const siteConfig = {
   /** 站点标题（品牌名） */
-  title: "Crypto Zen",
+  title: "CryptoZen",
 
   /** 部署后的站点地址（用于 canonical / OG / sitemap） */
   url: "https://cryptozen.fun",

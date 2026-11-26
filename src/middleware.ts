@@ -32,7 +32,8 @@ export function middleware(req: NextRequest) {
 
   const url = req.nextUrl.clone();
   url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
-  return NextResponse.redirect(url);
+  /* 308 永久重定向（SEO：权重传递；307 会分摊） */
+  return NextResponse.redirect(url, 308);
 }
 
 export const config = {

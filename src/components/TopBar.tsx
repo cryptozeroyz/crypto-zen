@@ -70,16 +70,16 @@ export default function TopBar({ locale }: { locale: Locale }) {
       <header className={`topbar${scrolled ? " scrolled" : ""}`}>
         <div className="tb-in">
           {/* 左：Logo */}
-          <Link href={`/${locale}`} className="tb-brand" aria-label="Crypto Zen home">
+          <Link href={`/${locale}`} className="tb-brand" aria-label="CryptoZen home">
             <Image
               src="/avatar.png"
-              alt="Crypto Zen"
+              alt="CryptoZen"
               width={34}
               height={34}
               className="tb-ava"
               priority
             />
-            <span className="tb-word">Crypto Zen</span>
+            <span className="tb-word">CryptoZen</span>
           </Link>
 
           {/* 中：桌面导航 */}

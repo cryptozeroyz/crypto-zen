@@ -11,7 +11,7 @@ import type { Locale } from "@/lib/i18n";
 const LINES = {
   zh: [
     ["Hey there! My name is", ""],
-    ["CRYPTO ZEN", "nm"],
+    ["CRYPTOZEN", "nm"],
     ["or you can find me at", ""],
     ["X (Twitter)", "link"],
     ["I am an Operator, a Trader", ""],
@@ -21,7 +21,7 @@ const LINES = {
   ] as Array<[string, string]>,
   en: [
     ["Hey there! My name is", ""],
-    ["CRYPTO ZEN", "nm"],
+    ["CRYPTOZEN", "nm"],
     ["or you can find me at", ""],
     ["X (Twitter)", "link"],
     ["I am an Operator, a Trader", ""],
@@ -73,7 +73,10 @@ export default function TypewriterHero({ locale }: { locale: Locale }) {
         .tw-frame::before{top:-3px;left:-3px;border-right:0;border-bottom:0}
         .tw-frame::after{bottom:-3px;right:-3px;border-left:0;border-top:0}
         .tw-text{font-family:var(--font-mono,ui-monospace,"Courier New",monospace);font-size:14.5px;letter-spacing:.04em;line-height:2.1;color:#2a2230;min-height:300px;white-space:pre-wrap}
-        .tw-text .nm{font-family:var(--font-serif,"Iowan Old Style",Palatino,Georgia,"Songti SC",serif);font-size:clamp(26px,3.6vw,38px);color:#5c2a52;font-weight:700;letter-spacing:.02em}
+        .tw-text .nm{font-family:var(--font-serif,"Iowan Old Style",Palatino,Georgia,"Songti SC",serif);font-size:clamp(26px,3.6vw,38px);color:#5c2a52;font-weight:700;letter-spacing:.02em;margin:0;line-height:1.35}
+        .tw-intro{margin:14px 0 0;font-size:13px;line-height:1.9;color:#2a2230;opacity:0;transform:translateY(8px);transition:opacity .8s ease .3s,transform .8s ease .3s;max-width:560px}
+        .tw-intro.show{opacity:.85;transform:none}
+        @media(prefers-reduced-motion:reduce){.tw-intro{opacity:.85;transform:none;transition:none}}
         .tw-text .hl{color:#ff5b3a;font-weight:700}
         .tw-text a.nm{text-decoration:underline;text-decoration-color:#ff5b3a;text-underline-offset:6px}
         .tw-caret{display:inline-block;width:9px;height:1.1em;background:#ff5b3a;vertical-align:-2px;animation:twblink .8s steps(1) infinite}
@@ -99,9 +102,15 @@ export default function TypewriterHero({ locale }: { locale: Locale }) {
           </svg>
         </div>
         <div className="tw-frame">
-        <p className="tw-text">
+        <div className="tw-text">
           <span dangerouslySetInnerHTML={{ __html: out + cur }} />
           {!done && <span className="tw-caret" />}
+        </div>
+        {/* 身份与主题说明（打完字后淡入，首屏关键词文案） */}
+        <p className={`tw-intro${done ? " show" : ""}`}>
+          {locale === "en"
+            ? "Memecoin research and on-chain analysis. Every call, update and post-mortem is on the record. Web3 product operator turned memecoin researcher."
+            : "Memecoin 研究与链上分析。每一次判断、更新与复盘全部留痕，可查可验。Web3 产品运营出身，Memecoin 研究者。"}
         </p>
         </div>
       </div>
@@ -112,7 +121,8 @@ export default function TypewriterHero({ locale }: { locale: Locale }) {
 function renderLine(txt: string, cls: string, part: string): string {
   if (cls === "link")
     return `<a class="nm" href="https://x.com/0CryptoZero" target="_blank" rel="noopener noreferrer">${part}</a>`;
-  if (cls === "nm") return `<span class="nm">${part}</span>`;
+  /* 品牌名一行输出为 H1（首页语义主标题） */
+  if (cls === "nm") return `<h1 class="nm">${part}</h1>`;
   if (cls === "hl") return `<span class="hl">${part}</span>`;
   return part;
 }

@@ -134,7 +134,7 @@ export default async function OgImage({
             letterSpacing: 4,
           }}
         >
-          {post.tags.slice(0, 3).join("  /  ") || "Crypto Zen"}
+          {post.tags.slice(0, 3).join("  /  ") || "CryptoZen"}
         </span>
 
         {/* 标题 */}

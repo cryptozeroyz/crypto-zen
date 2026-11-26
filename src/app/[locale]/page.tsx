@@ -82,7 +82,7 @@ export default async function HomePage({
     "@graph": [
       {
         "@type": "WebSite",
-        name: "Crypto Zen",
+        name: "CryptoZen",
         url: siteConfig.url,
         inLanguage: ["zh-CN", "en"],
         description:
@@ -92,9 +92,9 @@ export default async function HomePage({
       },
       {
         "@type": "Person",
-        name: "Crypto Zen",
+        name: "CryptoZen",
         url: siteConfig.url,
-        sameAs: [siteConfig.social.twitter],
+        sameAs: [siteConfig.social.twitter, siteConfig.social.telegram],
         jobTitle: locale === "en" ? "Memecoin Researcher" : "Memecoin 研究员",
       },
     ],

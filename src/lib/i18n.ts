@@ -15,9 +15,9 @@ export function isLocale(value: string): value is Locale {
 const zh = {
   meta: {
     description:
-      "Crypto Zen 的 Memecoin 研究与链上分析空间：投研日志（Track Record）、叙事研究、链上数据分析与 DYOR 笔记，判断留痕、复盘可查。",
-    titleTemplate: "%s · Crypto Zen",
-    defaultTitle: "Crypto Zen · Memecoin 研究与链上分析 | 投研日志",
+      "CryptoZen 的 Memecoin 研究与链上分析空间：投研日志（Track Record）、叙事研究、链上数据分析与 DYOR 笔记，判断留痕、复盘可查。",
+    titleTemplate: "%s · CryptoZen",
+    defaultTitle: "CryptoZen · Memecoin 研究与链上分析 | 投研日志",
   },
   nav: {
     articles: "文章",
@@ -26,7 +26,7 @@ const zh = {
     links: "推荐",
     bookmarks: "收藏",
     about: "关于",
-    homeAria: "Crypto Zen 的首页",
+    homeAria: "CryptoZen 的首页",
     switchLang: "切换语言",
     menu: "菜单",
   },
@@ -112,7 +112,7 @@ const zh = {
   about: {
     title: "关于我",
     paragraphs: [
-      "你好，我是 Crypto Zen。过去几年我一直在加密行业里打转：参与创业、做运营、做交易、赚过钱、亏过钱。",
+      "你好，我是 CryptoZen。过去几年我一直在加密行业里打转：参与创业、做运营、做交易、赚过钱、亏过钱。",
       "这个网站是我给自己的一块自留地。不发币、不带单、不接广告，只记录我作为一个普通参与者对 Meme 市场的观察。我既写严肃分析，也写不那么严肃的段子，因为我始终觉得：如果你不能笑着面对这个市场，你迟早会被它气死。",
       "我的所有内容都不构成投资建议。市场有风险，钱包归你，决策也归你。",
     ],
@@ -387,9 +387,9 @@ const zh = {
 const en: typeof zh = {
   meta: {
     description:
-      "Crypto Zen's memecoin research and on-chain analysis hub: track record of calls, narrative research, on-chain data breakdowns and DYOR notes — every judgment logged and reviewed.",
-    titleTemplate: "%s · Crypto Zen",
-    defaultTitle: "Crypto Zen · Memecoin Research & On-chain Analysis | Track Record",
+      "CryptoZen's memecoin research and on-chain analysis hub: track record of calls, narrative research, on-chain data breakdowns and DYOR notes — every judgment logged and reviewed.",
+    titleTemplate: "%s · CryptoZen",
+    defaultTitle: "CryptoZen · Memecoin Research & On-chain Analysis | Track Record",
   },
   nav: {
     articles: "Articles",
@@ -398,7 +398,7 @@ const en: typeof zh = {
     links: "Resources",
     bookmarks: "Saved",
     about: "About",
-    homeAria: "Crypto Zen home",
+    homeAria: "CryptoZen home",
     switchLang: "Switch language",
     menu: "Menu",
   },
@@ -484,7 +484,7 @@ const en: typeof zh = {
   about: {
     title: "About",
     paragraphs: [
-      "Hi, I'm Crypto Zen. I've spent the past few years deep in the crypto industry: founding startups, running operations, trading — I've made money and lost money.",
+      "Hi, I'm CryptoZen. I've spent the past few years deep in the crypto industry: founding startups, running operations, trading — I've made money and lost money.",
       "This site is a quiet corner I keep for myself. No token launches, no trade calls, no ads — just observations from an ordinary participant in the memecoin market. I write serious analysis and less-serious shitposts, because I've always believed: if you can't laugh at this market, it will eventually drive you mad.",
       "Nothing here is investment advice. The market carries risk; your wallet, your decisions.",
     ],

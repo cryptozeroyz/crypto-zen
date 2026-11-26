@@ -10,7 +10,7 @@ import AdminShell from "@/components/admin/AdminShell";
 export const metadata: Metadata = {
   title: {
     default: "后台管理",
-    template: "%s · Crypto Zen 后台",
+    template: "%s · CryptoZen 后台",
   },
 };
 
