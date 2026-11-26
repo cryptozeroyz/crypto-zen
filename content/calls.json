@@ -791,7 +791,7 @@
    "contractAddress": "0x0ddcab9ae04bda0c87ecc1640636fa11e8e613e8",
    "calledAt": "2026-11-26T05:43:00",
    "proofUrl": "https://x.com/texelrun",
-   "stance": "watch",
+   "stance": "bullish",
    "priceAtCall": 0.001,
    "mcapAtCall": 1000000,
    "narrative": "支持 AI Agent 按秒租用 GPU 计算资源的链上云平台",
@@ -821,7 +821,14 @@
    "priceSource": "auto",
    "pairAddress": "0xd67df8f8ed7266d89ac0a1918b45bcebedd45649cc666ee3f0adbec531c89489"
   },
-  "updates": [],
+  "updates": [
+   {
+    "callId": "2026-11-26-texel",
+    "at": "2026-11-26T13:50:00",
+    "type": "thesis-change",
+    "content": "立场调整 stance: watch → bullish"
+   }
+  ],
   "outcome": null
  }
 ]
