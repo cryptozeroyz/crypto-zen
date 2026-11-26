@@ -26,7 +26,7 @@ export default function ArticleCard({ post, locale, t }: ArticleCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={post.cover}
-            alt={`${post.title} cover`}
+            alt={post.title}
             loading="lazy"
             decoding="async"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
@@ -35,7 +35,7 @@ export default function ArticleCard({ post, locale, t }: ArticleCardProps) {
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={`/api/cover/${post.slug}?locale=${locale}`}
-            alt={`${post.title} cover`}
+            alt={post.title}
             loading="lazy"
             decoding="async"
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"

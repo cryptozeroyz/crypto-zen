@@ -14,7 +14,7 @@ import { DisclosureBadges } from "@/components/dashboard/TrackRecordClient";
 import { disclosureLabelsOf } from "@/components/dashboard/tr";
 import { getTr, stanceLabel, verdictLabel, fmtCalledAt, STANCE_BADGE, VERDICT_BADGE, type Tr } from "@/components/dashboard/tr";
 import ShareCallButton from "@/components/dashboard/ShareCallButton";
-import { avatarHue, formatMcap, formatPrice } from "@/lib/coin-format";
+import { avatarHue, formatMcap, formatPrice, safeTokenSlug } from "@/lib/coin-format";
 import { statusOf } from "@/lib/calls-stats";
 import type { CallRecord } from "@/lib/calls";
 import type { Locale } from "@/lib/i18n";
@@ -66,7 +66,7 @@ export default function HomeTrackRecord({
         const curMcap = outcome ? outcome.mcapAtClose : cur?.mcap;
         const lastUpdate = updates[updates.length - 1] ?? null;
         const status = statusOf({ call, updates, outcome });
-        const detailHref = `/${locale}/dashboard/${call.id}`;
+        const detailHref = `/${locale}/token/${safeTokenSlug(call.symbol)}`;
 
         const card =
           "group relative flex flex-col rounded-[16px_20px_14px_22px] border-[1.5px] border-dashed border-[#2a2230] bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[6px_8px_0_rgba(92,42,82,.12)]";
@@ -168,12 +168,9 @@ export default function HomeTrackRecord({
             {/* 判断依据（=thesis） */}
             <div className="mt-3 border-t border-dashed border-[#2a2230]/25 pt-3">
               <div className="text-[10px] tracking-wide text-muted">✦ {tr.source}</div>
-              <Link
-                href={detailHref}
-                className="mt-1 block text-[12.5px] leading-relaxed text-[#2a2230]/85 transition-colors hover:text-[#ff5b3a]"
-              >
-                <span className="line-clamp-2">{call.thesis}</span>
-              </Link>
+              <p className="mt-1 line-clamp-2 text-[12.5px] leading-relaxed text-[#2a2230]/85">
+                {call.thesis}
+              </p>
             </div>
 
             {/* 最新 Update（无则占位，保持结构统一） */}
@@ -209,7 +206,7 @@ export default function HomeTrackRecord({
                 href={detailHref}
                 className="font-mono text-[11px] text-[#2a2230]/70 underline-offset-4 transition-colors hover:text-[#ff5b3a] hover:underline"
               >
-                {tr.viewDetail} →
+                {locale === "en" ? `View ${call.symbol} calls` : `查看 ${call.symbol} 完整判断`} →
               </Link>
             </div>
           </article>

@@ -27,6 +27,8 @@ export function generateMetadata({
   return {
     title: t.news.title,
     description: t.news.intro,
+    /* 聚合第三方快讯，避免薄内容拉低整站质量评分 */
+    robots: { index: false, follow: true },
     alternates: {
       canonical: `/${locale}/news`,
       languages: { zh: "/zh/news", en: "/en/news", "x-default": "/zh/news" },

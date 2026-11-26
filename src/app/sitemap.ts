@@ -9,14 +9,17 @@ import { getAllPosts } from "@/lib/posts";
 
 const PAGES = ["", "/dashboard", "/writing", "/news", "/alpha", "/resources", "/about", "/bookmarks"];
 
-/** Track Record 详情 id（构建期读取 calls.json，缺失则不包含） */
-function callIds(): string[] {
+/** 代币 symbol 与叙事主题（构建期读取 calls.json，缺失则不包含） */
+function callMeta(): { symbols: string[]; topics: string[] } {
   try {
     const raw = fs.readFileSync("content/calls.json", "utf8");
-    const list = JSON.parse(raw) as Array<{ call?: { id?: string } }>;
-    return list.map((r) => r?.call?.id).filter((x): x is string => Boolean(x));
+    const list = JSON.parse(raw) as Array<{ call?: { symbol?: string; narrativeType?: string } }>;
+    return {
+      symbols: [...new Set(list.map((r) => r?.call?.symbol?.toLowerCase()).filter((x): x is string => Boolean(x)))],
+      topics: [...new Set(list.map((r) => r?.call?.narrativeType).filter((x): x is string => Boolean(x)))],
+    };
   } catch {
-    return [];
+    return { symbols: [], topics: [] };
   }
 }
 
@@ -80,34 +83,64 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  const callEntries: MetadataRoute.Sitemap = callIds().flatMap((id) => [
+  const { symbols, topics } = callMeta();
+  const tokenEntries: MetadataRoute.Sitemap = symbols.flatMap((slug) => [
     {
-      url: `${siteConfig.url}/zh/dashboard/${id}`,
+      url: `${siteConfig.url}/zh/token/${slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.6,
       alternates: {
         languages: {
-          zh: `${siteConfig.url}/zh/dashboard/${id}`,
-          en: `${siteConfig.url}/en/dashboard/${id}`,
-          "x-default": `${siteConfig.url}/zh/dashboard/${id}`,
+          zh: `${siteConfig.url}/zh/token/${slug}`,
+          en: `${siteConfig.url}/en/token/${slug}`,
+          "x-default": `${siteConfig.url}/zh/token/${slug}`,
         },
       },
     },
     {
-      url: `${siteConfig.url}/en/dashboard/${id}`,
+      url: `${siteConfig.url}/en/token/${slug}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.6,
       alternates: {
         languages: {
-          zh: `${siteConfig.url}/zh/dashboard/${id}`,
-          en: `${siteConfig.url}/en/dashboard/${id}`,
-          "x-default": `${siteConfig.url}/zh/dashboard/${id}`,
+          zh: `${siteConfig.url}/zh/token/${slug}`,
+          en: `${siteConfig.url}/en/token/${slug}`,
+          "x-default": `${siteConfig.url}/zh/token/${slug}`,
         },
       },
     },
   ]);
 
-  return [...pageEntries, ...postEntries, ...callEntries];
+  const topicEntries: MetadataRoute.Sitemap = topics.flatMap((topic) => [
+    {
+      url: `${siteConfig.url}/zh/topics/${topic}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+      alternates: {
+        languages: {
+          zh: `${siteConfig.url}/zh/topics/${topic}`,
+          en: `${siteConfig.url}/en/topics/${topic}`,
+          "x-default": `${siteConfig.url}/zh/topics/${topic}`,
+        },
+      },
+    },
+    {
+      url: `${siteConfig.url}/en/topics/${topic}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+      alternates: {
+        languages: {
+          zh: `${siteConfig.url}/zh/topics/${topic}`,
+          en: `${siteConfig.url}/en/topics/${topic}`,
+          "x-default": `${siteConfig.url}/zh/topics/${topic}`,
+        },
+      },
+    },
+  ]);
+
+  return [...pageEntries, ...postEntries, ...tokenEntries, ...topicEntries];
 }

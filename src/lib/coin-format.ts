@@ -26,3 +26,13 @@ export function formatMcap(value?: number): string {
   if (value >= 1e3) return `$${(value / 1e3).toFixed(0)}K`;
   return `$${value.toFixed(0)}`;
 }
+
+/** 代币 symbol → URL 安全 slug（如 ":3" → "3"，"NI KO" → "ni-ko"） */
+export function safeTokenSlug(symbol: string): string {
+  return (
+    symbol
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "token"
+  );
+}

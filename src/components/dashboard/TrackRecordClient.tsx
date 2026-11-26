@@ -9,7 +9,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import CoinAvatar from "@/components/CoinAvatar";
-import { avatarHue, formatMcap } from "@/lib/coin-format";
+import { avatarHue, formatMcap, safeTokenSlug } from "@/lib/coin-format";
 import { activityAt, statusOf, type CallStatus } from "@/lib/calls-stats";
 import {
   getTr,
@@ -233,7 +233,7 @@ function CallRow({
 
   return (
     <Link
-      href={`/${locale}/dashboard/${call.id}`}
+      href={`/${locale}/token/${safeTokenSlug(call.symbol)}`}
       className="group block rounded-[14px_18px_12px_20px] border-[1.5px] border-dashed border-[#2a2230] bg-white p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-solid hover:border-[#ff5b3a] hover:shadow-[5px_7px_0_rgba(92,42,82,.12)]"
     >
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5">

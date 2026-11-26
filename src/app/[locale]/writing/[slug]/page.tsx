@@ -11,6 +11,7 @@ import Link from "next/link";
 import { getAllPosts, getPostBySlug, getAdjacentPosts } from "@/lib/posts";
 import { getDictionary, isLocale, type Locale } from "@/lib/i18n";
 import { siteConfig } from "@/lib/siteConfig";
+import { safeTokenSlug } from "@/lib/coin-format";
 import { formatDate } from "@/lib/utils";
 import Container from "@/components/Container";
 import DexChart from "@/components/DexChart";
@@ -90,9 +91,39 @@ export default function PostPage({
   }
 
   const { prev, next } = getAdjacentPosts(post.slug, locale);
+
+  /* 相关判断（内链到 /token/[symbol]）：frontmatter tokens 匹配 symbol 或 CA */
+  const postTokens = (post.tokens ?? []).map((t) => t.trim().toLowerCase()).filter(Boolean);
+  let relatedCalls: { symbol: string; tokenName: string }[] = [];
+  if (postTokens.length > 0) {
+    try {
+      const fs = require("fs");
+      const raw = fs.readFileSync("content/calls.json", "utf8");
+      const list = JSON.parse(raw) as Array<{ call: { symbol: string; tokenName: string; contractAddress: string } }>;
+      const seen = new Set<string>();
+      relatedCalls = list
+        .filter((r) => {
+          const sym = r.call.symbol.toLowerCase();
+          const addr = r.call.contractAddress.toLowerCase();
+          return postTokens.some((t) => t === sym || t === addr) && !seen.has(sym) && (seen.add(sym), true);
+        })
+        .map((r) => ({ symbol: r.call.symbol, tokenName: r.call.tokenName }));
+    } catch {
+      /* 无数据 */
+    }
+  }
   const isResearch = post.category === "research";
 
   // 文章结构化数据（供搜索引擎理解）
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: locale === "en" ? "Home" : "首页", item: `${siteConfig.url}/${locale}` },
+      { "@type": "ListItem", position: 2, name: locale === "en" ? "Writing" : "文章", item: `${siteConfig.url}/${locale}/writing` },
+      { "@type": "ListItem", position: 3, name: post.title, item: `${siteConfig.url}/${locale}/writing/${post.slug}` },
+    ],
+  };
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -112,6 +143,10 @@ export default function PostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
 
       <Container size="site">
         {/* 阅读记录器：把当前文章写入本地阅读历史 */}
@@ -119,6 +154,21 @@ export default function PostPage({
         <div className="flex justify-center gap-14">
           {/* 正文栏 */}
           <div className="w-full max-w-content">
+            {relatedCalls.length > 0 && (
+              <div className="mb-6 flex flex-wrap items-center gap-2 rounded-xl border border-dashed border-line bg-card px-4 py-3 text-xs">
+                <span className="font-semibold text-muted">{locale === "en" ? "Related calls:" : "相关判断："}</span>
+                {relatedCalls.map((rc) => (
+                  <Link
+                    key={rc.symbol}
+                    href={`/${locale}/token/${safeTokenSlug(rc.symbol)}`}
+                    className="rounded-full border border-line px-2.5 py-0.5 font-medium text-accent transition-colors hover:border-accent dark:text-accent-mint"
+                  >
+                    {rc.tokenName}（{rc.symbol}）→
+                  </Link>
+                ))}
+              </div>
+            )}
+
             {/* 返回链接（首页文章区块）+ 随便看看（排除当前篇） */}
             <div className="flex items-center justify-between gap-4">
               <Link
