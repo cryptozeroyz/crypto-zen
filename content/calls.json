@@ -781,5 +781,45 @@
    }
   ],
   "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-26-texel",
+   "chain": "robinhood",
+   "tokenName": "Texel",
+   "symbol": "TEXEL",
+   "contractAddress": "0x0ddcab9ae04bda0c87ecc1640636fa11e8e613e8",
+   "calledAt": "2026-11-26T05:43:00",
+   "proofUrl": "https://x.com/texelrun",
+   "stance": "watch",
+   "priceAtCall": 0.001,
+   "mcapAtCall": 1000000,
+   "narrative": "支持 AI Agent 按秒租用 GPU 计算资源的链上云平台",
+   "thesis": "1、核心是把 GPU 算力和 AI 模型调用变成可直接用加密钱包购买的服务，主要面向开发者和 AI Agent\n2、模型调用、GPU 租赁、Serverless、Agent 基础设施 四种基础产品\n3、我实际检查了公开接口：目前能够返回 14 个模型和 28 种 GPU，说明项目并非只有静态宣传页；",
+   "catalysts": [
+    "1、现阶段更应把它视为早期测试网络，而不是已经形成规模收入的 GPU 云。可以期待收入扩大",
+    "2、TEXEL 已有支付、免费额度和销毁 utility，但现阶段持币收益与销毁数据包含较强的启动激励成分，尚不能证明由真实算力收入支撑，如果好转是一大催化剂"
+   ],
+   "risks": [
+    "1、真实采用率很低：公开充值、付费消费和租赁次数尚不足以验证商业模式。",
+    "2、生态依赖较强：依赖 Robinhood Chain、USDG、Uniswap 流动性及代币化股票的可用性"
+   ],
+   "narrativeType": "ai",
+   "horizon": "weeks",
+   "invalidation": "如果产品没有带来真实收入和产品没有持续迭代开发",
+   "successCriteria": "付费 credits 消耗是否持续增长、免费输出占比是否下降、Earn 的 NVDA 是否明确来源于持续经营收入",
+   "disclosure": {
+    "position": "none",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": false,
+   "priceSource": "auto",
+   "pairAddress": "0xd67df8f8ed7266d89ac0a1918b45bcebedd45649cc666ee3f0adbec531c89489"
+  },
+  "updates": [],
+  "outcome": null
  }
 ]
