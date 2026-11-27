@@ -134,16 +134,16 @@ export default async function TokenPage({
 
   /* K 线标记：全部判断 + 更新 */
   const marks = records.flatMap((r) => [
-    { time: Math.floor(Date.parse(r.call.calledAt) / 1000), kind: "call" as const },
+    { time: Math.floor(Date.parse(`${r.call.calledAt}+08:00`) / 1000), kind: "call" as const },
     ...r.updates.map((u) => ({
-      time: Math.floor(Date.parse(u.at) / 1000),
+      time: Math.floor(Date.parse(`${u.at}+08:00`) / 1000),
       kind:
         u.type === "thesis-change" ? ("thesis" as const)
         : u.type === "position-change" ? u.positionAction === "add" ? ("add" as const) : u.positionAction === "exit" ? ("exit" as const) : ("reduce" as const)
         : u.type === "closed" ? ("outcome" as const)
         : ("note" as const),
     })),
-    ...(r.outcome ? [{ time: Math.floor(Date.parse(r.outcome.closedAt) / 1000), kind: "outcome" as const }] : []),
+    ...(r.outcome ? [{ time: Math.floor(Date.parse(`${r.outcome.closedAt}+08:00`) / 1000), kind: "outcome" as const }] : []),
   ]);
 
   const breadcrumbLd = {

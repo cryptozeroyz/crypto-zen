@@ -9,6 +9,17 @@ const GECKO_NET: Record<string, string> = {
   polygon: "polygon_pos",
   avalanche: "avax",
   blast: "blast",
+  /* 新链补充（DexScreener chainId → GeckoTerminal network id） */
+  robinhood: "robinhood",
+  abstract: "abstract",
+  berachain: "berachain",
+  sonic: "sonic",
+  linea: "linea",
+  scroll: "scroll",
+  mantle: "mantle",
+  cronos: "cronos",
+  sei: "sei",
+  hyperevm: "hyperevm",
 };
 
 export async function fetchGeckoOhlcv(

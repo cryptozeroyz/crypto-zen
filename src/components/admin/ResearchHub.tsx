@@ -14,6 +14,11 @@ import { fmtCalledAt, posActionLabel, getTr } from "@/components/dashboard/tr";
 import { buildMarkdown } from "@/lib/frontmatter";
 
 /* ---------- 常量 ---------- */
+/** 当前北京时间（UTC+8）的 datetime-local 值 */
+function nowLocal(): string {
+  return new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 16);
+}
+
 const STANCES = ["watch", "bullish", "bearish", "avoid"] as const;
 const STANCE_ZH: Record<string, string> = { watch: "观望", bullish: "看多", bearish: "看空", avoid: "避雷" };
 const NTS = ["meme-culture", "event-driven", "ip", "celebrity", "ai", "other"] as const;
@@ -908,7 +913,7 @@ function OrphanPanel({
 function NewCallForm({ initialCa = "", onDone, onError }: { initialCa?: string; onDone: (id: string) => void; onError: (m: string) => void }) {
   const [f, setF] = useState({
     ca: initialCa,
-    date: new Date().toISOString().slice(0, 16),
+    date: nowLocal(),
     slug: "", chain: "solana", tokenName: "", symbol: "",
     stance: "watch", narrativeType: "meme-culture", horizon: "weeks",
     priceAtCall: "", mcapAtCall: "", pairAddress: "", manualPrice: false,
@@ -1135,7 +1140,7 @@ function NewCallForm({ initialCa = "", onDone, onError }: { initialCa?: string; 
 
 function UpdateForm({ callId, onDone, onError }: { callId: string; onDone: () => void; onError: (m: string) => void }) {
   const [type, setType] = useState<CallUpdate["type"]>("note");
-  const [at, setAt] = useState(new Date().toISOString().slice(0, 16));
+  const [at, setAt] = useState(nowLocal());
   const [content, setContent] = useState("");
   const [priceAt, setPriceAt] = useState("");
   const [positionAction, setPositionAction] = useState("");
@@ -1189,7 +1194,7 @@ function UpdateForm({ callId, onDone, onError }: { callId: string; onDone: () =>
 
 function CloseForm({ record, onDone, onError }: { record: CallRecord; onDone: () => void; onError: (m: string) => void }) {
   const [verdict, setVerdict] = useState("wrong");
-  const [closedAt, setClosedAt] = useState(new Date().toISOString().slice(0, 16));
+  const [closedAt, setClosedAt] = useState(nowLocal());
   const [priceAtClose, setPriceAtClose] = useState("");
   const [maxMcap, setMaxMcap] = useState("");
   const [minMcap, setMinMcap] = useState("");

@@ -11,6 +11,9 @@ import { useEffect, useRef, useState } from "react";
 import { createChart, type IChartApi, type ISeriesApi, type UTCTimestamp } from "lightweight-charts";
 
 type Range = "5m" | "15m" | "30m" | "24H" | "7D" | "30D" | "ALL";
+
+/** lightweight-charts 按 UTC 渲染时间轴：统一 +8h 让刻度显示北京时间（UTC+8） */
+const TZ_SHIFT = 8 * 3600;
 interface Candle {
   t: number; o: number; h: number; l: number; c: number; v?: number;
 }
@@ -169,7 +172,7 @@ export default function CallKline({
 
     series.setData(
       candles.map((c) => ({
-        time: c.t as UTCTimestamp,
+        time: (c.t + TZ_SHIFT) as UTCTimestamp,
         open: c.o,
         high: c.h,
         low: c.l,
@@ -179,13 +182,14 @@ export default function CallKline({
 
 
     /* 标记对齐到最近一根蜡烛的时间（lightweight-charts 要求 marker.time 命中数据点） */
-    const times = candles.map((c) => c.t);
+    const times = candles.map((c) => c.t + TZ_SHIFT);
     const snap = (t: number) => {
       let best = times[0];
       for (const x of times) if (Math.abs(x - t) < Math.abs(best - t)) best = x;
       return best;
     };
     const markers = marks
+      .map((m) => ({ ...m, time: m.time + TZ_SHIFT }))
       .filter((m) => m.time >= times[0] && m.time <= times[times.length - 1])
       .map((m) => {
         const st = MARK_STYLE[m.kind];
@@ -234,7 +238,16 @@ export default function CallKline({
       </div>
 
       {failed ? (
-        <p className="py-10 text-center text-xs text-muted">K 线数据暂不可用（可点上方 DexScreener ↗ 查看）</p>
+        <div>
+          {/* 站内 K 线暂不支持该链：降级嵌入 DexScreener 官方图表 */}
+          <iframe
+            src={`https://dexscreener.com/${chain}/${pair}?embed=1&trades=0&info=0`}
+            title="DexScreener K线"
+            className="h-[340px] w-full rounded-lg border border-line"
+            loading="lazy"
+          />
+          <p className="mt-2 text-[10px] text-muted">该链暂不支持站内 K 线，已加载 DexScreener 图表（判断标记不可用）</p>
+        </div>
       ) : (
         <div ref={containerRef} className="w-full" style={{ height: 320 }} aria-label="K 线走势图（标记为判断与更新时间点）" role="img" />
       )}

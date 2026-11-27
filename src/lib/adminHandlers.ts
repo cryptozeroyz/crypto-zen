@@ -448,7 +448,7 @@ export async function watchlistEventPOST(req: Request) {
     note = String(body.note ?? "").trim().slice(0, 500);
     date = /^\d{4}-\d{2}-\d{2}$/.test(String(body.date ?? ""))
       ? String(body.date)
-      : new Date().toISOString().slice(0, 10);
+      : new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10);
   } catch {
     /* 下方统一校验 */
   }
@@ -570,12 +570,12 @@ export async function watchlistPOST(req: Request) {
       status: holding ? "holding" : "watching",
       why,
       comment,
-      addedAt: new Date().toISOString().slice(0, 10),
+      addedAt: new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10),
       holding,
       events: [
         {
           type: "follow",
-          date: new Date().toISOString().slice(0, 10),
+          date: new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10),
           note: comment,
           why,
         },
@@ -746,7 +746,7 @@ export async function linksPOST(req: Request) {
       copyText: copyText || undefined,
       fileUrl: fileUrl || undefined,
       cover: cover || undefined,
-      addedAt: new Date().toISOString().slice(0, 10),
+      addedAt: new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10),
     });
   }
 
@@ -819,7 +819,7 @@ export async function journalPOST(req: Request) {
     const id = String(body.id ?? "").trim();
     const date = /^\d{4}-\d{2}-\d{2}$/.test(String(body.date ?? ""))
       ? String(body.date)
-      : new Date().toISOString().slice(0, 10);
+      : new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10);
     const entry = {
       id: id || `j-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
       date,
@@ -886,7 +886,7 @@ export async function aiReportPOST(req: Request) {
 
   const spark = await fetchGeckoSpark(data.chainId, data.pairAddress).catch(() => null);
   const chg7d = spark && spark.length >= 2 ? ((spark[spark.length - 1] / spark[0] - 1) * 100).toFixed(1) : "—";
-  const date = new Date().toISOString().slice(0, 10);
+  const date = new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 10);
   const models: string[] = [];
 
   const dataBlock = `代币：${data.name}（$${data.symbol}）\n链/交易对：${data.chainId} / ${data.dexId}\n价格：$${data.priceUsd}｜24H涨跌：${data.change24h}%｜近7日：${chg7d}%\n市值：${data.marketCap ?? data.fdv ?? "未知"}｜流动性：${data.liquidity ?? "未知"}｜24H成交量：${data.volume24h ?? "未知"}\nDexScreener：${data.url}`;
@@ -1081,7 +1081,7 @@ export async function callsStancePOST(req: Request) {
     if (!id) throw new Error("缺少 id");
     const at = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(String(body.at ?? ""))
       ? String(body.at)
-      : new Date().toISOString().slice(0, 16) + ":00";
+      : new Date(Date.now() + 8 * 3600_000).toISOString().slice(0, 16) + ":00";
     await updateCallStance(id, stance as Parameters<typeof updateCallStance>[1], at);
     return NextResponse.json({ ok: true });
   } catch (e) {
