@@ -933,7 +933,15 @@
    "priceSource": "auto",
    "pairAddress": "0xf8fd4b7062bba1c01d8d981e982cc80a8598a787280ce0c4ef08fee659a5217a"
   },
-  "updates": [],
+  "updates": [
+   {
+    "callId": "2026-11-27-liquidv",
+    "at": "2026-11-28T00:53:00",
+    "type": "note",
+    "content": "开判后补一笔价格观察。DexScreener 约 $0.00342、市值约 $341 万，相对判断价 $0.002517 大约 +36%，24h 成交超过 $100 万，24h 约 +78%，但 6h 已转弱大约 -4%。波动大，先维持观望，不在这条笔记里改立场。",
+    "priceAt": 0.00342
+   }
+  ],
   "outcome": null
  },
  {
