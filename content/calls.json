@@ -959,5 +959,49 @@
   },
   "updates": [],
   "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-27-orbio",
+   "chain": "robinhood",
+   "tokenName": "Orbio.so",
+   "symbol": "ORBIO",
+   "contractAddress": "0xAa07A0e9209e16aC99708C3EC70159c6eF3128A3",
+   "calledAt": "2026-11-27T22:31:00",
+   "stance": "bullish",
+   "priceAtCall": 0.02226,
+   "mcapAtCall": 21150238,
+   "narrative": "折扣 AI 推理积分市场",
+   "thesis": "折扣 AI 推理积分市场：开发者通过一个 API 密钥访问 400 余个模型（经由 OpenRouter 中继），以 5%–55% 的折扣购买用户挂售的积分。过去六周，项目经历了比首版报告预期更剧烈的”冷热分化”：产品侧指标爆发式增长，代币侧则彻底回吐投机溢价。",
+   "catalysts": [
+    "其一，用量能否在 Chat 与工具生态驱动下从月均 $48.5K 走向 $100K+（增长持续性）",
+    "其二，卡支付能否摆脱单月一万美元的低位、复购客户占比能否上升（需求真实性）",
+    "其三，Launchpad 的 2,065 个 Agent 代币中能否跑出月消耗数千美元级的头部 Agent（生态飞轮是否点火）"
+   ],
+   "risks": [
+    "OpenRouter 仍是 Orbio 不可绕过的上游（年化收入 1.6 亿美元、800 万+ 开发者、千万亿级 token），单点依赖的结构风险"
+   ],
+   "narrativeType": "meme-culture",
+   "horizon": "weeks",
+   "invalidation": "rhc链一直不火热，流动性一直匮乏",
+   "disclosure": {
+    "position": "holding",
+    "entryPrice": 0.015,
+    "sizeTier": "medium",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [
+    "orbio-so-ai"
+   ],
+   "tags": [
+    "AI"
+   ],
+   "isHistorical": false,
+   "priceSource": "auto",
+   "pairAddress": "0xa95b1fbdccb15d2b07509b980f63adab8a94303b1781f5ebc53b72942d12ddc1"
+  },
+  "updates": [],
+  "outcome": null
  }
 ]
