@@ -50,3 +50,5 @@ jobs:
           chmod 600 /tmp/deploy_key
           ssh -i /tmp/deploy_key -o StrictHostKeyChecking=accept-new root@${{ secrets.DEPLOY_HOST }} \
             "echo Y2hvd24gLVIgY3J5cHRvOmNyeXB0byAvaG9tZS9jcnlwdG8vYXBwCnN1IC0gY3J5cHRvIC1jICdzZXQgLWEgJiYgLiAvaG9tZS9jcnlwdG8vYXBwLy5lbnYgJiYgc2V0ICthICYmIGNkIC9ob21lL2NyeXB0by9hcHAgJiYgcG0yIGRlbGV0ZSBjcnlwdG8temVuID4gL2Rldi9udWxsIDI+JjE7IHBtMiBzdGFydCBzZXJ2ZXIuanMgLS1uYW1lIGNyeXB0by16ZW4gLS10aW1lICYmIHBtMiBzYXZlJwpzbGVlcCAzCmN1cmwgLXMgLW8gL2Rldi9udWxsIC13ICJkZXBsb3kg5ZCO5o6i5rWLIEhUVFAgJXtodHRwX2NvZGV9CiIgaHR0cDovLzEyNy4wLjAuMTozMDAwL3poCg== | base64 -d | bash"
+      - name: IndexNow 推送全站 URL（Bing 即时收录，失败不阻塞部署）
+        run: npx tsx scripts/indexnow.ts || echo "IndexNow 推送失败，忽略"
