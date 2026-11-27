@@ -841,7 +841,21 @@
     "content": "看来我最担心的推特的地理位置是东南亚，让我有点担心，真可能是园区盘"
    }
   ],
-  "outcome": null
+  "outcome": {
+   "callId": "2026-11-26-texel",
+   "closedAt": "2026-11-27T06:12:00",
+   "verdict": "correct",
+   "priceAtClose": 0.001274,
+   "mcapAtClose": 1274000,
+   "maxMcapAfterCall": 3500000,
+   "minMcapAfterCall": 1280000,
+   "returnAtClose": 27.4,
+   "maxDrawdown": 0,
+   "invalidationTriggered": false,
+   "lessons": "市场不支持有太高期待，获利了结",
+   "mistakeType": "other",
+   "priceSource": "auto"
+  }
  },
  {
   "call": {
