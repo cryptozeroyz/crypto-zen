@@ -33,3 +33,4 @@ next-env.d.ts
 *.log
 *.dpl-*
 ck.txt
+.indexnow-state.json

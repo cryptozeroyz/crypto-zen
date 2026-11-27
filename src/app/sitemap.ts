@@ -8,7 +8,8 @@ import { siteConfig } from "@/lib/siteConfig";
 import { getAllPosts } from "@/lib/posts";
 import { safeTokenSlug } from "@/lib/coin-format";
 
-const PAGES = ["", "/dashboard", "/writing", "/news", "/alpha", "/resources", "/about", "/bookmarks"];
+/* 不收录：/news（noindex 聚合页）、/bookmarks（私人收藏）、/admin（后台） */
+const PAGES = ["", "/dashboard", "/writing", "/topics", "/alpha", "/resources", "/about"];
 
 /** 代币 symbol 与叙事主题（构建期读取 calls.json，缺失则不包含） */
 function callMeta(): { symbols: string[]; topics: string[] } {
@@ -60,7 +61,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const postEntries: MetadataRoute.Sitemap = [
     ...zhPosts.map((post) => ({
       url: `${siteConfig.url}/zh/writing/${post.slug}`,
-      lastModified: new Date(post.date),
+      lastModified: new Date(post.updated ?? post.date),
       changeFrequency: "weekly" as const,
       priority: 0.8,
       alternates: {
@@ -72,7 +73,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...enPosts.map((post) => ({
       url: `${siteConfig.url}/en/writing/${post.slug}`,
-      lastModified: new Date(post.date),
+      lastModified: new Date(post.updated ?? post.date),
       changeFrequency: "weekly" as const,
       priority: 0.8,
       alternates: {
