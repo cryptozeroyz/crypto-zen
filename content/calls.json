@@ -830,5 +830,43 @@
    }
   ],
   "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-27-liquidv",
+   "chain": "elysium",
+   "tokenName": "LiquidV",
+   "symbol": "LIQUIDV",
+   "contractAddress": "0xd12609Ddb1CD18280C7C14fB2CB5091CFEa37f2D",
+   "calledAt": "2026-11-27T05:19:00",
+   "stance": "watch",
+   "priceAtCall": 0.02517,
+   "mcapAtCall": 25107079,
+   "narrative": "LiquidV 将 Hyperliquid 上任意公开交易钱包代币化：协议建立金库，按比例镜像目标钱包的永续合约仓位，再发行由金库净值（NAV）支持的 Trader Token。",
+   "thesis": "1，Montra 持续新高，为 elysium 带来新的关注\n2，项目不是纯概念站，但仍属于极小规模主网试验，但还未达到 PMF。",
+   "catalysts": [
+    "1，elysium  的持续爆发，引发生态热",
+    "2, 产品进一步扩大采用"
+   ],
+   "risks": [
+    "极端行情下，金库可能在目标钱包未被清算时先遭清算",
+    "交易员行为风险：历史盈利不代表未来表现；钱包所有者还可能通过其他账户交易、改变策略或停止交易。"
+   ],
+   "narrativeType": "other",
+   "horizon": "weeks",
+   "invalidation": "elysium 无好的表现，生态无人问津",
+   "disclosure": {
+    "position": "none",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": false,
+   "priceSource": "auto",
+   "pairAddress": "0x04bda7c915b29a3133f18e62e570ae48623adcfd1bccba044cd833825b8bf9d8"
+  },
+  "updates": [],
+  "outcome": null
  }
 ]
