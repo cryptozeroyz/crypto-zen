@@ -205,7 +205,6 @@ export default async function TokenPage({
       {data?.pairAddress && data.chainId && (
         <div className="mt-6 rounded-2xl border border-line bg-card p-4">
           <CallKline chain={data.chainId} pair={data.pairAddress} marks={marks} />
-          <p className="mt-2 text-[10px] text-muted">K 线数据来自 GeckoTerminal · 标记已对齐到最近时间粒度</p>
         </div>
       )}
 

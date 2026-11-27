@@ -282,7 +282,7 @@
     "at": "2026-11-18T00:00",
     "type": "closed",
     "content": "取消关注，并没被炒作起来",
-    "priceAt": 0.00008094,
+    "priceAt": 8.094e-05,
     "positionAction": "exit"
    }
   ],
@@ -290,7 +290,7 @@
    "callId": "2026-11-17-char",
    "closedAt": "2026-11-18T00:00",
    "verdict": "wrong",
-   "priceAtClose": 0.00008094,
+   "priceAtClose": 8.094e-05,
    "mcapAtClose": 79557,
    "maxMcapAfterCall": 115938,
    "minMcapAfterCall": 19769,
@@ -513,7 +513,7 @@
     "at": "2026-11-17T00:00",
     "type": "closed",
     "content": "没有因为mihao的爆发带来增长，叙事只能长期持有龙一，β标的只能做短期操作",
-    "priceAt": 0.00009705,
+    "priceAt": 9.705e-05,
     "positionAction": "exit"
    }
   ],
@@ -521,7 +521,7 @@
    "callId": "2026-11-12-updog",
    "closedAt": "2026-11-17T00:00",
    "verdict": "wrong",
-   "priceAtClose": 0.00009705,
+   "priceAtClose": 9.705e-05,
    "mcapAtClose": 94524,
    "maxMcapAfterCall": 443310,
    "minMcapAfterCall": 27299,
@@ -866,8 +866,8 @@
    "contractAddress": "0xd12609Ddb1CD18280C7C14fB2CB5091CFEa37f2D",
    "calledAt": "2026-11-27T05:19:00",
    "stance": "watch",
-   "priceAtCall": 0.02517,
-   "mcapAtCall": 25107079,
+   "priceAtCall": 0.002517,
+   "mcapAtCall": 2500000,
    "narrative": "LiquidV 将 Hyperliquid 上任意公开交易钱包代币化：协议建立金库，按比例镜像目标钱包的永续合约仓位，再发行由金库净值（NAV）支持的 Trader Token。",
    "thesis": "1，Montra 持续新高，为 elysium 带来新的关注\n2，项目不是纯概念站，但仍属于极小规模主网试验，但还未达到 PMF。",
    "catalysts": [
@@ -890,7 +890,7 @@
    "tags": [],
    "isHistorical": false,
    "priceSource": "auto",
-   "pairAddress": "0x04bda7c915b29a3133f18e62e570ae48623adcfd1bccba044cd833825b8bf9d8"
+   "pairAddress": "0xf8fd4b7062bba1c01d8d981e982cc80a8598a787280ce0c4ef08fee659a5217a"
   },
   "updates": [],
   "outcome": null

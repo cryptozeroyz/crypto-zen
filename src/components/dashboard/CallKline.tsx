@@ -238,8 +238,8 @@ export default function CallKline({
       </div>
 
       {failed ? (
-        <div>
-          {/* 站内 K 线暂不支持该链：降级嵌入 DexScreener 官方图表 */}
+        /* key 强制卸载图表容器（否则 React 复用 div 导致空图表与 iframe 并存） */
+        <div key="fallback">
           <iframe
             src={`https://dexscreener.com/${chain}/${pair}?embed=1&trades=0&info=0`}
             title="DexScreener K线"
@@ -249,7 +249,10 @@ export default function CallKline({
           <p className="mt-2 text-[10px] text-muted">该链暂不支持站内 K 线，已加载 DexScreener 图表（判断标记不可用）</p>
         </div>
       ) : (
-        <div ref={containerRef} className="w-full" style={{ height: 320 }} aria-label="K 线走势图（标记为判断与更新时间点）" role="img" />
+        <div key="chart">
+          <div ref={containerRef} className="w-full" style={{ height: 320 }} aria-label="K 线走势图（标记为判断与更新时间点）" role="img" />
+          <p className="mt-2 text-[10px] text-muted">K 线数据来自 GeckoTerminal · 标记已对齐到最近时间粒度（UTC+8）</p>
+        </div>
       )}
     </div>
   );
