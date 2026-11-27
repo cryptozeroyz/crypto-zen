@@ -1021,7 +1021,15 @@
    "priceSource": "auto",
    "pairAddress": "0xa95b1fbdccb15d2b07509b980f63adab8a94303b1781f5ebc53b72942d12ddc1"
   },
-  "updates": [],
+  "updates": [
+   {
+    "callId": "2026-11-27-orbio",
+    "at": "2026-11-28T00:51:00",
+    "type": "note",
+    "content": "开仓后第一个夜盘记录。DexScreener 主池 ORBIO/USDG 约 $0.01951、市值约 $18.5M，相对判断价 $0.02226 大约 -12%，相对成本 $0.015 仍是浮盈。24h 约 +5.4%，多池合计成交大约 $52 万，主池流动性大约 $54.5 万。产品侧没有新的反向证据，证伪条件（RHC 流动性枯竭）也还没有被触发。先跟踪，不加仓。",
+    "priceAt": 0.01951
+   }
+  ],
   "outcome": null
  }
 ]
