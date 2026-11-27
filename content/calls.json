@@ -780,7 +780,21 @@
     "content": "立场调整 stance: bullish → watch"
    }
   ],
-  "outcome": null
+  "outcome": {
+   "callId": "2026-11-25-basket",
+   "closedAt": "2026-11-27T21:17:00",
+   "verdict": "wrong",
+   "priceAtClose": 0.0004175,
+   "mcapAtClose": 417563,
+   "maxMcapAfterCall": 3000000,
+   "minMcapAfterCall": 300000,
+   "returnAtClose": -82.53,
+   "maxDrawdown": 0,
+   "invalidationTriggered": true,
+   "lessons": "Solana launchpad作为竞争力非常大的产品，如果发现市值不稳，无极高的创新或者开发背景的话，多数情况为一波流，需要严格限制止盈止损",
+   "mistakeType": "late-entry",
+   "priceSource": "auto"
+  }
  },
  {
   "call": {
