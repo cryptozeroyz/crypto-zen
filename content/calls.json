@@ -809,7 +809,7 @@
    "invalidation": "如果产品没有带来真实收入和产品没有持续迭代开发",
    "successCriteria": "付费 credits 消耗是否持续增长、免费输出占比是否下降、Earn 的 NVDA 是否明确来源于持续经营收入",
    "disclosure": {
-    "position": "holding",
+    "position": "sold",
     "entryPrice": 0.001,
     "sizeTier": "medium",
     "sponsored": false,
