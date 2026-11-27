@@ -38,7 +38,7 @@ import {
 import { parseMarkdown, isValidSlug } from "@/lib/frontmatter";
 import { translateMarkdown } from "@/lib/translate";
 import { fetchCoinData } from "@/lib/watchlist";
-import { fetchGeckoSpark } from "@/lib/gecko";
+import { fetchGeckoOhlcvCandles, fetchGeckoSpark } from "@/lib/gecko";
 
 function isAuthed(): boolean {
   return verifySessionToken(cookies().get(COOKIE_NAME)?.value);
@@ -1130,6 +1130,130 @@ export async function callsDisclosurePOST(req: Request) {
     return NextResponse.json(
       { ok: false, message: `校验失败：${schemaMessage(e)}` },
       { status: 400 }
+    );
+  }
+}
+
+/* ==================== AI 复盘草稿生成（DeepSeek） ==================== */
+
+/**
+ * POST /api/admin/calls/review —— 关闭复盘前生成 AI 复盘草稿
+ * 输入：判断快照 + 全部更新 + 行情（结束价/判断后最高最低市值，服务端自动补齐）
+ * 输出：{ verdict, verdictReason, mistakeType, lessons, market } —— 全部可编辑，人工确认后入库
+ * 红线：数字全部由服务端注入 prompt，禁止模型编造；过程记录不足时如实说明。
+ */
+export async function callsReviewPOST(req: Request) {
+  if (!isAuthed()) return unauthorized();
+  if (!process.env.DEEPSEEK_API_KEY) {
+    return NextResponse.json({ ok: false, message: "未配置 DEEPSEEK_API_KEY" }, { status: 500 });
+  }
+  try {
+    const body = await req.json();
+    const id = String(body.id ?? "").trim();
+    if (!id) throw new Error("缺少 id");
+
+    const records = await readCallRecords();
+    const record = records.find((r) => r.call.id === id);
+    if (!record) return NextResponse.json({ ok: false, message: "判断不存在" }, { status: 404 });
+    if (record.outcome) return NextResponse.json({ ok: false, message: "该判断已复盘" }, { status: 409 });
+    const { call, updates } = record;
+
+    /* 行情：优先用表单已填值，否则服务端抓取补齐 */
+    let priceAtClose = Number(body.priceAtClose) || 0;
+    let maxMcap = Number(body.maxMcapAfterCall) || 0;
+    let minMcap = Number(body.minMcapAfterCall) || 0;
+    const data = await fetchCoinData(call.contractAddress, { pairAddress: call.pairAddress }).catch(() => null);
+    if (!priceAtClose && data?.priceUsd) priceAtClose = data.priceUsd;
+    if ((!maxMcap || !minMcap) && data?.pairAddress && data.chainId) {
+      const candles = await fetchGeckoOhlcvCandles(data.chainId, data.pairAddress, "ALL").catch(() => []);
+      const from = Date.parse(`${call.calledAt}+08:00`) / 1000;
+      const slice = candles.filter((c) => c.t >= from);
+      const closes = (slice.length >= 2 ? slice : candles).map((c) => c.c);
+      if (closes.length >= 2) {
+        const ratio = closes.map((c) => c / call.priceAtCall);
+        if (!maxMcap) maxMcap = Math.round(call.mcapAtCall * Math.max(...ratio));
+        if (!minMcap) minMcap = Math.round(call.mcapAtCall * Math.min(...ratio));
+      }
+    }
+    const returnPct = priceAtClose ? Math.round(((priceAtClose / call.priceAtCall - 1) * 100) * 100) / 100 : null;
+
+    const fmtU = (n: number | null | undefined) => (n ? `$${Math.round(n).toLocaleString()}` : "未知");
+    const material = [
+      `【判断快照】（发布于 ${call.calledAt}，发布后锁定未改动）`,
+      `代币：${call.tokenName}（$${call.symbol}）· ${call.chain}`,
+      `立场：${call.stance}｜判断时价格 $${call.priceAtCall}｜判断时市值 ${fmtU(call.mcapAtCall)}`,
+      `一句话叙事：${call.narrative}`,
+      `判断依据（thesis）：${call.thesis}`,
+      `催化剂：${call.catalysts.join("；") || "未填写"}`,
+      `风险：${call.risks.join("；") || "未填写"}`,
+      `证伪条件（什么情况算错）：${call.invalidation}`,
+      `成功标准：${call.successCriteria || "未填写"}｜目标市值 ${fmtU(call.targetMcap)}｜止损市值 ${fmtU(call.stopMcap)}`,
+      `利益披露：持仓=${call.disclosure.position}${call.disclosure.entryPrice ? `（成本 $${call.disclosure.entryPrice}）` : ""}｜有合作=${call.disclosure.sponsored}｜含返佣=${call.disclosure.referral}`,
+      ``,
+      `【过程更新】共 ${updates.length} 条（时间｜类型｜当时价格｜内容）：`,
+      ...(updates.length > 0
+        ? updates.map((u) => `- ${u.at}｜${u.type}${u.positionAction ? `(${u.positionAction})` : ""}｜${u.priceAt ? `$${u.priceAt}` : "无价格"}｜${u.content}`)
+        : ["（无任何过程更新）"]),
+      ``,
+      `【结果数据】当前/结束价格 ${priceAtClose ? `$${priceAtClose}` : "未知"}｜判断以来收益率 ${returnPct !== null ? `${returnPct}%` : "未知"}｜判断后最高市值 ${fmtU(maxMcap)}｜判断后最低市值 ${fmtU(minMcap)}`,
+    ].join("\n");
+
+    const prompt = `${material}
+
+请基于以上材料生成复盘草稿。要求：
+1. 只使用材料中的事实与数字，禁止编造任何价格、日期、事件；材料没有的如实说明。
+2. verdict 判定标准：收益率>+10% 且论点核心兑现=correct；-10%~+10% 之间或部分兑现=partly；<-10% 或证伪条件已触发=wrong；数据严重不足=unresolved。
+3. 若过程更新少于 2 条，在 lessons 中如实指出"过程记录不足，复盘粒度受限"。
+4. lessons 用 Markdown 三段（每段 2-4 句，直接、具体、不留情面）：
+   ## 判断对照 —— 当时的论点 vs 实际走势，对在哪、错在哪
+   ## 信号复盘 —— 哪些催化剂/风险/证伪条件应验了，哪些没有
+   ## 可执行规则 —— 下次遇到同类情况，一条可以立刻执行的具体规则
+5. 严格输出 JSON（不要任何其他文字）：
+{"verdict":"correct|partly|wrong|unresolved","verdictReason":"不超过80字的判定理由","mistakeType":"narrative-fade|late-entry|liquidity|rug|timing|sizing|other|null（仅 wrong/partly 时给出）","lessons":"上述三段 Markdown"}`;
+
+    const res = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}` },
+      body: JSON.stringify({
+        model: "deepseek-chat",
+        temperature: 0.3,
+        response_format: { type: "json_object" },
+        messages: [{ role: "user", content: prompt }],
+      }),
+      signal: AbortSignal.timeout(90_000),
+    });
+    if (!res.ok) throw new Error(`DeepSeek HTTP ${res.status}`);
+    const json = await res.json();
+    const raw = json?.choices?.[0]?.message?.content;
+    if (!raw) throw new Error("AI 返回为空");
+    const parsed = JSON.parse(raw) as {
+      verdict?: string; verdictReason?: string; mistakeType?: string | null; lessons?: string;
+    };
+
+    const VERDICTS_OK = ["correct", "partly", "wrong", "unresolved"];
+    const MISTAKES_OK = ["narrative-fade", "late-entry", "liquidity", "rug", "timing", "sizing", "other"];
+    const verdict = VERDICTS_OK.includes(parsed.verdict ?? "") ? parsed.verdict : "unresolved";
+    const mistakeType =
+      parsed.mistakeType && MISTAKES_OK.includes(parsed.mistakeType) ? parsed.mistakeType : null;
+    const lessons = `${String(parsed.lessons ?? "").trim()}\n\n> 本复盘由 AI 辅助起草，经人工确认。`;
+
+    return NextResponse.json({
+      ok: true,
+      verdict,
+      verdictReason: String(parsed.verdictReason ?? ""),
+      mistakeType,
+      lessons,
+      market: {
+        priceAtClose: priceAtClose || null,
+        maxMcapAfterCall: maxMcap || null,
+        minMcapAfterCall: minMcap || null,
+        returnPct,
+      },
+    });
+  } catch (e) {
+    return NextResponse.json(
+      { ok: false, message: `复盘生成失败：${e instanceof Error ? e.message : e}` },
+      { status: 500 }
     );
   }
 }

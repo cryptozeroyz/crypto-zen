@@ -1203,7 +1203,43 @@ function CloseForm({ record, onDone, onError }: { record: CallRecord; onDone: ()
   const [lessons, setLessons] = useState("");
   const [mistakeType, setMistakeType] = useState("");
   const [busy, setBusy] = useState(false);
+  /* AI 复盘草稿 */
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiReason, setAiReason] = useState("");
   const ca = record.call.contractAddress;
+
+  /** 一键生成复盘草稿：AI 读取判断快照+全部更新+行情，回填表单（全部可编辑） */
+  const genReview = async () => {
+    setAiBusy(true);
+    onError("");
+    setAiReason("");
+    try {
+      const res = await fetch("/api/admin/calls/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: record.call.id,
+          priceAtClose: priceAtClose ? Number(priceAtClose) : undefined,
+          maxMcapAfterCall: maxMcap ? Number(maxMcap) : undefined,
+          minMcapAfterCall: minMcap ? Number(minMcap) : undefined,
+        }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j?.message ?? "生成失败");
+      setVerdict(j.verdict);
+      setMistakeType(j.mistakeType ?? "");
+      setLessons(j.lessons ?? "");
+      setAiReason(j.verdictReason ?? "");
+      /* 行情字段顺带补齐（若为空） */
+      if (j.market?.priceAtClose && !priceAtClose) setPriceAtClose(String(j.market.priceAtClose));
+      if (j.market?.maxMcapAfterCall && !maxMcap) setMaxMcap(String(j.market.maxMcapAfterCall));
+      if (j.market?.minMcapAfterCall && !minMcap) setMinMcap(String(j.market.minMcapAfterCall));
+    } catch (e) {
+      onError(e instanceof Error ? e.message : "生成失败");
+    } finally {
+      setAiBusy(false);
+    }
+  };
 
   const fetchClose = async () => {
     try {
@@ -1271,6 +1307,22 @@ function CloseForm({ record, onDone, onError }: { record: CallRecord; onDone: ()
 
   return (
     <form onSubmit={submit} className="space-y-2 rounded-xl border-[1.5px] border-dashed border-[#5c2a52] bg-white p-4">
+      {/* AI 复盘草稿：读取判断快照+过程更新+行情，一键回填（全部可编辑） */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => void genReview()}
+          disabled={aiBusy}
+          className="rounded-lg bg-[#5c2a52] px-4 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-px disabled:opacity-50"
+        >
+          {aiBusy ? "⏳ AI 复盘中（约 20 秒）…" : "⚡ AI 生成复盘草稿"}
+        </button>
+        {aiReason && (
+          <span className="rounded-lg bg-codebg px-2.5 py-1.5 text-[11px] text-muted">
+            AI 判定理由：{aiReason}
+          </span>
+        )}
+      </div>
       <div className="flex flex-wrap gap-2">
         <select value={verdict} onChange={(e) => setVerdict(e.target.value)} className={`${input} w-auto`}>
           <option value="correct">判断正确</option>
