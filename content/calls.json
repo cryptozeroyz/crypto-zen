@@ -282,7 +282,7 @@
     "at": "2026-11-18T00:00",
     "type": "closed",
     "content": "取消关注，并没被炒作起来",
-    "priceAt": 8.094e-05,
+    "priceAt": 0.00008094,
     "positionAction": "exit"
    }
   ],
@@ -290,7 +290,7 @@
    "callId": "2026-11-17-char",
    "closedAt": "2026-11-18T00:00",
    "verdict": "wrong",
-   "priceAtClose": 8.094e-05,
+   "priceAtClose": 0.00008094,
    "mcapAtClose": 79557,
    "maxMcapAfterCall": 115938,
    "minMcapAfterCall": 19769,
@@ -513,7 +513,7 @@
     "at": "2026-11-17T00:00",
     "type": "closed",
     "content": "没有因为mihao的爆发带来增长，叙事只能长期持有龙一，β标的只能做短期操作",
-    "priceAt": 9.705e-05,
+    "priceAt": 0.00009705,
     "positionAction": "exit"
    }
   ],
@@ -521,7 +521,7 @@
    "callId": "2026-11-12-updog",
    "closedAt": "2026-11-17T00:00",
    "verdict": "wrong",
-   "priceAtClose": 9.705e-05,
+   "priceAtClose": 0.00009705,
    "mcapAtClose": 94524,
    "maxMcapAfterCall": 443310,
    "minMcapAfterCall": 27299,
@@ -891,6 +891,43 @@
    "isHistorical": false,
    "priceSource": "auto",
    "pairAddress": "0xf8fd4b7062bba1c01d8d981e982cc80a8598a787280ce0c4ef08fee659a5217a"
+  },
+  "updates": [],
+  "outcome": null
+ },
+ {
+  "call": {
+   "id": "2026-11-27-hey",
+   "chain": "robinhood",
+   "tokenName": "Hey Research Lab",
+   "symbol": "HEY",
+   "contractAddress": "0xb33eb16782776b4d738c0fd643577cb0284db610",
+   "calledAt": "2026-11-27T17:54:00",
+   "stance": "watch",
+   "priceAtCall": 0.0009889,
+   "mcapAtCall": 988985,
+   "narrative": "项目开发活动与证据数据层：通过代码仓库、版本发布、合约部署和项目官网等公开来源，回答“这个项目是否仍有人在建设、最近交付了什么”，而不是根据币价、交易量或钱包行为给出买卖建议。",
+   "thesis": "1、产品层面偏积极：定位清晰，产品已经上线，数据覆盖面较大，开发活跃，并且针对 API、MCP、AI Agent 做了较完整的机器接口。\n2、HEY 值得作为早期数据基础设施项目持续跟踪或试用，但现阶段不宜仅凭“开发活跃”推导出代币投资价值。",
+   "catalysts": [
+    "独立 API 账户数、外部集成数和持续调用量是否增长；",
+    "付费研究请求及实际收入是否摆脱个位数阶段"
+   ],
+   "risks": [
+    "收入高度依赖代币交易活跃度，可能与真正的企业数据收入脱节。"
+   ],
+   "narrativeType": "tool",
+   "horizon": "weeks",
+   "invalidation": "用户无采用，目前过于依赖代币带来的收入，但收入规模较小",
+   "disclosure": {
+    "position": "none",
+    "sponsored": false,
+    "referral": false
+   },
+   "relatedReports": [],
+   "tags": [],
+   "isHistorical": false,
+   "priceSource": "auto",
+   "pairAddress": "0x1f0da4872bea85b2f95064d1c89671a5e578d114c375597d23962a0579771d16"
   },
   "updates": [],
   "outcome": null
